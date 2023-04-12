@@ -61,7 +61,9 @@ export class Post {
 
 ##### **`*.service.ts`**
 
-Define services related to the domain in these files (often used by the domain controller).
+Define services related to the domain in these files (often used by the controller).
+
+This example includes the injection of a repository, that is used to handle the given entity.
 
 ```ts
 import { Injectable } from '@nestjs/common';
@@ -95,7 +97,9 @@ export class PostsService {
 }
 ```
 
-##### **`*.controller.spec.ts`** or **`*.service.spec.ts`**
+##### **`*.controller.ts`**
+
+The controllers defines the API endpoints. [Read more.](https://docs.nestjs.com/controllers)
 
 ```ts
 import { Body, Controller, Get, Post } from '@nestjs/common';
@@ -123,7 +127,13 @@ export class PostsController {
 }
 ```
 
-##### **`*.controller.spec.ts`**
+##### **`*.spec.ts`** (e.g.: `posts.controller.spec.ts`)
+
+The spec-files contain unit-tests for the co-located file. In this example it's unit-testing the controller methods.
+
+> **_NOTE_**: A spec, short for specification, comes from behavior driven testing, and encourages the mindset where you are defining 'what' the software does.
+
+This example includes mocking of a service-class method.
 
 ```ts
 import { Test } from '@nestjs/testing';
@@ -170,6 +180,8 @@ export {};
 
 ##### **`*.module.ts`**
 
+Module files encapsulates providers for dependency injection. [Read more.](https://docs.nestjs.com/modules)
+
 ```ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -198,3 +210,9 @@ export class CreatePostDto {
   title: string;
 }
 ```
+
+## Migrations
+
+1. Change or create a `*.entity.ts` file.
+2. Run: `npm run migrate:generate --name=MigrationName`.
+3. Run: `npm run migrate:run`.
