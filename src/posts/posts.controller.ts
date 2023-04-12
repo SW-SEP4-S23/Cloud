@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CreatePostDto } from '~/posts/dto/create-post.dto';
-import { PostsService } from '~/posts/posts.service';
+import { Body, Controller, Get, Post } from "@nestjs/common";
+import { CreatePostDto } from "~/posts/dto/create-post.dto";
+import { PostsService } from "~/posts/posts.service";
 
-@Controller('posts')
+@Controller("posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
@@ -11,7 +11,7 @@ export class PostsController {
     return this.postsService.findAll();
   }
 
-  @Get(':id')
+  @Get(":id")
   findOne(id: number) {
     return this.postsService.findOne(id);
   }
