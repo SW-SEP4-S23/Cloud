@@ -3,5 +3,15 @@
   "dockerComposeFile": ["docker-compose.yml"],
   "service": "app",
   "workspaceFolder": "/usr/src/app",
-  "shutdownAction": "stopCompose"
+"shutdownAction": "stopCompose",
+"customizations": {
+	"vscode": {
+		"extensions": [
+			"ms-azuretools.vscode-docker",
+			"github.vscode-github-actions",
+			"esbenp.prettier-vscode",
+			"dbaeumer.vscode-eslint"
+		]
+	}
+}
 }
