@@ -197,6 +197,28 @@ import { PostsController } from '~/posts/posts.controller';
 export class PostsModule {}
 ```
 
+Remember to import the new module in the `app.module.ts` file, as shown in the example below.
+
+```ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { PostsModule } from '~/posts/posts.module';
+import { DataSource } from 'typeorm';
+import { ormConfig } from '../typeorm.config';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot(ormConfig),
+    PostsModule,
+  ],
+})
+export class AppModule {
+  constructor(private dataSource: DataSource) {}
+}
+```
+
 ##### **`/dto/*.ts`**
 
 Data-validation annotations library: [class-validator](https://github.com/typestack/class-validator)
