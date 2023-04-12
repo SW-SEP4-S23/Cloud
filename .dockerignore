@@ -1,5 +1,21 @@
+# Docker
 Dockerfile
 .dockerignore
+docker-compose.yml
+docker-compose
+
+# Node
 node_modules
 npm-debug.log
 dist
+
+# Secret
+.env
+
+# Git
+.git
+.gitignore
+
+# VS Code
+.vs
+.vscode
