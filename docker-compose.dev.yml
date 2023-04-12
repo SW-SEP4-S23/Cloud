@@ -17,16 +17,13 @@ services:
       - "3000:3000"
 
   db:
-    image: postgres:11
+    image: postgres
     restart: always
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: ${DB_USER}
+      POSTGRES_USER:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - db_data:/var/lib/postgresql/data
-
-volumes:
-  db_data:

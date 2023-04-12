@@ -16,7 +16,7 @@ export const ormConfig: DataSourceOptions = {
   database: configService.get("DB_NAME"),
   entities: [join(__dirname, "./src/**/*.entity.{ts,js}")],
   migrations: [join(__dirname, "./migrations/**/*.{ts,js}")],
-  synchronize: process.env.NODE_ENV === "development",
+  synchronize: process.env.NODE_ENV !== "production",
 };
 
 export default new DataSource(ormConfig);
