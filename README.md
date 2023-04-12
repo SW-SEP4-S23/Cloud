@@ -178,6 +178,20 @@ describe('PostController', () => {
 export {};
 ```
 
+##### **`/dto/*.ts`**
+
+Data-validation annotations library: [class-validator](https://github.com/typestack/class-validator)
+
+```ts
+import { IsString, Length } from 'class-validator';
+
+export class CreatePostDto {
+  @IsString()
+  @Length(10, 30)
+  title: string;
+}
+```
+
 ##### **`*.module.ts`**
 
 Module files encapsulates providers for dependency injection. [Read more.](https://docs.nestjs.com/modules)
@@ -216,20 +230,6 @@ import { ormConfig } from '../typeorm.config';
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
-}
-```
-
-##### **`/dto/*.ts`**
-
-Data-validation annotations library: [class-validator](https://github.com/typestack/class-validator)
-
-```ts
-import { IsString, Length } from 'class-validator';
-
-export class CreatePostDto {
-  @IsString()
-  @Length(10, 30)
-  title: string;
 }
 ```
 
