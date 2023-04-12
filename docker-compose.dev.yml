@@ -7,7 +7,7 @@ services:
       context: .
       target: development
     depends_on:
-      - db
+      - postgres
     env_file:
       - .env
     volumes:
@@ -16,15 +16,14 @@ services:
     ports:
       - "3000:3000"
 
-  db:
+  postgres:
     image: postgres
     restart: always
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
       - db_data:/var/lib/postgresql/data
 

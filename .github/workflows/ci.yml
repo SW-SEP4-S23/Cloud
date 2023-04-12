@@ -9,19 +9,27 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
 
-      - name: Build and run Docker Compose
-        run: |
-          docker-compose -f docker-compose.ci.yml build
-          docker-compose -f docker-compose.ci.yml up -d
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build container
+        run: docker build --target production -t app .
+
+      - name: Run container
+        run: docker run -d -p 3000:3000 -e DB_URL=postgres://postgres:postgres@postgres:5432/postgres
 
       - name: Run unit tests
-        run: docker-compose -f docker-compose.ci.yml exec app npm run test
+        run: npm run test
 
       - name: Run E2E tests
-        run: docker-compose -f docker-compose.ci.yml exec app npm run test:e2e
-
-      - name: Stop and remove Docker Compose containers
-        run: docker-compose -f docker-compose.ci.yml down
+        run: npm run test:e2e
