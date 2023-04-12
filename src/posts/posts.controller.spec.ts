@@ -1,24 +1,39 @@
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
+import { Test } from '@nestjs/testing';
+import { PostsController } from '~/posts/posts.controller';
+import { PostsService } from '~/posts/posts.service';
 
-// describe('AppController', () => {
-//   let appController: AppController;
+describe('PostController', () => {
+  let postsController: PostsController;
+  let postsService: PostsService;
 
-//   beforeEach(async () => {
-//     const app: TestingModule = await Test.createTestingModule({
-//       controllers: [AppController],
-//       providers: [AppService],
-//     }).compile();
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      controllers: [PostsController],
+      providers: [PostsService],
+    }).compile();
 
-//     appController = app.get<AppController>(AppController);
-//   });
+    postsController = moduleRef.get(PostsController);
+    postsService = moduleRef.get(PostsService);
+  });
 
-//   describe('root', () => {
-//     it('should return "Hello World!"', () => {
-//       expect(appController.getHello()).toBe('Hello World!');
-//     });
-//   });
-// });
+  describe('create', () => {
+    it('should return return the created post', async () => {
+      const title = 'Post Title Test';
+
+      const result = {
+        id: 1,
+        title,
+      };
+
+      jest.spyOn(postsService, 'create').mockImplementation(async () => result);
+
+      expect(
+        await postsController.create({
+          title,
+        }),
+      ).toBe(result);
+    });
+  });
+});
 
 export {};
