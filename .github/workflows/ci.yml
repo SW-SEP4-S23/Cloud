@@ -9,41 +9,17 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-
-    env:
-      NODE_ENV: test
-      DATABASE_URL: postgres://postgres:postgres@postgres:postgres/postgres
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Set .env variables
-        run: |
-          touch .env
-          echo DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres >> .env
-
-      - name: Build
-        run: npm run build --if-present
+      - name: Start containers
+        run: docker-compose -f "docker-compose.ci.yml" up -d --build
 
       - name: Run unit tests
-        run: npm run test
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run test
 
       - name: Run E2E tests
-        run: npm run test:e2e
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
+
+      - name: Stop containers
+        run: docker-compose -f "docker-compose.ci.yml" down
