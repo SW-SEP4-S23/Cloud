@@ -1,5 +1,16 @@
-Dockerfile
 .dockerignore
+
+# Node
 node_modules
 npm-debug.log
 dist
+
+# Secret
+.env  
+
+# Git
+.git
+.gitignore
+
+# VS Code
+.vscode

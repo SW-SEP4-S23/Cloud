@@ -1,40 +1,14 @@
 # Cloud
 
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+## Development
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
+### Installation
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+### Running the app
 
 ```bash
 # development
@@ -47,7 +21,7 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+### Test
 
 ```bash
 # unit tests
@@ -60,16 +34,207 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Architecture
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Modules
 
-## Stay in touch
+The modules are separated by domain. If we have a controller that handles Posts, all files assosciated with the Posts-domain, will be in the `posts` directory.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### Module Files
 
-## License
+##### **`*.entity.ts`**
 
-Nest is [MIT licensed](LICENSE).
+Define database entities related to the domain in these files (often used by the service).
+
+```ts
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class Post {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  title: string;
+}
+```
+
+##### **`*.service.ts`**
+
+Define services related to the domain in these files (often used by the controller).
+
+This example includes the injection of a repository, that is used to handle the given entity.
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreatePostDto } from '~/posts/dto/create-post.dto';
+import { Post } from '~/posts/post.entity';
+
+@Injectable()
+export class PostsService {
+  constructor(
+    @InjectRepository(Post)
+    private postsRepo: Repository<Post>,
+  ) {}
+
+  create(createPostDto: CreatePostDto) {
+    return this.postsRepo.save(createPostDto);
+  }
+
+  findAll() {
+    return this.postsRepo.find();
+  }
+
+  findOne(id: number) {
+    return this.postsRepo.findOneBy({ id });
+  }
+
+  async remove(id: number) {
+    await this.postsRepo.delete(id);
+  }
+}
+```
+
+##### **`*.controller.ts`**
+
+The controllers defines the API endpoints. [Read more.](https://docs.nestjs.com/controllers)
+
+```ts
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { CreatePostDto } from '~/posts/dto/create-post.dto';
+import { PostsService } from '~/posts/posts.service';
+
+@Controller('posts')
+export class PostsController {
+  constructor(private readonly postsService: PostsService) {}
+
+  @Get()
+  findAll() {
+    return this.postsService.findAll();
+  }
+
+  @Get(':id')
+  findOne(id: number) {
+    return this.postsService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() createPostDto: CreatePostDto) {
+    return this.postsService.create(createPostDto);
+  }
+}
+```
+
+##### **`*.spec.ts`** (e.g.: `posts.controller.spec.ts`)
+
+The spec-files contain unit-tests for the co-located file. In this example it's unit-testing the controller methods.
+
+> **_NOTE_**: A spec, short for specification, comes from behavior driven testing, and encourages the mindset where you are defining 'what' the software does.
+
+This example includes mocking of a service-class method.
+
+```ts
+import { Test } from '@nestjs/testing';
+import { PostsController } from '~/posts/posts.controller';
+import { PostsService } from '~/posts/posts.service';
+
+describe('PostController', () => {
+  let postsController: PostsController;
+  let postsService: PostsService;
+
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      controllers: [PostsController],
+      providers: [PostsService],
+    }).compile();
+
+    postsController = moduleRef.get(PostsController);
+    postsService = moduleRef.get(PostsService);
+  });
+
+  describe('create', () => {
+    it('should return return the created post', async () => {
+      const title = 'Post Title Test';
+
+      const result = {
+        id: 1,
+        title,
+      };
+
+      // mock the result of the "create" method on the postsService instance
+      jest.spyOn(postsService, 'create').mockImplementation(async () => result);
+
+      expect(
+        await postsController.create({
+          title,
+        }),
+      ).toBe(result);
+    });
+  });
+});
+
+export {};
+```
+
+##### **`/dto/*.ts`**
+
+Data-validation annotations library: [class-validator](https://github.com/typestack/class-validator)
+
+```ts
+import { IsString, Length } from 'class-validator';
+
+export class CreatePostDto {
+  @IsString()
+  @Length(10, 30)
+  title: string;
+}
+```
+
+##### **`*.module.ts`**
+
+Module files encapsulates providers for dependency injection. [Read more.](https://docs.nestjs.com/modules)
+
+```ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Post } from './post.entity';
+import { PostsService } from '~/posts/posts.service';
+import { PostsController } from '~/posts/posts.controller';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Post])],
+  providers: [PostsService],
+  controllers: [PostsController],
+})
+export class PostsModule {}
+```
+
+Remember to import the new module in the `app.module.ts` file, as shown in the example below.
+
+```ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { PostsModule } from '~/posts/posts.module';
+import { DataSource } from 'typeorm';
+import { ormConfig } from '../typeorm.config';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot(ormConfig),
+    PostsModule,
+  ],
+})
+export class AppModule {
+  constructor(private dataSource: DataSource) {}
+}
+```
+
+## Migrations
+
+1. Change or create a `*.entity.ts` file.
+2. Run: `npm run migrate:generate --name=MigrationName`.
+3. Run: `npm run migrate:run`.

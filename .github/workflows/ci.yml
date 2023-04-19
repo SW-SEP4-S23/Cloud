@@ -6,23 +6,20 @@ on:
     branches: [dev]
 
 jobs:
-  unit-tests:
-    name: Unit Tests
+  tests:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      - run: npm ci
-      - run: npm run test
-  e2e-tests:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      - run: npm ci
-      - run: npm run test:e2e
+      - uses: actions/checkout@v3
+
+      - name: Start containers
+        run: docker-compose -f "docker-compose.ci.yml" up -d --build
+
+      - name: Run unit tests
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run test
+
+      - name: Run E2E tests
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
+
+      - name: Stop containers
+        run: docker-compose -f "docker-compose.ci.yml" down
