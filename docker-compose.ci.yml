@@ -3,13 +3,14 @@ version: "3.7"
 services:
   app:
     build:
-      dockerfile: Dockerfile
+      dockerfile: ci.Dockerfile
       context: .
-      target: development
     depends_on:
       - postgres
     volumes:
       - .:/usr/src/app
+    env_file:
+      - .env.example
     ports:
       - "3000:3000"
 
