@@ -2,26 +2,21 @@
 
 ## Development
 
-### Installation
+### Running the Dev Container
 
-```bash
-$ npm install
-```
+1. Open the project in VS Code.
 
-### Running the app
+2. Open the command palette (CTRL + SHIFT + P).
 
-```bash
-# development
-$ npm run start
+3. Run the command: `Dev Containers: Rebuild and Reopen in Container`.
 
-# watch mode
-$ npm run start:dev
+> **_NOTE_**: If this errors, make sure you're not using PORT 3000 or 5432. Refer to this guide to close the ports: [Guide](https://stackoverflow.com/a/39633428).
 
-# production mode
-$ npm run start:prod
-```
+4. Run `npm install` in the VS Code Terminal (This will run it in the container).
 
-### Test
+5. The REST API should now be available at `localhost:3000`.
+
+### Running tests
 
 ```bash
 # unit tests
@@ -47,7 +42,7 @@ The modules are separated by domain. If we have a controller that handles Posts,
 Define database entities related to the domain in these files (often used by the service).
 
 ```ts
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Post {
@@ -66,11 +61,11 @@ Define services related to the domain in these files (often used by the controll
 This example includes the injection of a repository, that is used to handle the given entity.
 
 ```ts
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreatePostDto } from '~/posts/dto/create-post.dto';
-import { Post } from '~/posts/post.entity';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { CreatePostDto } from "~/posts/dto/create-post.dto";
+import { Post } from "~/posts/post.entity";
 
 @Injectable()
 export class PostsService {
@@ -102,11 +97,11 @@ export class PostsService {
 The controllers defines the API endpoints. [Read more.](https://docs.nestjs.com/controllers)
 
 ```ts
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CreatePostDto } from '~/posts/dto/create-post.dto';
-import { PostsService } from '~/posts/posts.service';
+import { Body, Controller, Get, Post } from "@nestjs/common";
+import { CreatePostDto } from "~/posts/dto/create-post.dto";
+import { PostsService } from "~/posts/posts.service";
 
-@Controller('posts')
+@Controller("posts")
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
@@ -115,7 +110,7 @@ export class PostsController {
     return this.postsService.findAll();
   }
 
-  @Get(':id')
+  @Get(":id")
   findOne(id: number) {
     return this.postsService.findOne(id);
   }
@@ -136,11 +131,11 @@ The spec-files contain unit-tests for the co-located file. In this example it's 
 This example includes mocking of a service-class method.
 
 ```ts
-import { Test } from '@nestjs/testing';
-import { PostsController } from '~/posts/posts.controller';
-import { PostsService } from '~/posts/posts.service';
+import { Test } from "@nestjs/testing";
+import { PostsController } from "~/posts/posts.controller";
+import { PostsService } from "~/posts/posts.service";
 
-describe('PostController', () => {
+describe("PostController", () => {
   let postsController: PostsController;
   let postsService: PostsService;
 
@@ -154,9 +149,9 @@ describe('PostController', () => {
     postsService = moduleRef.get(PostsService);
   });
 
-  describe('create', () => {
-    it('should return return the created post', async () => {
-      const title = 'Post Title Test';
+  describe("create", () => {
+    it("should return return the created post", async () => {
+      const title = "Post Title Test";
 
       const result = {
         id: 1,
@@ -164,7 +159,7 @@ describe('PostController', () => {
       };
 
       // mock the result of the "create" method on the postsService instance
-      jest.spyOn(postsService, 'create').mockImplementation(async () => result);
+      jest.spyOn(postsService, "create").mockImplementation(async () => result);
 
       expect(
         await postsController.create({
@@ -183,7 +178,7 @@ export {};
 Data-validation annotations library: [class-validator](https://github.com/typestack/class-validator)
 
 ```ts
-import { IsString, Length } from 'class-validator';
+import { IsString, Length } from "class-validator";
 
 export class CreatePostDto {
   @IsString()
@@ -197,11 +192,11 @@ export class CreatePostDto {
 Module files encapsulates providers for dependency injection. [Read more.](https://docs.nestjs.com/modules)
 
 ```ts
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Post } from './post.entity';
-import { PostsService } from '~/posts/posts.service';
-import { PostsController } from '~/posts/posts.controller';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Post } from "./post.entity";
+import { PostsService } from "~/posts/posts.service";
+import { PostsController } from "~/posts/posts.controller";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Post])],
@@ -214,12 +209,12 @@ export class PostsModule {}
 Remember to import the new module in the `app.module.ts` file, as shown in the example below.
 
 ```ts
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { PostsModule } from '~/posts/posts.module';
-import { DataSource } from 'typeorm';
-import { ormConfig } from '../typeorm.config';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { ConfigModule } from "@nestjs/config";
+import { PostsModule } from "~/posts/posts.module";
+import { DataSource } from "typeorm";
+import { ormConfig } from "../typeorm.config";
 
 @Module({
   imports: [
