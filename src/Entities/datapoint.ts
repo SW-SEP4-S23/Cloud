@@ -6,7 +6,7 @@ export class Datapoint {
   timestamp: string;
 
   @Column()
-  Co2: number;
+  co2: number;
 
   @Column()
   temp: number;
