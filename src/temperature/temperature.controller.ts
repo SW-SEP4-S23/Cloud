@@ -5,9 +5,15 @@ import {TemperatureService} from './temperature.service';
 export class TemperatureController { 
     constructor (private readonly temperatureService: TemperatureService) {}
 
+    //TODO : Change the get method so it takes two dates, and returns all temperatures inbetween those dates.
     @Get()
-    findAll(): number {
+    findAll() {
         return this.temperatureService.getTemperature();
+    }
+
+    @Get('test')
+    DvaRule34() {
+        return  this.temperatureService.getTest();
     }
     
 }
