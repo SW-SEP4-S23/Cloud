@@ -9,7 +9,7 @@ export class Datapoint {
   co2: number;
 
   @Column()
-  temp: number;
+  temperature: number;
 
   @Column()
   humidity: number;
