@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryColumn } from "typeorm";
 @Entity()
 export class Datapoint {
   @PrimaryColumn()
-  DataTimeStamp: string;
+  timestamp: string;
 
   @Column()
   Co2: number;
