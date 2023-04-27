@@ -11,9 +11,11 @@ export class WebsocketService implements BeforeApplicationShutdown {
       "wss://iotnet.teracom.dk/app?token=vnoVQAAAABFpb3RuZXQudGVyYWNvbS5ka0AHfDGv873AtxYtbA-B0Sw",
     );
   }
+  
   beforeApplicationShutdown() {
     this.#socket?.close();
   }
+  
   async initSocket(url: string): Promise<void> {
     this.#socket = await createWebSocket(url);
 
