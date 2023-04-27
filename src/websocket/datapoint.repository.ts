@@ -10,9 +10,9 @@ export class DatapointRepository {
     co2: number;
     humidity: number;
     temperature: number;
-  }): Promise<void> {
+  }) {
     const { timestamp, co2, humidity, temperature } = params;
-    this.prisma.datapoint.create({
+    return this.prisma.datapoint.create({
       data: { timestamp, co2, humidity, temperature },
     });
   }
