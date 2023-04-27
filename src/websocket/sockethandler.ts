@@ -1,32 +1,27 @@
 //TODO: Import repository
 import { createWebSocket } from "./create-websocket";
 
+export async function initSocket(url: string) {
+  const socket = await createWebSocket(url);
 
-export async function initSocket(url: string)
-{
-    const socket = await createWebSocket(url)
-
-    //Måske et andet keyword?
-    socket.on("message", (data: any) => {
-        data.port === 1 ? 
-            onMessage(data) :
-            console.log("port is 2 - its the overhead")
-      });
+  //Måske et andet keyword?
+  socket.on("message", (data: any) => {
+    data.port === 1
+      ? onMessage(data)
+      : console.log("port is 2 - its the overhead");
+  });
 }
 
 function onMessage(data: any): void {
+  const incomingdata = JSON.parse(data.data.toString());
 
-    const incomingdata = JSON.parse(data.data.toString());
-    
-    const hexTranslatedData = translateHex(incomingdata);
+  const hexTranslatedData = translateHex(incomingdata);
 
-    //Repository save
-
+  //Repository save
 }
 
-
 //Skal laves om til en adapter
-function translateHex(transformedData: string) : number[] {
+function translateHex(transformedData: string): number[] {
   // Get the first 6 hex digits (3 bytes) from the input string
   const hexSubstring = transformedData.substring(0, 6);
 
@@ -38,7 +33,7 @@ function translateHex(transformedData: string) : number[] {
 
   // Extract the bytes from the value
   for (let i = 0; i < 3; i++) {
-    const byte = (hexValue >> (8 * (2 - i))) & 0xFF;
+    const byte = (hexValue >> (8 * (2 - i))) & 0xff;
     result[i] = byte;
   }
 

@@ -1,11 +1,13 @@
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common"
+import { ValidationPipe } from "@nestjs/common";
 import { initSocket } from "./websocket/sockethandler";
 
 async function bootstrap() {
-  await initSocket("wss://iotnet.teracom.dk/app?token=vnoVQAAAABFpb3RuZXQudGVyYWNvbS5ka0AHfDGv873AtxYtbA-B0Sw");
+  await initSocket(
+    "wss://iotnet.teracom.dk/app?token=vnoVQAAAABFpb3RuZXQudGVyYWNvbS5ka0AHfDGv873AtxYtbA-B0Sw",
+  );
 
   const app = await NestFactory.create(AppModule);
 
