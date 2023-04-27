@@ -1,24 +1,26 @@
 import { createWebSocket } from "./create-websocket";
 import { DatapointRepository } from "./datapoint.repository";
-import { BeforeApplicationShutdown, Injectable } from "@nestjs/common";
+import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { WebSocket } from "ws";
 
 @Injectable()
-export class WebsocketService implements BeforeApplicationShutdown {
-  #socket: WebSocket | null;
-  constructor(private dpRep: DatapointRepository) {
-    this.initSocket(
+export class WebsocketService implements OnModuleInit, OnModuleDestroy {
+  #socket: WebSocket;
+
+  constructor(private dpRep: DatapointRepository) {}
+
+  async onModuleDestroy() {
+    await this.#socket.close();
+  }
+
+  async onModuleInit() {
+    this.#socket = await createWebSocket(
       "wss://iotnet.teracom.dk/app?token=vnoVQAAAABFpb3RuZXQudGVyYWNvbS5ka0AHfDGv873AtxYtbA-B0Sw",
     );
+    await this.initSocket();
   }
-  
-  beforeApplicationShutdown() {
-    this.#socket?.close();
-  }
-  
-  async initSocket(url: string): Promise<void> {
-    this.#socket = await createWebSocket(url);
 
+  async initSocket(): Promise<void> {
     //Måske et andet keyword?
     this.#socket.on("message", (data: any) => {
       data.port === 1
@@ -26,7 +28,7 @@ export class WebsocketService implements BeforeApplicationShutdown {
         : console.log("port is 2 - its the overhead");
     });
   }
-  
+
   onMessage(data: any): void {
     const incomingdata = JSON.parse(data.data.toString());
 
