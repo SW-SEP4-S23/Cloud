@@ -6,7 +6,7 @@ export function createWebSocket(url: string): Promise<WebSocket> {
 
     socket.on("open", () => {
       console.log("Connected to WebSocket");
-      resolve(this.socket);
+      resolve(socket);
     });
 
     socket.on("error", () => {
