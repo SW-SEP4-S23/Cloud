@@ -7,12 +7,15 @@ import { WebSocket } from "ws";
 export class WebsocketService implements BeforeApplicationShutdown {
   #socket: WebSocket | null;
   constructor(private dpRep: DatapointRepository) {
-    this.initSocket(
-      "wss://iotnet.teracom.dk/app?token=vnoVQAAAABFpb3RuZXQudGVyYWNvbS5ka0AHfDGv873AtxYtbA-B0Sw",
-    );
+    this.awaitable();
   }
   beforeApplicationShutdown(signal?: string) {
     this.#socket?.close();
+  }
+  async awaitable(): Promise<any> {
+    return await this.initSocket(
+      "wss://iotnet.teracom.dk/app?token=vnoVQAAAABFpb3RuZXQudGVyYWNvbS5ka0AHfDGv873AtxYtbA-B0Sw",
+    );
   }
   async initSocket(url: string): Promise<void> {
     this.#socket = await createWebSocket(url);
