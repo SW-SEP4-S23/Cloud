@@ -2,6 +2,8 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
+ARG DATABASE_URL
+
 FROM node:18-alpine As development
 
 # Create app directory
@@ -14,6 +16,8 @@ COPY --chown=node:node package*.json ./
 
 # Copy prisma schema
 COPY --chown=node:node prisma ./prisma
+
+ENV DATABASE_URL=$DATABASE_URL
 
 # Install app dependencies using the `npm ci` command instead of `npm install`
 RUN npm ci
