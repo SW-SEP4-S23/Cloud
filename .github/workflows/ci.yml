@@ -15,6 +15,12 @@ jobs:
       - name: Start containers
         run: docker-compose -f "docker-compose.ci.yml" up -d --build
 
+      - name: Lint code
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run lint
+
+      - name: Format code
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run format
+
       - name: Run unit tests
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test
 
