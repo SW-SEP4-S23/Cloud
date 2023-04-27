@@ -2,9 +2,9 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-ARG DATABASE_URL
-
 FROM node:18-alpine As development
+
+ARG DATABASE_URL
 
 # Create app directory
 WORKDIR /usr/src/app
