@@ -1,5 +1,4 @@
 import { PrismaService } from "../prisma.service";
-import { Datapoint } from "@prisma/client";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
