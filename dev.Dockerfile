@@ -4,14 +4,15 @@ FROM node:18
 # Set the working directory to /app
 WORKDIR /app
 
-# Install NestJS CLI globally
-RUN npm install -g @nestjs/cli
-
-# Install app dependencies
+# COPY package.json and package-lock.json files
 COPY package*.json ./
+
+# generated prisma files
+COPY prisma ./prisma/
+
 RUN npm install
 
-# Bundle app source code
+# Copy the rest of the application files to the container
 COPY . .
 
 # Set environment variables

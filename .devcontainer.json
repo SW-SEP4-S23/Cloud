@@ -7,11 +7,12 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-azuretools.vscode-docker",
-        "github.vscode-github-actions",
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint"
-      ]
+		"ms-azuretools.vscode-docker",
+		"github.vscode-github-actions",
+		"esbenp.prettier-vscode",
+		"dbaeumer.vscode-eslint",
+		"Prisma.prisma"
+	]
     }
   }
 }

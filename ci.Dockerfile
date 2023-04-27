@@ -4,8 +4,11 @@ FROM node:18
 # Set the working directory to /app
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files to the container
+# COPY package.json and package-lock.json files
 COPY package*.json ./
+
+# generated prisma files
+COPY prisma ./prisma/
 
 # Install the dependencies
 RUN npm ci

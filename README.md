@@ -230,6 +230,7 @@ export class AppModule {
 
 ## Migrations
 
-1. Change or create a `*.entity.ts` file.
-2. Run: `npm run migrate:generate --name=MigrationName`.
-3. Run: `npm run migrate:run`.
+1. Update the `prisma.schema` file to your needs.
+2. Run `npm run migrate:dev` in the terminal.
+
+> **_NOTE_**: If the types don't update for the Prisma Client, you might need to restart the TS server in VS Code. CTRL + SHIFT + P and run 'Restart TS Server'.
