@@ -1,12 +1,11 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { Datapoint } from "../entities/datapoint.entity";
 import { TemperatureService } from "./temperature.service";
 import { TemperatureController } from "./temperature.controller";
+import { PrismaService } from "../prisma.service";
+import { TemperatureRepository } from "./temperature.repository";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Datapoint])],
-    providers: [TemperatureService],
-    controllers: [TemperatureController],
+  providers: [TemperatureService, TemperatureRepository, PrismaService],
+  controllers: [TemperatureController],
 })
 export class TemperatureModule {}
