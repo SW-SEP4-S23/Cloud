@@ -1,17 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsDate } from "class-validator";
 
-class IntervalQuery {
-  @ApiProperty()
-  @Type(() => Date)
+export class IntervalQuery {
   @IsDate()
+  @Type(() => Date)
   startDate: Date;
 
-  @ApiProperty()
-  @Type(() => Date)
   @IsDate()
+  @Type(() => Date)
   endDate: Date;
 }
-
-export { IntervalQuery };
