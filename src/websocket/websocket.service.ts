@@ -4,7 +4,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { WebSocket } from "ws";
 
 @Injectable()
-export class WebsocketService implements OnModuleInit, OnModuleDestroy {
+export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   #socket: WebSocket;
 
   constructor(private dpRep: DatapointRepository) {}
@@ -29,12 +29,12 @@ export class WebsocketService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  onMessage(data: any): void {
-    const incomingdata = JSON.parse(data.data.toString());
+  async onMessage(data: any) {
+    const incomingdata = JSON.parse(data).data;
 
     const hexTranslatedData = this.translateHex(incomingdata);
 
-    this.dpRep.createDatapoint({
+    return this.dpRep.createDatapoint({
       timestamp: new Date(),
       temperature: hexTranslatedData[0],
       co2: hexTranslatedData[1],
