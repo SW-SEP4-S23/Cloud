@@ -15,7 +15,7 @@ WORKDIR /usr/src/app
 COPY --chown=node:node package*.json ./
 
 # Copy prisma schema
-COPY --chown=node:node prisma ./prisma
+COPY --chown=node:node prisma ./prisma/
 
 # Create a .env file and write envrioment variables to it
 RUN touch .env
@@ -23,9 +23,6 @@ RUN echo "DATABASE_URL=$DATABASE_URL" > ./.env
 
 # Install app dependencies using the `npm ci` command instead of `npm install`
 RUN npm ci
-
-# Migrate database schema
-RUN npm run migrate:prod
 
 # Bundle app source
 COPY --chown=node:node . .
@@ -45,6 +42,7 @@ COPY --chown=node:node package*.json ./
 
 # In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
 COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=development /usr/src/app/prisma ./prisma/
 COPY --chown=node:node --from=development /usr/src/app/.env ./.env
 COPY --chown=node:node . .
 
@@ -68,9 +66,8 @@ FROM node:18-alpine As production
 # Copy the bundled code from the build stage to the production image
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-
-# Copy .env file
+COPY --chown=node:node --from=build /usr/src/app/prisma ./prisma/
 COPY --chown=node:node --from=build /usr/src/app/.env ./.env
 
 # Start the server using the production build
-CMD [ "node", "dist/main.js" ]  
+CMD [ "npm", "run", "start:migrate:prod" ]  
