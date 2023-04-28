@@ -21,6 +21,9 @@ jobs:
       - name: Format code
         run: docker-compose -f "docker-compose.ci.yml" run app npm run format
 
+      - name: Setup Prisma
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run migrate:dev
+
       - name: Run unit tests
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test
 

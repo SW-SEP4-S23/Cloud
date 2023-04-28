@@ -8,12 +8,6 @@ export class TemperatureController {
 
   @Get()
   findAllInterval(@Query() interval: IntervalQuery) {
-    return "Hello";
     return this.temperatureService.findAllInterval(interval);
-  }
-
-  @Get("test")
-  DvaRule34() {
-    return this.temperatureService.getTest();
   }
 }

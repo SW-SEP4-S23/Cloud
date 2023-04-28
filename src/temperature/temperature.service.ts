@@ -11,8 +11,4 @@ export class TemperatureService {
     //if statements to check if the interval is valid
     return this.temperatureRepository.findAllInterval(interval);
   }
-
-  getTest() {
-    return "Hello Simon Mr Manderson - this is a test";
-  }
 }
