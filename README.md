@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Cloud
 
 ## Development
@@ -235,6 +234,3 @@ export class AppModule {
 2. Run `npm run migrate:dev` in the terminal.
 
 > **_NOTE_**: If the types don't update for the Prisma Client, you might need to restart the TS server in VS Code. CTRL + SHIFT + P and run 'Restart TS Server'.
-=======
-# Cloud
->>>>>>> main
