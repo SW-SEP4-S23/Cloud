@@ -15,7 +15,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     this.#socket = await createWebSocket(
-      "wss://iotnet.teracom.dk/app?token=vnoVQAAAABFpb3RuZXQudGVyYWNvbS5ka0AHfDGv873AtxYtbA-B0Sw",
+      "wss://iotnet.teracom.dk/app?token=vnoVQAAAABFpb3RuZXQudGVyYWNvbS5ka0AHfDGv873AtxYtbA-B0Sw=",
     );
     await this.initSocket();
   }
