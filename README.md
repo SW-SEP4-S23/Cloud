@@ -6,6 +6,8 @@
 
 1. Open the project in VS Code.
 
+> **_NOTE_**: If you don't have a `.env` file yet, copy the `.env.example` file and change the name to `.env`.
+
 2. Start the database: `docker-compose -f "docker-compose.dev.yml" up -d --build`.
 
 > **_NOTE_**: If this errors, make sure you're not using PORT 5432. Refer to this guide to close the ports: [Guide](https://stackoverflow.com/a/39633428).
