@@ -30,11 +30,14 @@ jobs:
       - name: Run E2E tests
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
 
-      - name: Stop containers
-        run: docker-compose -f "docker-compose.ci.yml" down
+      - name: Move coverage folder
+        run: docker cp app:coverage ./coverage
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Code-Coverage
-          path: ./coverage/
+          path: coverage
+
+      - name: Stop containers
+        run: docker-compose -f "docker-compose.ci.yml" down
