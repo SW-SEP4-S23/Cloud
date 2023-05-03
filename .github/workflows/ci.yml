@@ -25,7 +25,7 @@ jobs:
         run: docker-compose -f "docker-compose.ci.yml" run app npm run migrate:dev
 
       - name: Run unit tests
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run test
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov
 
       - name: Run E2E tests
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
