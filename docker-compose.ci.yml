@@ -9,8 +9,8 @@ services:
       - postgres
     volumes:
       - .:/usr/src/app
-    env_file:
-      - .env.example
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
     ports:
       - "3000:3000"
 
