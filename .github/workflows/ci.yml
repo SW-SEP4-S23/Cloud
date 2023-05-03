@@ -36,8 +36,10 @@ jobs:
       - name: Run Coverage
         run: |
           docker-compose -f "docker-compose.ci.yml" run app npm run test:cov
-          docker-compose -f "docker-compose.ci.yml" exec app sh -c 'cp -r /src/coverage /app_coverage'
-          docker cp app:/app_coverage .
+
+      - name: Move Coverage Folder
+        run: |
+          docker-compose -f "docker-compose.ci.yml" exec app sh -c 'mkdir -p /src/coverage && cp -r /app_coverage/* /src/coverage/'
           ls
 
       - name: Upload Coverage Artifact
