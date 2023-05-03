@@ -16,6 +16,7 @@ jobs:
         run: docker-compose -f "docker-compose.ci.yml" up -d --build
 
       - run: docker ps -a
+      - run: docker
 
       - name: Lint code
         run: docker-compose -f "docker-compose.ci.yml" run app npm run lint
@@ -32,8 +33,10 @@ jobs:
       - name: Run E2E tests
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
 
+        - run: docker-compose -f "docker-compose.ci.yml" run app ls
+
       - name: Move coverage folder
-        run: docker cp CONTAINER:/coverage ./coverage
+        run: docker cp :/coverage ./coverage
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
