@@ -34,19 +34,17 @@ jobs:
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
 
       - name: Run Coverage
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov && docker-compose -f "docker-compose.ci.yml" run app pwd && docker-compose -f "docker-compose.ci.yml" run app ls && docker-compose -f "docker-compose.ci.yml" exec app ls /src
+        run: |
+          docker-compose -f "docker-compose.ci.yml" run app npm run test:cov
+          docker-compose -f "docker-compose.ci.yml" exec app sh -c 'cp -r /src/coverage /app_coverage'
+          docker cp app:/app_coverage .
+          ls
 
-      - name: check container folder
-        run: docker-compose -f "docker-compose.ci.yml" exec app ls /src
-
-      - name: Move coverage folder
-        run: docker cp app:/src/coverage .
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v2
         with:
-          name: Code-Coverage
-          path: coverage
+          name: coverage
+          path: ./coverage
 
       - name: Stop containers
         run: docker-compose -f "docker-compose.ci.yml" down
