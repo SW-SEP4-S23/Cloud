@@ -22,20 +22,20 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   }
 
   async initSocket(): Promise<void> {
-    //Måske et andet keyword?
-    this.#socket.on("message", (data: any) => {
-      data.port === 1
+    this.#socket.on("message", (buffer: Buffer) => {
+      const data = JSON.parse(buffer.toString());
+
+      data.port == 1
         ? this.onMessage(data)
         : console.log("port is 2 - its the overhead");
     });
   }
 
   async onMessage(data: any) {
-    const incomingdata = JSON.parse(data).data;
-
-    const hexTranslatedData = translateHex(incomingdata);
+    const hexTranslatedData = translateHex(data.data);
 
     return this.dpRep.createDatapoint({
+      // Check if data already contains a timestamp
       timestamp: new Date(),
       temperature: hexTranslatedData[0],
       co2: hexTranslatedData[1],
