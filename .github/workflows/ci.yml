@@ -37,7 +37,7 @@ jobs:
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov
 
       - name: check container folder
-        run: docker-compose -f "docker-compose.ci.yml" run app ls
+        run: docker-compose -f "docker-compose.ci.yml" run app/src ls
 
       #- name: Move coverage folder
       #  run: docker cp app:/coverage .
