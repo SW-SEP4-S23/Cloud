@@ -33,6 +33,7 @@ jobs:
       - name: Stop containers
         run: docker-compose -f "docker-compose.ci.yml" down
 
+
       - name: Upload artifact
         - uses: actions/upload-artifact@v3
           with:
