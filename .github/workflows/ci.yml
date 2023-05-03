@@ -34,10 +34,10 @@ jobs:
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
 
       - name: Run Coverage
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov && docker-compose -f "docker-compose.ci.yml" run app pwd && docker-compose -f "docker-compose.ci.yml" run app ls
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov && docker-compose -f "docker-compose.ci.yml" run app pwd && docker-compose -f "docker-compose.ci.yml" run app ls && docker-compose -f "docker-compose.ci.yml" exec app ls /src
 
       - name: check container folder
-        run: docker-compose -f "docker-compose.ci.yml" run app ls
+        run: docker-compose -f "docker-compose.ci.yml" exec app ls /src
 
       - name: Move coverage folder
         run: docker cp app:/src/coverage .
