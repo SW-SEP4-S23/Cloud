@@ -2,15 +2,17 @@
 
 ## Development
 
-### Running the Dev Container
+### Running the project
 
-1. Open the project in VS Code.
+1. Start the database: Run this command in the terminal, while in the directory of the project `docker-compose -f "docker-compose.dev.yml" up -d --build`
 
-2. Open the command palette (CTRL + SHIFT + P).
+2. Open the project in VS Code.
 
-3. Run the command: `Dev Containers: Rebuild and Reopen in Container`.
+3. Install the dependencies: Run this command in the the terminal, while in the directory of the project: `npm install`.
 
-> **_NOTE_**: If this errors, make sure you're not using PORT 3000 or 5432. Refer to this guide to close the ports: [Guide](https://stackoverflow.com/a/39633428).
+4. Run the command: `Dev Containers: Rebuild and Reopen in Container`.
+
+> **_NOTE_**: If this errors, make sure you're not using PORT 5432. Refer to this guide to close the ports: [Guide](https://stackoverflow.com/a/39633428).
 
 4. Run `npm install` in the VS Code Terminal (This will run it in the container).
 

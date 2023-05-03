@@ -1,19 +1,6 @@
 version: "3.7"
 
 services:
-  app:
-    build:
-      dockerfile: dev.Dockerfile
-      context: .
-    depends_on:
-      - postgres
-    env_file:
-      - .env
-    volumes:
-      - .:/usr/src/app
-    ports:
-      - "3000:3000"
-
   postgres:
     image: postgres
     restart: always
@@ -29,6 +16,3 @@ services:
       retries: 5
     volumes:
       - db_data:/var/lib/postgresql/data
-
-volumes:
-  db_data:
