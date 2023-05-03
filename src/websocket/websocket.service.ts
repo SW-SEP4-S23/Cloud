@@ -1,6 +1,7 @@
 import { createWebSocket } from "./create-websocket";
 import { DatapointRepository } from "./datapoint.repository";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { translateHex } from "./translate-hex";
 import { WebSocket } from "ws";
 
 @Injectable()
@@ -32,7 +33,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   async onMessage(data: any) {
     const incomingdata = JSON.parse(data).data;
 
-    const hexTranslatedData = this.translateHex(incomingdata);
+    const hexTranslatedData = translateHex(incomingdata);
 
     return this.dpRep.createDatapoint({
       timestamp: new Date(),
@@ -40,25 +41,5 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
       co2: hexTranslatedData[1],
       humidity: hexTranslatedData[2],
     });
-  }
-
-  translateHex(transformedData: string): number[] {
-    // Get the first 6 hex digits (3 bytes) from the input string
-    const hexSubstring = transformedData.substring(0, 6);
-
-    // Convert the hex substring to a number
-    const hexValue = parseInt(hexSubstring, 16);
-
-    // Create an array to store the result values
-    const result = new Array<number>(3);
-
-    // Extract the bytes from the value
-    for (let i = 0; i < 3; i++) {
-      const byte = (hexValue >> (8 * (2 - i))) & 0xff;
-      result[i] = byte;
-    }
-
-    // Return the result array
-    return result;
   }
 }
