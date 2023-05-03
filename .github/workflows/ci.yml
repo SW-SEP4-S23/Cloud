@@ -39,8 +39,8 @@ jobs:
       - name: check container folder
         run: docker-compose -f "docker-compose.ci.yml" run app ls
 
-      - name: Move coverage folder
-        run: docker cp app:/coverage .
+      #- name: Move coverage folder
+      #  run: docker cp app:/coverage .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
