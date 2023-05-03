@@ -15,6 +15,8 @@ jobs:
       - name: Start containers
         run: docker-compose -f "docker-compose.ci.yml" up -d --build
 
+      - run: docker ps -a
+
       - name: Lint code
         run: docker-compose -f "docker-compose.ci.yml" run app npm run lint
 
@@ -30,7 +32,6 @@ jobs:
       - name: Run E2E tests
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
 
-      - run: docker ps
       - name: Move coverage folder
         run: docker cp app:/coverage ./coverage
 
