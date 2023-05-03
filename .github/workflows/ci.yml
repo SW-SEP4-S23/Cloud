@@ -34,7 +34,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Code-Coverage
-          path: coverage
+          path: |
+            coverage
+            !coverage/**/*.md
 
       - name: Stop containers
         run: docker-compose -f "docker-compose.ci.yml" down
