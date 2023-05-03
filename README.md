@@ -4,17 +4,15 @@
 
 ### Running the project
 
-1. Start the database: Run this command in the terminal, while in the directory of the project `docker-compose -f "docker-compose.dev.yml" up -d --build`
+1. Open the project in VS Code.
 
-2. Open the project in VS Code.
-
-3. Install the dependencies: Run this command in the the terminal, while in the directory of the project: `npm install`.
-
-4. Run the command: `Dev Containers: Rebuild and Reopen in Container`.
+2. Start the database: `docker-compose -f "docker-compose.dev.yml" up -d --build`.
 
 > **_NOTE_**: If this errors, make sure you're not using PORT 5432. Refer to this guide to close the ports: [Guide](https://stackoverflow.com/a/39633428).
 
-4. Run `npm install` in the VS Code Terminal (This will run it in the container).
+3. Install the dependencies: `npm install`.
+
+4. Run the app: `npm run start:dev`
 
 5. The REST API should now be available at `localhost:3000`.
 
