@@ -49,7 +49,7 @@ jobs:
         run: docker-compose -f "docker-compose.ci.yml" run app ls
 
       - name: Run ls
-        run: docker-compose -f "docker-compose.ci.yml" run app ls -al
+        run: docker-compose -f "docker-compose.ci.yml" run app ls src
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v2
