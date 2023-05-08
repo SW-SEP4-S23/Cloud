@@ -36,6 +36,9 @@ jobs:
       - name: Run unit tests with coverage
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov
 
+      - name: Run ls
+        run: docker-compose -f "docker-compose.ci.yml" run app ls
+
       - name: Save coverage report as artifact
         uses: actions/upload-artifact@v2
         with:
