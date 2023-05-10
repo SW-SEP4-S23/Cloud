@@ -33,9 +33,6 @@ jobs:
       - name: Setup Prisma
         run: docker-compose -f "docker-compose.ci.yml" run app npm run migrate:dev
 
-      - name: Run E2E tests
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
-
       - name: Run Jest with Coverage
         run: docker-compose -f "docker-compose.ci.yml" up --abort-on-container-exit jest-coverage
 
@@ -44,6 +41,9 @@ jobs:
         with:
           coverage-file: ./coverage/coverage-final.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run E2E tests
+        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
 
       - name: Stop containers
         run: docker-compose -f "docker-compose.ci.yml" down
