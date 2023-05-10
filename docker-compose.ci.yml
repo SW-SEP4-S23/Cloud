@@ -10,6 +10,7 @@ services:
       - postgres
     volumes:
       - .:/usr/src/app
+      - ./coverage:/app/coverage
     env_file:
       - .env.example
     ports:
@@ -28,3 +29,12 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
+  jest-coverage:
+    container_name: jest-coverage
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    command: ["npm", "run", "test:coverage"]

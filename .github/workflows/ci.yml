@@ -33,47 +33,23 @@ jobs:
       - name: Setup Prisma
         run: docker-compose -f "docker-compose.ci.yml" run app npm run migrate:dev
 
-      - name: Run unit tests
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov
-
       - name: Run E2E tests
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
 
-      - name: Generate coverage report
-        run: docker-compose -f "docker-compose.ci.yml" run app npx jest --ci --coverage --coverageReporters="lcov"
+      - name: Run Jest with Coverage
+        run: docker-compose -f "docker-compose.ci.yml" up --abort-on-container-exit jest-coverage
 
-      - name: Upload coverage report
+      - name: Save Coverage Report
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
+          coverage-file: ./coverage/coverage-final.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          coverage-file: ./coverage/lcov.info
-
-      - name: pwd app
-        run: docker-compose -f "docker-compose.ci.yml" run app pwd
-
-      - name: Run ls
-        run: docker-compose -f "docker-compose.ci.yml" run app ls
-
-      - name: Run ls
-        run: docker-compose -f "docker-compose.ci.yml" run app ls src
-
-      - name: pwd
-        run: pwd
-
-      - name: not docker Run ls
-        run: ls
-
-      - name: pwd
-        run: pwd
-
-      - name: Run ls
-        run: docker-compose -f "docker-compose.ci.yml" run app ls
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: ./coverage
 
       - name: Stop containers
         run: docker-compose -f "docker-compose.ci.yml" down
+
+      - name: Save coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: ./coverage/lcov.info
