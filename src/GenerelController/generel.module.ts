@@ -1,4 +1,4 @@
-import { Controller, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { GenerelService } from "./generel.service";
 import { GenerelRepository } from "./generel.repository";
 import { PrismaService } from "../prisma.service";

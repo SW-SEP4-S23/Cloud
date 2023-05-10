@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { GenerelRepository } from "./generel.repository";
 import { NewValsDTO } from "../shared/newValsDTO";
+import { allVariablesNewValsDTO } from "../shared/allVariablesNewValsDTO";
 
 @Injectable()
 export class GenerelService {
@@ -11,7 +12,7 @@ export class GenerelService {
     return this.generelRepository.findAllInterval(interval);
   }
 
-  setNewValues(newVals: NewValsDTO) {
+  setNewValues(newVals: allVariablesNewValsDTO) {
     return this.generelRepository.setNewValues(newVals);
   }
 }
