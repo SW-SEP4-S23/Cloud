@@ -51,10 +51,7 @@ jobs:
       - name: pwd
         run: pwd
 
-      - name: Run ls
-        run: cd src
-
-      - name: Run ls
+      - name: not docker Run ls
         run: ls
 
       - name: pwd
