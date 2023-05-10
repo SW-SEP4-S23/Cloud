@@ -50,8 +50,10 @@ jobs:
 
       - name: Run ls
         run: |
-          cd app
-          ls src
+          cd src
+
+      - name: Run ls
+        run: ls
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
