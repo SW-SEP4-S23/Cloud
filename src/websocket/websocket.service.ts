@@ -3,6 +3,8 @@ import { DatapointRepository } from "./datapoint.repository";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { translateHex } from "./translate-hex";
 import { WebSocket } from "ws";
+import { plainToClass } from "class-transformer";
+import { UplinkData } from "./dto/uplink-data";
 
 @Injectable()
 export class WebSocketService implements OnModuleInit, OnModuleDestroy {
@@ -25,13 +27,14 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
     this.#socket.on("message", (buffer: Buffer) => {
       const data = JSON.parse(buffer.toString());
 
-      data.port == 1
-        ? this.onMessage(data)
-        : console.log("port is 2 - its the overhead");
+      if (data?.cmd === "rx") {
+        const uplinkData = plainToClass(UplinkData, data);
+        this.onUplinkData(data);
+      }
     });
   }
 
-  async onMessage(data: any) {
+  async onUplinkData(data: any) {
     const hexTranslatedData = translateHex(data.data);
 
     return this.dpRep.createDatapoint({
