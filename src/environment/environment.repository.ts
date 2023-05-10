@@ -1,4 +1,3 @@
-import { interval } from "rxjs";
 import { Injectable } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { PrismaService } from "../prisma.service";
@@ -20,6 +19,6 @@ export class EnvironmentRepository {
   }
 
   setNewValues(newVals: allVariablesNewValsDTO) {
-    return "TODO";
+    return this.prismaService.dataPointThreshholds.updateMany({});
   }
 }

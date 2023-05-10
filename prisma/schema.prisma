@@ -22,6 +22,7 @@ model DataPointThreshholds {
   minVal      Float
   maxVal      Float
   dateChanged DateTime
+  ackId       Float
 }
 
 enum DataType {
