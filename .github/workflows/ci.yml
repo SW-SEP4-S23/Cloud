@@ -39,6 +39,9 @@ jobs:
       - name: Run E2E tests
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
 
+      - name: Run ls
+        run: docker-compose -f "docker-compose.ci.yml" run app cd src
+
       - name: Generate coverage report
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov
 
