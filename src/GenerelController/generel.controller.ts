@@ -1,7 +1,6 @@
 import { GenerelService } from "./generel.service";
 import { IntervalQuery } from "./../shared/interval-query";
 import { Body, Controller, Get, Put, Query } from "@nestjs/common";
-import { NewValsDTO } from "../shared/newValsDTO";
 import { allVariablesNewValsDTO } from "../shared/allVariablesNewValsDTO";
 
 @Controller("environment")

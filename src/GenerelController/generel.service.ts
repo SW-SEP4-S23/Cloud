@@ -13,6 +13,7 @@ export class GenerelService {
   }
 
   setNewValues(newVals: allVariablesNewValsDTO) {
-    return this.generelRepository.setNewValues(newVals);
+    const updatedValues = this.generelRepository.setNewValues(newVals);
+    return "TODO: updatedvalues -> new websocket service";
   }
 }
