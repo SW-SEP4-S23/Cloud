@@ -39,6 +39,9 @@ jobs:
       - name: Run E2E tests
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
 
+      - name: Generate coverage report
+        run: docker-compose -f "docker-compose.ci.yml" run app npx jest --ci --coverage --coverageReporters="lcov"
+
       - name: Upload coverage report
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
