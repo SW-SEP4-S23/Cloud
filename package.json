@@ -78,7 +78,7 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "/home/runner/work/Cloud/Cloud/coverage/",
+    "coverageDirectory": "./app/coverage/",
     "collectCoverage": true,
     "testEnvironment": "node"
   }

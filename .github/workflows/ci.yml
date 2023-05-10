@@ -42,9 +42,6 @@ jobs:
       - name: pwd app
         run: docker-compose -f "docker-compose.ci.yml" run app pwd
 
-      - name: pwd dunno
-        run: docker-compose -f "docker-compose.ci.yml" pwd
-
       - name: Generate coverage report
         run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov
 
