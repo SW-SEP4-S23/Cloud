@@ -5,6 +5,7 @@ import { TemperatureModule } from "./temperature/temperature.module";
 import { HumidityModule } from "./humidity/humidity.module";
 import { Co2Module } from "./co2/co2.module";
 import { WebSocketModule } from "./websocket/websocket.module";
+import { GenerelModule } from "./GenerelController/generel.module";
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { WebSocketModule } from "./websocket/websocket.module";
     TemperatureModule,
     HumidityModule,
     Co2Module,
+    GenerelModule,
     WebSocketModule,
   ],
 })
