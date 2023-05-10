@@ -1,6 +1,7 @@
 import { GenerelService } from "./generel.service";
 import { IntervalQuery } from "./../shared/interval-query";
-import { Controller, Get, Query } from "@nestjs/common";
+import { Body, Controller, Get, Put, Query } from "@nestjs/common";
+import { NewValsDTO } from "../shared/newValsDTO";
 
 @Controller("environment")
 export class GenerelController {
@@ -9,5 +10,10 @@ export class GenerelController {
   @Get()
   findAllInterval(@Query() interval: IntervalQuery) {
     return this.generelService.findAllInterval(interval);
+  }
+
+  @Put()
+  putAllNewValues(@Body() body: NewValsDTO) {
+    return this.generelService.setNewValues(body);
   }
 }

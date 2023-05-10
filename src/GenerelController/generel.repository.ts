@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { PrismaService } from "../prisma.service";
 
-@Injectable()
+@Injectable("environment")
 export class GenerelRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
