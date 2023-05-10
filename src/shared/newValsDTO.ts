@@ -5,4 +5,8 @@ export class NewValsDTO {
   @ApiProperty()
   @Type(() => Number)
   tempMin: number;
+
+  @ApiProperty()
+  @Type(() => Number)
+  tempMax: number;
 }
