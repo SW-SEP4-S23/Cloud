@@ -24,6 +24,9 @@ jobs:
       - run: docker ps -a
       - run: docker
 
+      - name: Run ls
+        run: ls /app/src
+
       - name: Lint code
         run: docker-compose -f "docker-compose.ci.yml" run app npm run lint
 
@@ -41,9 +44,6 @@ jobs:
 
       - name: pwd app
         run: docker-compose -f "docker-compose.ci.yml" run app pwd
-
-      - name: Generate coverage report
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:cov
 
       - name: Run ls
         run: docker-compose -f "docker-compose.ci.yml" run app ls
