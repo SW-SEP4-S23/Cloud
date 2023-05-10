@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { EnvironmentRepository } from "./environment.repository";
-import { NewValsDTO } from "../shared/newValsDTO";
+import { allVariablesNewValsDTO } from "../shared/allVariablesNewValsDTO";
 
 @Injectable()
 export class EnvironmentService {
@@ -11,7 +11,8 @@ export class EnvironmentService {
     return this.environmentRepository.findAllInterval(interval);
   }
 
-  setNewValues(newVals: NewValsDTO) {
-    return this.environmentRepository.setNewValues(newVals);
+  setNewValues(newVals: allVariablesNewValsDTO) {
+    const updatedValues = this.environmentRepository.setNewValues(newVals);
+    return "TODO: updatedvalues -> new websocket service";
   }
 }

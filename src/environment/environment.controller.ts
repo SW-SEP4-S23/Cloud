@@ -1,7 +1,7 @@
 import { EnvironmentService } from "./environment.service";
 import { IntervalQuery } from "../shared/interval-query";
 import { Body, Controller, Get, Put, Query } from "@nestjs/common";
-import { NewValsDTO } from "../shared/newValsDTO";
+import { allVariablesNewValsDTO } from "../shared/allVariablesNewValsDTO";
 
 @Controller("environment")
 export class EnvironmentController {
@@ -13,7 +13,7 @@ export class EnvironmentController {
   }
 
   @Put()
-  putAllNewValues(@Body() body: NewValsDTO) {
+  putAllNewValues(@Body() body: allVariablesNewValsDTO) {
     return this.environmentService.setNewValues(body);
   }
 }
