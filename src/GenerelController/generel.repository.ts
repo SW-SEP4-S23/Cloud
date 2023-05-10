@@ -8,6 +8,6 @@ export class GenerelRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   findAllInterval(interval: IntervalQuery) {
-    return "TODO DATA";
+    return "Data";
   }
 }

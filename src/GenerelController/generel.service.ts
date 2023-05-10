@@ -8,6 +8,6 @@ export class GenerelService {
   constructor(private readonly generelRepository: GenerelRepository) {}
 
   findAllInterval(interval: IntervalQuery) {
-    return "TODO";
+    return this.generelRepository.findAllInterval(interval);
   }
 }

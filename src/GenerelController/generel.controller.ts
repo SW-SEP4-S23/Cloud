@@ -5,10 +5,10 @@ import { interval } from "rxjs";
 
 @Controller("environment")
 export class GenerelController {
-  constructor(private readonly GenerelService: GenerelService) {}
+  constructor(private readonly generelService: GenerelService) {}
 
   @Get()
   findAllInterval(@Query() interval: IntervalQuery) {
-    return "data";
+    return this.generelService.findAllInterval(interval);
   }
 }
