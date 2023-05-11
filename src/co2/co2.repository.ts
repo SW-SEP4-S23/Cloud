@@ -29,4 +29,16 @@ export class Co2Repository {
       },
     });
   }
+
+  updateThresholds(newVals) {
+    return this.prisma.dataPointThreshholds.update({
+      where: {
+        dataType: "co2",
+      },
+      data: {
+        minVal: newVals.minVal,
+        maxVal: newVals.maxVal,
+      },
+    });
+  }
 }

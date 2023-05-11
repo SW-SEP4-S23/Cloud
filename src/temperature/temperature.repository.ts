@@ -28,4 +28,16 @@ export class TemperatureRepository {
       },
     });
   }
+
+  updateThresholds(newVals) {
+    return this.prisma.dataPointThreshholds.update({
+      where: {
+        dataType: "temperature",
+      },
+      data: {
+        minVal: newVals.minVal,
+        maxVal: newVals.maxVal,
+      },
+    });
+  }
 }
