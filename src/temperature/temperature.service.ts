@@ -13,6 +13,10 @@ export class TemperatureService {
     return this.temperatureRepository.findAllInterval(interval);
   }
 
+  getDataPointThresholds() {
+    return this.temperatureRepository.getDataPointThresholds();
+  }
+
   updateThresholds(newVals) {
     newValsDTOChecker(newVals);
     return this.temperatureRepository.updateThresholds(newVals);

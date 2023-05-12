@@ -30,6 +30,14 @@ export class Co2Repository {
     });
   }
 
+  getDataPointThresholds() {
+    return this.prisma.dataPointThresholds.findUnique({
+      where: {
+        dataType: "co2",
+      },
+    });
+  }
+
   updateThresholds(newVals) {
     return this.prisma.dataPointThresholds.update({
       where: {

@@ -12,7 +12,12 @@ export class HumidityController {
     return this.humidityService.findAllInterval(interval);
   }
 
-  @Patch()
+  @Get("/thresholds")
+  getDataPointThresholds() {
+    return this.humidityService.getDataPointThresholds();
+  }
+
+  @Patch("/thresholds")
   updateThresholds(@Body() newVals: NewValsDTO) {
     return this.humidityService.updateThresholds(newVals);
   }

@@ -13,6 +13,10 @@ export class Co2Service {
     return this.co2Repository.findAllInterval(interval);
   }
 
+  getDataPointThresholds() {
+    return this.co2Repository.getDataPointThresholds();
+  }
+
   updateThresholds(newVals) {
     newValsDTOChecker(newVals);
     return this.co2Repository.updateThresholds(newVals);

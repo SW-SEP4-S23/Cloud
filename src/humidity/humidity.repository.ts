@@ -30,6 +30,14 @@ export class HumidityRepository {
     });
   }
 
+  getDataPointThresholds() {
+    return this.prisma.dataPointThresholds.findUnique({
+      where: {
+        dataType: "humidity",
+      },
+    });
+  }
+
   updateThresholds(newVals) {
     return this.prisma.dataPointThresholds.update({
       where: {
