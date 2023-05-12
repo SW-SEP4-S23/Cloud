@@ -18,11 +18,11 @@ model Datapoint {
 }
 
 model DataPointThresholds {
-  dataType    DataType @id
+  dataType    DataType  @id
   minVal      Float
   maxVal      Float
-  dateChanged DateTime
-  requestDate DateTime
+  dateChanged DateTime?
+  requestDate DateTime?
 }
 
 enum DataType {

@@ -11,9 +11,17 @@ export class EnvironmentService {
     return this.environmentRepository.findAllInterval(interval);
   }
 
-  setNewValues(newVals: allVariablesNewValsDTO) {
-    Object.keys(newVals).forEach((key) => {
-      return "";
-    });
+  async setNewValues(newVals: allVariablesNewValsDTO) {
+    await Promise.all([
+      this.environmentRepository.setNewValues(
+        `temperature`,
+        newVals.newTempVals,
+      ),
+      this.environmentRepository.setNewValues(`co2`, newVals.newCo2Vals),
+      this.environmentRepository.setNewValues(
+        `humidity`,
+        newVals.newHumidityVals,
+      ),
+    ]);
   }
 }
