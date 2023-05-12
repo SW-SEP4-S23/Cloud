@@ -8,7 +8,9 @@ on:
 jobs:
   tests:
     permissions:
+      checks: write
       pull-requests: write
+      contents: write
 
     runs-on: ubuntu-latest
 
