@@ -1,8 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { TemperatureRepository } from "./temperature.repository";
-
 import { newValsDTOChecker } from "../shared/newValsDTO";
-
 import { IntervalQuery, intervalQueryChecker } from "../shared/interval-query";
 
 @Injectable()
