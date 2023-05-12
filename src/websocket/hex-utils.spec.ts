@@ -1,4 +1,4 @@
-import { translateHex } from "./translate-hex";
+import { translateHex } from "./hex-utils";
 
 describe("translateHex", () => {
   it("it should return an array of 3 numbers", () => {
