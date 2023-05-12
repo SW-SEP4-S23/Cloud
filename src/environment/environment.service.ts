@@ -13,14 +13,14 @@ export class EnvironmentService {
   }
 
   async setNewValues(newVals: allVariablesNewValsDTO) {
-    await Promise.all([
+    return await Promise.all([
       this.environmentRepository.setNewValues(
-        `temperature`,
+        `TEMPERATURE`,
         newVals.newTempVals,
       ),
-      this.environmentRepository.setNewValues(`co2`, newVals.newCo2Vals),
+      this.environmentRepository.setNewValues(`CO2`, newVals.newCo2Vals),
       this.environmentRepository.setNewValues(
-        `humidity`,
+        `HUMIDITY`,
         newVals.newHumidityVals,
       ),
     ]);

@@ -26,7 +26,7 @@ model DataPointThresholds {
 }
 
 enum DataType {
-  temperature
-  co2
-  humidity
+  TEMPERATURE
+  CO2
+  HUMIDITY
 }
