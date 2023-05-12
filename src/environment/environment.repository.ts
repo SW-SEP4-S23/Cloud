@@ -24,14 +24,14 @@ export class EnvironmentRepository {
     await this.prismaService.dataPointThresholds.upsert({
       where: { dataType: type },
       update: {
-        minVal: newVals.tempMin,
-        maxVal: newVals.tempMax,
+        minVal: newVals.minVal,
+        maxVal: newVals.maxVal,
         requestDate: new Date(),
       },
       create: {
         dataType: type,
-        minVal: newVals.tempMin,
-        maxVal: newVals.tempMax,
+        minVal: newVals.minVal,
+        maxVal: newVals.maxVal,
         requestDate: new Date(),
       },
     });

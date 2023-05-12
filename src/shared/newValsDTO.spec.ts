@@ -17,14 +17,14 @@ describe("NewValsDTO", () => {
   });
 
   it("should throw an error if tempMin > tempMax", () => {
-    provider.tempMin = 10;
-    provider.tempMax = 5;
+    provider.minVal = 10;
+    provider.maxVal = 5;
     expect(() => newValsDTOChecker(provider)).toThrowError();
   });
 
   it("should not throw an error if tempMin < tempMax", () => {
-    provider.tempMin = 5;
-    provider.tempMax = 10;
+    provider.minVal = 5;
+    provider.maxVal = 10;
     expect(() => newValsDTOChecker(provider)).not.toThrowError();
   });
 });
