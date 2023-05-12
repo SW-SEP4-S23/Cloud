@@ -1,7 +1,7 @@
 import { createWebSocket } from "./create-websocket";
 import { DatapointRepository } from "./datapoint.repository";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { translateHex } from "./translate-hex";
+import { translateHex } from "./hex-utils";
 import { WebSocket } from "ws";
 import { plainToClass } from "class-transformer";
 import { UplinkData } from "./dto/uplink-data";
