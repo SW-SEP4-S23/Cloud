@@ -31,13 +31,14 @@ export class HumidityRepository {
   }
 
   updateThresholds(newVals) {
-    return this.prisma.dataPointThreshholds.update({
+    return this.prisma.dataPointThresholds.update({
       where: {
         dataType: "humidity",
       },
       data: {
         minVal: newVals.minVal,
         maxVal: newVals.maxVal,
+        requestDate: new Date(),
       },
     });
   }

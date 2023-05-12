@@ -30,13 +30,14 @@ export class TemperatureRepository {
   }
 
   updateThresholds(newVals) {
-    return this.prisma.dataPointThreshholds.update({
+    return this.prisma.dataPointThresholds.update({
       where: {
         dataType: "temperature",
       },
       data: {
         minVal: newVals.minVal,
         maxVal: newVals.maxVal,
+        requestDate: new Date(),
       },
     });
   }

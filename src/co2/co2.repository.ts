@@ -31,13 +31,14 @@ export class Co2Repository {
   }
 
   updateThresholds(newVals) {
-    return this.prisma.dataPointThreshholds.update({
+    return this.prisma.dataPointThresholds.update({
       where: {
         dataType: "co2",
       },
       data: {
         minVal: newVals.minVal,
         maxVal: newVals.maxVal,
+        requestDate: new Date(),
       },
     });
   }
