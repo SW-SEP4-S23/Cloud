@@ -7,7 +7,7 @@ WORKDIR /app
 # COPY package.json and package-lock.json files
 COPY package*.json ./
 
-# generated prisma files
+# Prisma files
 COPY prisma ./prisma/
 
 # Install the dependencies
