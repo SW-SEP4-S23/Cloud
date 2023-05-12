@@ -51,8 +51,6 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
           this.onUplinkData(uplinkData),
         ]);
       }
-
-      console.info("Messsage wasn't handled: ", data);
     });
   }
 
@@ -61,8 +59,6 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
       console.error("No data in uplink data");
       return;
     }
-
-    console.info("Uplink data: ", uplinkData.data);
 
     const [temperature, co2, humidity] = translateHex(uplinkData.data);
     const timestamp = new Date(uplinkData.ts);
@@ -98,7 +94,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
     const data: DownlinkData = {
       cmd: "tx",
       EUI: IOT_EUI,
-      port: 2,
+      port: 1,
       confirmed: false,
       data: payload,
     };

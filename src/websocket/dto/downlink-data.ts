@@ -1,7 +1,7 @@
 export interface DownlinkData {
   cmd: "tx";
   EUI: string;
-  port: 2;
+  port: number;
   confirmed: false;
   data: string;
 }
