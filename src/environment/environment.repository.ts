@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
-import { PrismaService } from "../prisma.service";
+import { PrismaService } from "nestjs-prisma";
 import { NewValsDTO } from "../shared/newValsDTO";
 import { DataType } from "@prisma/client";
 

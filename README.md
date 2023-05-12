@@ -8,17 +8,19 @@
 
 > **_NOTE_**: If you don't have a `.env` file yet, copy the `.env.example` file and change the name to `.env`.
 
-2. Start the database: `npm run db:start`.
+2. Install the dependencies: `npm install`.
+
+3. Start the database: `npm run db:start`.
 
 > **_NOTE_**: If this errors, make sure you're not already using PORT 5432. Refer to this guide to close the ports: [Guide](https://stackoverflow.com/a/39633428).
 
 > **_NOTE_**: To stop the database you can run `npm run db:stop`.
 
-3. Install the dependencies: `npm install`.
+4. Sync your database: `npm run db:migrate`
 
-4. Run the app: `npm run start:dev`
+5. Run the app: `npm run start:dev`
 
-5. The server should now be running at `localhost:3000`.
+6. The server should now be running at `localhost:3000`.
 
 ### Running tests
 
