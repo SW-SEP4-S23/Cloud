@@ -59,4 +59,6 @@ jobs:
         run: npm run test:e2e
 
       - name: Unit tests
-        uses: ArtiomTr/jest-coverage-report-action@v2
+        uses: npx jest --ci --coverage --coverageReporters json-summary
+
+      - uses: MishaKav/jest-coverage-comment@main
