@@ -5,10 +5,12 @@ import { TemperatureModule } from "./temperature/temperature.module";
 import { HumidityModule } from "./humidity/humidity.module";
 import { Co2Module } from "./co2/co2.module";
 import { WebSocketModule } from "./websocket/websocket.module";
+import { PrismaModule } from "nestjs-prisma";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    PrismaModule.forRoot({ isGlobal: true }),
     ExampleModule,
     TemperatureModule,
     HumidityModule,
