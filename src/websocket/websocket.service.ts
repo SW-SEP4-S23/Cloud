@@ -1,17 +1,23 @@
 import { createWebSocket } from "./create-websocket";
 import { DatapointRepository } from "./datapoint.repository";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { translateHex } from "./hex-utils";
+import {
+  DownlinkPayload,
+  downlinkPayloadToHex,
+  translateHex,
+} from "./hex-utils";
 import { WebSocket } from "ws";
 import { plainToClass } from "class-transformer";
 import { UplinkData } from "./dto/uplink-data";
 import { validateSync } from "class-validator";
+import { IOT_EUI } from "../constants";
+import { DownlinkData } from "./dto/downlink-data";
 
 @Injectable()
 export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   #socket: WebSocket;
 
-  constructor(private dpRep: DatapointRepository) {}
+  constructor(private datapointRepository: DatapointRepository) {}
 
   async onModuleDestroy() {
     await this.#socket.close();
@@ -25,8 +31,10 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   }
 
   async initSocket(): Promise<void> {
-    this.#socket.on("message", (buffer: Buffer) => {
+    this.#socket.on("message", async (buffer: Buffer) => {
       const data = JSON.parse(buffer.toString());
+
+      console.log("Data: ", data);
 
       // Only handle the data packet of the uplink.
       if (data?.cmd === "rx" && data?.port == 1) {
@@ -38,8 +46,10 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
           return;
         }
 
-        this.onUplinkData(uplinkData);
-        return;
+        await Promise.all([
+          this.updateIotThresholds(),
+          this.onUplinkData(uplinkData),
+        ]);
       }
 
       console.info("Messsage wasn't handled: ", data);
@@ -57,11 +67,44 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
     const [temperature, co2, humidity] = translateHex(uplinkData.data);
     const timestamp = new Date(uplinkData.ts);
 
-    return this.dpRep.createDatapoint({
+    return this.datapointRepository.createDatapoint({
       timestamp,
       temperature,
       co2,
       humidity,
     });
+  }
+
+  async updateIotThresholds() {
+    // placeholder input
+    const newThresholds: DownlinkPayload = {
+      id: "01",
+      temperature: {
+        minValue: 10,
+        maxValue: 20,
+      },
+      co2: {
+        minValue: 10,
+        maxValue: 20,
+      },
+      humidity: {
+        minValue: 10,
+        maxValue: 20,
+      },
+    };
+
+    const payload = downlinkPayloadToHex(newThresholds);
+
+    const data: DownlinkData = {
+      cmd: "tx",
+      EUI: IOT_EUI,
+      port: 2,
+      confirmed: false,
+      data: payload,
+    };
+
+    this.#socket.send(JSON.stringify(data));
+
+    console.log("sent");
   }
 }
