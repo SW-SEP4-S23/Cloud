@@ -12,7 +12,12 @@ export class EnvironmentService {
   }
 
   setNewValues(newVals: allVariablesNewValsDTO) {
-    const updatedValues = this.environmentRepository.setNewValues(newVals);
+    const updatedValues = await Promise.all(Object.keys(newVals).map(async key => {
+      const updatedValue = await this.environmentRepository.setNewValues(newVals[key]);
+      return updatedValue;
+    });
+
+    this.environmentRepository.setNewValues(newVals);
     return "TODO: updatedvalues -> new websocket service";
   }
 }

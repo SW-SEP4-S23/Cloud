@@ -19,6 +19,10 @@ export class EnvironmentRepository {
   }
 
   setNewValues(newVals: allVariablesNewValsDTO) {
-    return this.prismaService.dataPointThreshholds.updateMany({});
+    return this.prismaService.dataPointThreshholds.updateMany({
+      update: {
+        minVal: newVals.
+      }
+    });
   }
 }
