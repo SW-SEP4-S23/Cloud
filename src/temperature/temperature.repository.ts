@@ -1,10 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "../prisma.service";
+import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
 
 @Injectable()
 export class TemperatureRepository {
   constructor(private readonly prisma: PrismaService) {}
+
   findAllInterval(interval: IntervalQuery) {
     return this.prisma.datapoint.findMany({
       where: {

@@ -3,6 +3,9 @@ import { DatapointRepository } from "./datapoint.repository";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { translateHex } from "./translate-hex";
 import { WebSocket } from "ws";
+import { plainToClass } from "class-transformer";
+import { UplinkData } from "./dto/uplink-data";
+import { validateSync } from "class-validator";
 
 @Injectable()
 export class WebSocketService implements OnModuleInit, OnModuleDestroy {
@@ -25,21 +28,40 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
     this.#socket.on("message", (buffer: Buffer) => {
       const data = JSON.parse(buffer.toString());
 
-      data.port == 1
-        ? this.onMessage(data)
-        : console.log("port is 2 - its the overhead");
+      // Only handle the data packet of the uplink.
+      if (data?.cmd === "rx" && data?.port == 1) {
+        // Validate incoming data.
+        const uplinkData = plainToClass(UplinkData, data);
+        const validationErrors = validateSync(uplinkData);
+        if (validationErrors.length > 0) {
+          console.error("Validation of uplink data failed: ", validationErrors);
+          return;
+        }
+
+        this.onUplinkData(uplinkData);
+        return;
+      }
+
+      console.info("Messsage wasn't handled: ", data);
     });
   }
 
-  async onMessage(data: any) {
-    const hexTranslatedData = translateHex(data.data);
+  async onUplinkData(uplinkData: UplinkData) {
+    if (!uplinkData.data) {
+      console.error("No data in uplink data");
+      return;
+    }
+
+    console.info("Uplink data: ", uplinkData.data);
+
+    const [temperature, co2, humidity] = translateHex(uplinkData.data);
+    const timestamp = new Date(uplinkData.ts);
 
     return this.dpRep.createDatapoint({
-      // Check if data already contains a timestamp
-      timestamp: new Date(),
-      temperature: hexTranslatedData[0],
-      co2: hexTranslatedData[1],
-      humidity: hexTranslatedData[2],
+      timestamp,
+      temperature,
+      co2,
+      humidity,
     });
   }
 }
