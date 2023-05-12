@@ -18,10 +18,10 @@ describe("TemperatureController (e2e)", () => {
   //To see the seeded data, find the file in ../prisma/seed.ts
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
-  it("/enviroment/temperature?startDate&endDate get specific dates from seed data (GET)", () => {
+  it("/environment/temperature?startDate&endDate get specific dates from seed data (GET)", () => {
     return request(app.getHttpServer())
       .get(
-        "/enviroment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
+        "/environment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
       )
       .expect(200)
       .expect([
@@ -32,10 +32,10 @@ describe("TemperatureController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01T00:00:00.000Z to 2021-01-01T01:40:00.000Z, which should return all 21 records from the seeding
-  it("/enviroment/temperature get all dates from seed data (GET)", () => {
+  it("/environment/temperature get all dates from seed data (GET)", () => {
     return request(app.getHttpServer())
       .get(
-        "/enviroment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
+        "/environment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
       )
       .expect(200)
       .expect([
@@ -64,10 +64,10 @@ describe("TemperatureController (e2e)", () => {
   });
 
   //Testing for a 404 error since there is no seeded data from 2020 to 2020.
-  it("/enviroment/temperature?startDate&endDate get dates not in seed data (GET)", () => {
+  it("/environment/temperature?startDate&endDate get dates not in seed data (GET)", () => {
     return request(app.getHttpServer())
       .get(
-        "/enviroment/temperature?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T01:40:00.000Z",
+        "/environment/temperature?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T01:40:00.000Z",
       )
       .expect(200)
       .expect([]);
