@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
 import { NewValsDTO } from "../shared/newValsDTO";
+import { DataType } from "@prisma/client";
 
 @Injectable()
 export class Co2Repository {
@@ -34,7 +35,7 @@ export class Co2Repository {
   getDataPointThresholds() {
     return this.prisma.dataPointThresholds.findUnique({
       where: {
-        dataType: "co2",
+        dataType: DataType.CO2,
       },
     });
   }
@@ -42,7 +43,7 @@ export class Co2Repository {
   updateThresholds(newVals: NewValsDTO) {
     return this.prisma.dataPointThresholds.upsert({
       where: {
-        dataType: "co2",
+        dataType: DataType.CO2,
       },
       update: {
         minVal: newVals.minVal,
@@ -50,7 +51,7 @@ export class Co2Repository {
         requestDate: new Date(),
       },
       create: {
-        dataType: "co2",
+        dataType: DataType.CO2,
         minVal: newVals.minVal,
         maxVal: newVals.maxVal,
         requestDate: new Date(),

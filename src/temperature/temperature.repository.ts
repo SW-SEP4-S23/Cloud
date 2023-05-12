@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
 import { NewValsDTO } from "../shared/newValsDTO";
+import { DataType } from "@prisma/client";
 
 @Injectable()
 export class TemperatureRepository {
@@ -34,7 +35,7 @@ export class TemperatureRepository {
   getDataPointThresholds() {
     return this.prisma.dataPointThresholds.findUnique({
       where: {
-        dataType: "temperature",
+        dataType: DataType.TEMPERATURE,
       },
     });
   }
@@ -43,7 +44,7 @@ export class TemperatureRepository {
     console.log(newVals);
     return this.prisma.dataPointThresholds.upsert({
       where: {
-        dataType: "temperature",
+        dataType: DataType.TEMPERATURE,
       },
       update: {
         minVal: newVals.minVal,
@@ -51,7 +52,7 @@ export class TemperatureRepository {
         requestDate: new Date(),
       },
       create: {
-        dataType: "temperature",
+        dataType: DataType.TEMPERATURE,
         minVal: newVals.minVal,
         maxVal: newVals.maxVal,
         requestDate: new Date(),

@@ -19,17 +19,16 @@ export class EnvironmentRepository {
     });
   }
 
-  async setNewValues(dataType: string, newVals: NewValsDTO) {
-    const type: DataType = DataType[dataType];
+  async setNewValues(dataType: DataType, newVals: NewValsDTO) {
     await this.prismaService.dataPointThresholds.upsert({
-      where: { dataType: type },
+      where: { dataType: dataType },
       update: {
         minVal: newVals.minVal,
         maxVal: newVals.maxVal,
         requestDate: new Date(),
       },
       create: {
-        dataType: type,
+        dataType: dataType,
         minVal: newVals.minVal,
         maxVal: newVals.maxVal,
         requestDate: new Date(),

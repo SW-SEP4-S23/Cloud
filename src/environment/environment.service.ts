@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { IntervalQuery, intervalQueryChecker } from "../shared/interval-query";
 import { EnvironmentRepository } from "./environment.repository";
 import { allVariablesNewValsDTO } from "../shared/allVariablesNewValsDTO";
+import { DataType } from "@prisma/client";
 
 @Injectable()
 export class EnvironmentService {
@@ -15,12 +16,12 @@ export class EnvironmentService {
   async setNewValues(newVals: allVariablesNewValsDTO) {
     return await Promise.all([
       this.environmentRepository.setNewValues(
-        `TEMPERATURE`,
+        DataType.TEMPERATURE,
         newVals.newTempVals,
       ),
-      this.environmentRepository.setNewValues(`CO2`, newVals.newCo2Vals),
+      this.environmentRepository.setNewValues(DataType.CO2, newVals.newCo2Vals),
       this.environmentRepository.setNewValues(
-        `HUMIDITY`,
+        DataType.HUMIDITY,
         newVals.newHumidityVals,
       ),
     ]);
