@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { IntervalQuery } from "../shared/interval-query";
+import { IntervalQuery, intervalQueryChecker } from "../shared/interval-query";
 import { HumidityRepository } from "./humidity.repository";
 import { newValsDTOChecker } from "../shared/newValsDTO";
 
@@ -8,8 +8,7 @@ export class HumidityService {
   constructor(private readonly humidityRepository: HumidityRepository) {}
 
   findAllInterval(interval: IntervalQuery) {
-    // TODO : if interval is null, return all temperatures
-    //if statements to check if the interval is valid
+    intervalQueryChecker(interval);
     return this.humidityRepository.findAllInterval(interval);
   }
 
