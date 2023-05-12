@@ -233,6 +233,9 @@ export class AppModule {
 ## Migrations
 
 1. Update the `prisma.schema` file to your needs.
-2. Run `npm run migrate:dev` in the terminal.
+2. Syncing the database
+3. If you're drafting locally, don't create a migration, run `npm run db:push`.
+4. If you're done drafting, create a migration by running `npm run db:migrate`.
+5. Run `npm run migrate:dev` in the terminal.
 
 > **_NOTE_**: If the types don't update for the Prisma Client, you might need to restart the TS server in VS Code. CTRL + SHIFT + P and run 'Restart TS Server'.
