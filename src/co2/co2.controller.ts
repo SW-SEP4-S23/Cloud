@@ -12,7 +12,12 @@ export class Co2Controller {
     return this.co2Service.findAllInterval(interval);
   }
 
-  @Patch()
+  @Get("/thresholds")
+  getDataPointThresholds() {
+    return this.co2Service.getDataPointThresholds();
+  }
+
+  @Patch("/thresholds")
   updateThresholds(@Body() newVals: NewValsDTO) {
     return this.co2Service.updateThresholds(newVals);
   }

@@ -29,6 +29,14 @@ export class TemperatureRepository {
     });
   }
 
+  getDataPointThresholds() {
+    return this.prisma.dataPointThresholds.findUnique({
+      where: {
+        dataType: "temperature",
+      },
+    });
+  }
+
   updateThresholds(newVals) {
     return this.prisma.dataPointThresholds.update({
       where: {

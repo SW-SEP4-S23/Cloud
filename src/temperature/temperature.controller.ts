@@ -11,7 +11,12 @@ export class TemperatureController {
     return this.temperatureService.findAllInterval(interval);
   }
 
-  @Patch()
+  @Get("/thresholds")
+  getDataPointThresholds() {
+    return this.temperatureService.getDataPointThresholds();
+  }
+
+  @Patch("/thresholds")
   updateThresholds(@Body() newVals: NewValsDTO) {
     return this.temperatureService.updateThresholds(newVals);
   }

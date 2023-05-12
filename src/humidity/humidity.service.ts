@@ -13,6 +13,10 @@ export class HumidityService {
     return this.humidityRepository.findAllInterval(interval);
   }
 
+  getDataPointThresholds() {
+    return this.humidityRepository.getDataPointThresholds();
+  }
+
   updateThresholds(newVals) {
     newValsDTOChecker(newVals);
     return this.humidityRepository.updateThresholds(newVals);
