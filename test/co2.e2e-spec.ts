@@ -18,10 +18,10 @@ describe("Co2Controller (e2e)", () => {
   //To see the seeded data, find the file in ../prisma/seed.ts
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
-  it("/enviroment/co2?startDate&endDate (GET)", () => {
+  it("/environment/co2?startDate&endDate (GET)", () => {
     return request(app.getHttpServer())
       .get(
-        "/enviroment/co2?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
+        "/environment/co2?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
       )
       .expect(200)
       .expect([
@@ -32,10 +32,10 @@ describe("Co2Controller (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return all 21 records
-  it("/enviroment/co2?startDate&endDate (GET)", () => {
+  it("/environment/co2?startDate&endDate (GET)", () => {
     return request(app.getHttpServer())
       .get(
-        "/enviroment/co2?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
+        "/environment/co2?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
       )
       .expect(200)
       .expect([
@@ -64,10 +64,10 @@ describe("Co2Controller (e2e)", () => {
   });
 
   //In this case, the seed data is from 2020-01-01 to 2020-01-10, which should return 0 records
-  it("/enviroment/co2?startDate&endDate get dates not in seed data(GET)", () => {
+  it("/environment/co2?startDate&endDate get dates not in seed data(GET)", () => {
     return request(app.getHttpServer())
       .get(
-        "/enviroment/co2?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T00:10:00.000Z",
+        "/environment/co2?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T00:10:00.000Z",
       )
       .expect(200)
       .expect([]);
