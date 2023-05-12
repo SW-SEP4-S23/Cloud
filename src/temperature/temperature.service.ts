@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { TemperatureRepository } from "./temperature.repository";
-import { newValsDTOChecker } from "../shared/newValsDTO";
+import { NewValsDTO, newValsDTOChecker } from "../shared/newValsDTO";
 import { IntervalQuery, intervalQueryChecker } from "../shared/interval-query";
 
 @Injectable()
@@ -16,7 +16,7 @@ export class TemperatureService {
     return this.temperatureRepository.getDataPointThresholds();
   }
 
-  updateThresholds(newVals) {
+  updateThresholds(newVals: NewValsDTO) {
     newValsDTOChecker(newVals);
     return this.temperatureRepository.updateThresholds(newVals);
   }

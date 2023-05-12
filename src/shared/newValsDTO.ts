@@ -7,16 +7,16 @@ export class NewValsDTO {
   @IsNumber()
   @ApiProperty()
   @Type(() => Number)
-  tempMin: number;
+  minVal: number;
 
   @IsNumber()
   @ApiProperty()
   @Type(() => Number)
-  tempMax: number;
+  maxVal: number;
 }
 
 export const newValsDTOChecker = (newVals: NewValsDTO) => {
-  if (newVals.tempMin > newVals.tempMax) {
+  if (newVals.minVal > newVals.maxVal) {
     throw new HttpException(
       "tempMin must be less than tempMax",
       HttpStatus.BAD_REQUEST,
