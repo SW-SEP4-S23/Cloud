@@ -17,7 +17,7 @@ model Datapoint {
   temperature Float
 }
 
-model DataPointThreshholds {
+model DataPointThresholds {
   dataType    DataType @id
   minVal      Float
   maxVal      Float
