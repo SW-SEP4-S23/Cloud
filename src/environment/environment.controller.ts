@@ -12,8 +12,13 @@ export class EnvironmentController {
     return this.environmentService.findAllInterval(interval);
   }
 
-  @Patch()
+  @Patch("/thresholds")
   putAllNewValues(@Body() body: allVariablesNewValsDTO) {
     return this.environmentService.setNewValues(body);
+  }
+
+  @Get("/treshholds")
+  findAllThresholds() {
+    return this.environmentService.findAllThresholds();
   }
 }

@@ -36,4 +36,8 @@ export class EnvironmentRepository {
       },
     });
   }
+
+  findAllThresholds() {
+    return this.prismaService.dataPointThresholds.findMany();
+  }
 }

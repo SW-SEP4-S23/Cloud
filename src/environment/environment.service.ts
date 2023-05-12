@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { IntervalQuery } from "../shared/interval-query";
+import { IntervalQuery, intervalQueryChecker } from "../shared/interval-query";
 import { EnvironmentRepository } from "./environment.repository";
 import { allVariablesNewValsDTO } from "../shared/allVariablesNewValsDTO";
 
@@ -8,6 +8,7 @@ export class EnvironmentService {
   constructor(private readonly environmentRepository: EnvironmentRepository) {}
 
   findAllInterval(interval: IntervalQuery) {
+    intervalQueryChecker(interval);
     return this.environmentRepository.findAllInterval(interval);
   }
 
@@ -23,5 +24,9 @@ export class EnvironmentService {
         newVals.newHumidityVals,
       ),
     ]);
+  }
+
+  findAllThresholds() {
+    return this.environmentRepository.findAllThresholds();
   }
 }
