@@ -7,7 +7,8 @@ on:
 
 jobs:
   tests:
-    permissions: write-all
+    permissions:
+      pull-requests: write
 
     runs-on: ubuntu-latest
 
@@ -61,4 +62,10 @@ jobs:
         run: npm run test:e2e
 
       - name: Unit tests
+        run: npx jest --ci --json --coverage --testLocationInResults --outputFile=report.json
+
+      - name: Coverage report
         uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          coverage-file: report.json
+          base-coverage-file: report.json
