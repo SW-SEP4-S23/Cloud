@@ -7,10 +7,7 @@ on:
 
 jobs:
   tests:
-    permissions:
-      checks: write
-      pull-requests: write
-      contents: write
+    permissions: write-all
 
     runs-on: ubuntu-latest
 
