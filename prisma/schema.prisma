@@ -16,3 +16,17 @@ model Datapoint {
   humidity    Float
   temperature Float
 }
+
+model DataPointThresholds {
+  dataType    DataType  @id
+  minVal      Float
+  maxVal      Float
+  dateChanged DateTime?
+  requestDate DateTime?
+}
+
+enum DataType {
+  TEMPERATURE
+  CO2
+  HUMIDITY
+}

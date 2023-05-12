@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
+import { NewValsDTO } from "../shared/newValsDTO";
+import { DataType } from "@prisma/client";
 
 @Injectable()
 export class HumidityRepository {
@@ -26,6 +28,33 @@ export class HumidityRepository {
       select: {
         timestamp: true,
         humidity: true,
+      },
+    });
+  }
+
+  getDataPointThresholds() {
+    return this.prisma.dataPointThresholds.findUnique({
+      where: {
+        dataType: DataType.HUMIDITY,
+      },
+    });
+  }
+
+  updateThresholds(newVals: NewValsDTO) {
+    return this.prisma.dataPointThresholds.upsert({
+      where: {
+        dataType: DataType.HUMIDITY,
+      },
+      update: {
+        minVal: newVals.minVal,
+        maxVal: newVals.maxVal,
+        requestDate: new Date(),
+      },
+      create: {
+        dataType: DataType.HUMIDITY,
+        minVal: newVals.minVal,
+        maxVal: newVals.maxVal,
+        requestDate: new Date(),
       },
     });
   }

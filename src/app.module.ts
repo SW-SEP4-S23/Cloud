@@ -5,6 +5,7 @@ import { TemperatureModule } from "./temperature/temperature.module";
 import { HumidityModule } from "./humidity/humidity.module";
 import { Co2Module } from "./co2/co2.module";
 import { WebSocketModule } from "./websocket/websocket.module";
+import { EnvironmentModule } from "./environment/environment.module";
 import { PrismaModule } from "nestjs-prisma";
 
 @Module({
@@ -15,6 +16,7 @@ import { PrismaModule } from "nestjs-prisma";
     TemperatureModule,
     HumidityModule,
     Co2Module,
+    EnvironmentModule,
     WebSocketModule,
   ],
 })
