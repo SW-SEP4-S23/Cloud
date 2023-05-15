@@ -43,20 +43,25 @@ The modules are separated by domain. If we have a controller that handles Posts,
 
 #### Module Files
 
-##### **`*.entity.ts`**
+##### **`*.repository.ts`**
 
-Define database entities related to the domain in these files (often used by the service).
+Define repositories that executes queries using Prisma in these files.
 
 ```ts
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "nestjs-prisma";
 
-@Entity()
-export class Post {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  title: string;
+@Injectable()
+export class PostsRepository {
+  constructor(private readonly prisma: PrismaService) {}
+  
+  findAll() {
+    return this.prisma.posts.findMany({
+      select: {
+        title: true,
+      },
+    });
+  }
 }
 ```
 
@@ -68,32 +73,28 @@ This example includes the injection of a repository, that is used to handle the 
 
 ```ts
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { PostRepository } from "./posts.repository"
 import { CreatePostDto } from "~/posts/dto/create-post.dto";
 import { Post } from "~/posts/post.entity";
 
 @Injectable()
 export class PostsService {
-  constructor(
-    @InjectRepository(Post)
-    private postsRepo: Repository<Post>,
-  ) {}
+  constructor(private readonly postsRepository: PostRepository) {}
 
   create(createPostDto: CreatePostDto) {
-    return this.postsRepo.save(createPostDto);
+    return this.postsRepository.save(createPostDto);
   }
 
   findAll() {
-    return this.postsRepo.find();
+    return this.postsRepository.find();
   }
 
   findOne(id: number) {
-    return this.postsRepo.findOneBy({ id });
+    return this.postsRepository.findOneBy({ id });
   }
 
   async remove(id: number) {
-    await this.postsRepo.delete(id);
+    await this.postsRepository.delete(id);
   }
 }
 ```
@@ -199,13 +200,10 @@ Module files encapsulates providers for dependency injection. [Read more.](https
 
 ```ts
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { Post } from "./post.entity";
 import { PostsService } from "~/posts/posts.service";
 import { PostsController } from "~/posts/posts.controller";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post])],
   providers: [PostsService],
   controllers: [PostsController],
 })
@@ -219,13 +217,11 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import { PostsModule } from "~/posts/posts.module";
-import { DataSource } from "typeorm";
-import { ormConfig } from "../typeorm.config";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot(ormConfig),
+    PrismaModule.forRoot({ isGlobal: true }),
     PostsModule,
   ],
 })
@@ -234,12 +230,13 @@ export class AppModule {
 }
 ```
 
+> **_NOTE_**: PrismaModule should only be included in the `app.module.ts`(root module).
+
 ## Migrations
 
 1. Update the `prisma.schema` file to your needs.
 2. Syncing the database
 3. If you're drafting locally, don't create a migration, run `npm run db:push`.
 4. If you're done drafting, create a migration by running `npm run db:migrate`.
-5. Run `npm run migrate:dev` in the terminal.
 
 > **_NOTE_**: If the types don't update for the Prisma Client, you might need to restart the TS server in VS Code. CTRL + SHIFT + P and run 'Restart TS Server'.
