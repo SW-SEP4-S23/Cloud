@@ -23,3 +23,9 @@ export const newValsDTOChecker = (newVals: NewValsDTO) => {
     );
   }
 };
+
+export const newValNullCheck = (newVals: NewValsDTO) => {
+  if (newVals.minVal == null || newVals.maxVal == null) {
+    return true;
+  } else return false;
+};
