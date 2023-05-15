@@ -21,7 +21,7 @@ export class EnvironmentRepository {
 
   async setNewValues(dataType: DataType, newVals: NewValsDTO) {
     return this.prismaService.dataPointThresholds.upsert({
-      where: { dataType: dataType },
+      where: { dataType },
       update: {
         minVal: newVals.minVal,
         maxVal: newVals.maxVal,
