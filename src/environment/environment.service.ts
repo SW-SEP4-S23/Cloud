@@ -44,10 +44,6 @@ export class EnvironmentService {
       );
     }
 
-    //Maybe
-    if (promises.length === 0) {
-      return [];
-    }
 
     return Promise.all(promises);
   }
