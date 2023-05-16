@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { PrismaService } from "nestjs-prisma";
-import { NewValsDTO } from "../shared/newValsDTO";
 import { DataType } from "@prisma/client";
+import { allVariablesNewValsDTO } from "../shared/allVariablesNewValsDTO";
 
 @Injectable()
 export class EnvironmentRepository {
@@ -19,28 +19,38 @@ export class EnvironmentRepository {
     });
   }
 
-  async setNewValues(dataType: DataType, newVals: NewValsDTO) {
-    /*
-    await this.prismaService.dataPointThresholds.upsert({
-      where: { dataType: dataType },
-      update: {
-        minVal: newVals.minVal,
-        maxVal: newVals.maxVal,
+  postThresholdRequests(newVals: allVariablesNewValsDTO) {
+    const data = [
+      {
+        dataType: DataType.CO2,
+        minValReq: newVals.newCo2Vals.minVal,
+        maxValReq: newVals.newCo2Vals.maxVal,
         requestDate: new Date(),
       },
-      create: {
-        dataType: dataType,
-        minVal: newVals.minVal,
-        maxVal: newVals.maxVal,
+      {
+        dataType: DataType.HUMIDITY,
+        minValReq: newVals.newCo2Vals.minVal,
+        maxValReq: newVals.newCo2Vals.maxVal,
         requestDate: new Date(),
       },
+      {
+        dataType: DataType.TEMPERATURE,
+        minValReq: newVals.newTempVals.minVal,
+        maxValReq: newVals.newTempVals.maxVal,
+        requestDate: new Date(),
+      },
+    ];
+
+    const filteredData = data.filter(
+      (item) => item.minValReq !== null && item.maxValReq !== null,
+    );
+
+    return this.prismaService.thresholdRequest.createMany({
+      data: filteredData,
     });
-    */
   }
 
   findAllThresholds() {
-    /*
-    return this.prismaService.dataPointThresholds.findMany();¨
-    */
+    return this.prismaService.thresholds.findMany();
   }
 }

@@ -33,12 +33,8 @@ export class Co2Repository {
   }
 
   getDataPointThresholds() {
-    return this.prisma.thresholds.upsert({
+    return this.prisma.thresholds.findUnique({
       where: {
-        dataType: DataType.CO2,
-      },
-      update: {},
-      create: {
         dataType: DataType.CO2,
       },
     });
