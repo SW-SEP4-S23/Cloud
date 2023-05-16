@@ -18,6 +18,9 @@
 
 4. Sync your database: `npm run db:migrate`
 
+> **_NOTE_**: Like 3. authentication errors to db can also occur of the same reson try this: [Guide]
+
+
 5. Run the app: `npm run start:dev`
 
 6. The server should now be running at `localhost:3000`.
