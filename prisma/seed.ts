@@ -15,29 +15,28 @@ async function main() {
 
   for (let i = 0; i < iterations; i++) {
     data.push({
-      timestamp: startDate,
+      timestamp: new Date(startDate),
       type: DataType.CO2,
       value: co2,
     });
     data.push({
-      timestamp: startDate,
+      timestamp: new Date(startDate),
       type: DataType.HUMIDITY,
       value: humidity,
     });
     data.push({
-      timestamp: startDate,
+      timestamp: new Date(startDate),
       type: DataType.TEMPERATURE,
       value: temperature,
     });
 
     startDate.setMinutes(startDate.getMinutes() + 5);
     co2 += 100;
-    humidity += 0.1;
+    humidity = parseFloat((humidity + 0.1).toFixed(1));
     temperature += 2;
   }
-  console.log("Creating: " + JSON.stringify(data));
   const datapoints = await prisma.datapoint.createMany({
-    data,
+    data: data,
   });
   console.log("Just created: " + JSON.stringify(datapoints));
 }

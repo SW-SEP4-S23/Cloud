@@ -29,6 +29,7 @@
 $ npm run test
 
 # e2e tests
+# local testing e2e: remember to seed the database before running these tests (npm run db:seed)
 $ npm run test:e2e
 
 # test coverage
@@ -54,7 +55,7 @@ import { PrismaService } from "nestjs-prisma";
 @Injectable()
 export class PostsRepository {
   constructor(private readonly prisma: PrismaService) {}
-  
+
   findAll() {
     return this.prisma.posts.findMany({
       select: {
@@ -73,7 +74,7 @@ This example includes the injection of a repository, that is used to handle the 
 
 ```ts
 import { Injectable } from "@nestjs/common";
-import { PostRepository } from "./posts.repository"
+import { PostRepository } from "./posts.repository";
 import { CreatePostDto } from "~/posts/dto/create-post.dto";
 import { Post } from "~/posts/post.entity";
 
