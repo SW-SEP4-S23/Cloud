@@ -1,7 +1,7 @@
 import { EnvironmentService } from "./environment.service";
 import { IntervalQuery } from "../shared/interval-query";
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
-import { allVariablesNewValsDTO } from "../shared/allVariablesNewValsDTO";
+import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
 
 @Controller("environment")
 export class EnvironmentController {
@@ -13,7 +13,7 @@ export class EnvironmentController {
   }
 
   @Post("/thresholds")
-  postThresholdsRequests(@Body() body: allVariablesNewValsDTO) {
+  postThresholdsRequests(@Body() body: NewThresholdWrapperDTO) {
     return this.environmentService.postThresholdsRequests(body);
   }
 

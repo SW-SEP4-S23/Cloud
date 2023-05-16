@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { NewValsDTO, newValsDTOChecker } from "./newValsDTO";
+import { NewValsDTO, newValsDTOChecker } from "./newThresholdDTO";
 
 describe("NewValsDTO", () => {
   let provider: NewValsDTO;
@@ -17,14 +17,14 @@ describe("NewValsDTO", () => {
   });
 
   it("should throw an error if tempMin > tempMax", () => {
-    provider.minVal = 10;
-    provider.maxVal = 5;
+    provider.minValue = 10;
+    provider.maxValue = 5;
     expect(() => newValsDTOChecker(provider)).toThrowError();
   });
 
   it("should not throw an error if tempMin < tempMax", () => {
-    provider.minVal = 5;
-    provider.maxVal = 10;
+    provider.minValue = 5;
+    provider.maxValue = 10;
     expect(() => newValsDTOChecker(provider)).not.toThrowError();
   });
 });

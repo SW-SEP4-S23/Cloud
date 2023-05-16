@@ -1,7 +1,7 @@
 import { Controller, Get, Query, Post, Body } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { HumidityService } from "./humidity.service";
-import { NewValsDTO } from "../shared/newValsDTO";
+import { NewThresholdDTO } from "../shared/newThresholdDTO";
 
 @Controller("environment/humidity")
 export class HumidityController {
@@ -18,7 +18,7 @@ export class HumidityController {
   }
 
   @Post("/thresholds")
-  postThresholdRequest(@Body() newVals: NewValsDTO) {
-    return this.humidityService.postThresholdRequest(newVals);
+  postThresholdRequest(@Body() newThreshold: NewThresholdDTO) {
+    return this.humidityService.postThresholdRequest(newThreshold);
   }
 }

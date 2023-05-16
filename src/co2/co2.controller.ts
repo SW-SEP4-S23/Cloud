@@ -1,7 +1,7 @@
 import { Controller, Get, Query, Post, Body } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { Co2Service } from "./co2.service";
-import { NewValsDTO } from "../shared/newValsDTO";
+import { NewThresholdDTO } from "../shared/newThresholdDTO";
 
 @Controller("environment/co2")
 export class Co2Controller {
@@ -19,7 +19,7 @@ export class Co2Controller {
   }
 
   @Post("/thresholds")
-  postThresholdRequest(@Body() newVals: NewValsDTO) {
-    return this.co2Service.postThresholdRequest(newVals);
+  postThresholdRequest(@Body() newThreshold: NewThresholdDTO) {
+    return this.co2Service.postThresholdRequest(newThreshold);
   }
 }

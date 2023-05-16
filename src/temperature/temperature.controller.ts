@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Query, Body } from "@nestjs/common";
 import { TemperatureService } from "./temperature.service";
 import { IntervalQuery } from "../shared/interval-query";
-import { NewValsDTO } from "../shared/newValsDTO";
+import { NewThresholdDTO } from "../shared/newThresholdDTO";
+
 @Controller("environment/temperature")
 export class TemperatureController {
   constructor(private readonly temperatureService: TemperatureService) {}
@@ -17,7 +18,7 @@ export class TemperatureController {
   }
 
   @Post("/thresholds")
-  postThresholdRequest(@Body() newVals: NewValsDTO) {
-    return this.temperatureService.postThresholdRequest(newVals);
+  postThresholdRequest(@Body() newThreshold: NewThresholdDTO) {
+    return this.temperatureService.postThresholdRequest(newThreshold);
   }
 }
