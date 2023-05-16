@@ -11,6 +11,7 @@ export class HumidityRepository {
   findAllInterval(interval: IntervalQuery) {
     return this.prisma.datapoint.findMany({
       where: {
+        type: DataType.HUMIDITY,
         timestamp: {
           gte: interval.startDate,
           lte: interval.endDate,
@@ -18,7 +19,7 @@ export class HumidityRepository {
       },
       select: {
         timestamp: true,
-        humidity: true,
+        value: true,
       },
     });
   }
@@ -27,7 +28,7 @@ export class HumidityRepository {
     return this.prisma.datapoint.findMany({
       select: {
         timestamp: true,
-        humidity: true,
+        value: true,
       },
     });
   }

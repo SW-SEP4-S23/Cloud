@@ -11,10 +11,11 @@ datasource db {
 }
 
 model Datapoint {
-  timestamp   DateTime @id
-  co2         Float
-  humidity    Float
-  temperature Float
+  timestamp DateTime
+  type      DataType
+  value     Float
+
+  @@id([timestamp, type])
 }
 
 model DataPointThresholds {
