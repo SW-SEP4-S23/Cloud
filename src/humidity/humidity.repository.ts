@@ -34,31 +34,25 @@ export class HumidityRepository {
   }
 
   getDataPointThresholds() {
-    /*return this.prisma.dataPointThresholds.findUnique({
+    return this.prisma.thresholds.upsert({
       where: {
         dataType: DataType.HUMIDITY,
       },
-    });
-    */
-  }
-
-  updateThresholds(newVals: NewValsDTO) {
-    /*return this.prisma.dataPointThresholds.upsert({
-      where: {
-        dataType: DataType.HUMIDITY,
-      },
-      update: {
-        minVal: newVals.minVal,
-        maxVal: newVals.maxVal,
-        requestDate: new Date(),
-      },
+      update: {},
       create: {
         dataType: DataType.HUMIDITY,
-        minVal: newVals.minVal,
-        maxVal: newVals.maxVal,
-        requestDate: new Date(),
       },
     });
-    */
+  }
+
+  postThresholdRequest(newVals: NewValsDTO) {
+    return this.prisma.thresholdRequest.create({
+      data: {
+        dataType: DataType.HUMIDITY,
+        requestDate: new Date(),
+        minValReq: newVals.minVal,
+        maxValReq: newVals.maxVal,
+      },
+    });
   }
 }
