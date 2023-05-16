@@ -19,27 +19,27 @@ model Datapoint {
 
 model Thresholds {
   dataType          DataType           @id
-  minVal            Float
-  maxVal            Float
+  minVal            Float?
+  maxVal            Float?
   thresholdRequests ThresholdRequest[]
 }
 
 model ThresholdRequest {
-  id          Float
+  id          Int        @default(autoincrement())
   //I think this is neccesary?
   dataTypeFK  Thresholds @relation(fields: [dataType], references: [dataType])
   dataType    DataType
   minValReq   Float
   maxValReq   Float
   requestDate DateTime
-  ack_idFK    Acks       @relation(fields: [ack_id], references: [id])
-  ack_id      Float
+  ack_idFK    Acks?      @relation(fields: [ack_id], references: [id])
+  ack_id      Int?
 
   @@id([id, dataType])
 }
 
 model Acks {
-  id               Float              @id
+  id               Int                @id @default(autoincrement())
   dateRecieved     DateTime
   acked            Boolean
   ThresholdRequest ThresholdRequest[]

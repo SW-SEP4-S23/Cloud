@@ -20,6 +20,7 @@ export class EnvironmentRepository {
   }
 
   async setNewValues(dataType: DataType, newVals: NewValsDTO) {
+    /*
     await this.prismaService.dataPointThresholds.upsert({
       where: { dataType: dataType },
       update: {
@@ -34,9 +35,12 @@ export class EnvironmentRepository {
         requestDate: new Date(),
       },
     });
+    */
   }
 
   findAllThresholds() {
-    return this.prismaService.dataPointThresholds.findMany();
+    /*
+    return this.prismaService.dataPointThresholds.findMany();¨
+    */
   }
 }

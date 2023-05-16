@@ -33,14 +33,17 @@ export class TemperatureRepository {
   }
 
   getDataPointThresholds() {
+    /*
     return this.prisma.dataPointThresholds.findUnique({
       where: {
         dataType: DataType.TEMPERATURE,
       },
     });
+    */
   }
 
   updateThresholds(newVals: NewValsDTO) {
+    /*
     console.log(newVals);
     return this.prisma.dataPointThresholds.upsert({
       where: {
@@ -58,5 +61,6 @@ export class TemperatureRepository {
         requestDate: new Date(),
       },
     });
+    */
   }
 }
