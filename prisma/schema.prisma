@@ -17,12 +17,32 @@ model Datapoint {
   temperature Float
 }
 
-model DataPointThresholds {
-  dataType    DataType  @id
-  minVal      Float
-  maxVal      Float
-  dateChanged DateTime?
-  requestDate DateTime?
+model Thresholds {
+  dataType          DataType           @id
+  minVal            Float
+  maxVal            Float
+  thresholdRequests ThresholdRequest[]
+}
+
+model ThresholdRequest {
+  id          Float
+  //I think this is neccesary?
+  dataTypeFK  Thresholds @relation(fields: [dataType], references: [dataType])
+  dataType    DataType
+  minValReq   Float
+  maxValReq   Float
+  requestDate DateTime
+  ack_idFK    Acks       @relation(fields: [ack_id], references: [id])
+  ack_id      Float
+
+  @@id([id, dataType])
+}
+
+model Acks {
+  id               Float              @id
+  dateRecieved     DateTime
+  acked            Boolean
+  ThresholdRequest ThresholdRequest[]
 }
 
 enum DataType {
