@@ -33,34 +33,25 @@ export class TemperatureRepository {
   }
 
   getDataPointThresholds() {
-    /*
-    return this.prisma.dataPointThresholds.findUnique({
+    return this.prisma.thresholds.upsert({
       where: {
         dataType: DataType.TEMPERATURE,
       },
-    });
-    */
-  }
-
-  updateThresholds(newVals: NewValsDTO) {
-    /*
-    console.log(newVals);
-    return this.prisma.dataPointThresholds.upsert({
-      where: {
-        dataType: DataType.TEMPERATURE,
-      },
-      update: {
-        minVal: newVals.minVal,
-        maxVal: newVals.maxVal,
-        requestDate: new Date(),
-      },
+      update: {},
       create: {
         dataType: DataType.TEMPERATURE,
-        minVal: newVals.minVal,
-        maxVal: newVals.maxVal,
-        requestDate: new Date(),
       },
     });
-    */
+  }
+
+  postThresholdRequest(newVals: NewValsDTO) {
+    return this.prisma.thresholdRequest.create({
+      data: {
+        dataType: DataType.TEMPERATURE,
+        requestDate: new Date(),
+        minValReq: newVals.minVal,
+        maxValReq: newVals.maxVal,
+      },
+    });
   }
 }

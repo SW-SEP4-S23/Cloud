@@ -17,8 +17,8 @@ export class HumidityService {
     return this.humidityRepository.getDataPointThresholds();
   }
 
-  updateThresholds(newVals: NewValsDTO) {
+  postThresholdRequest(newVals: NewValsDTO) {
     newValsDTOChecker(newVals);
-    return this.humidityRepository.updateThresholds(newVals);
+    return this.humidityRepository.postThresholdRequest(newVals);
   }
 }

@@ -1,4 +1,3 @@
-import { DatapointRepository } from "./../websocket/datapoint.repository";
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";

@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Query, Body } from "@nestjs/common";
+import { Controller, Get, Post, Query, Body } from "@nestjs/common";
 import { TemperatureService } from "./temperature.service";
 import { IntervalQuery } from "../shared/interval-query";
 import { NewValsDTO } from "../shared/newValsDTO";
@@ -16,8 +16,8 @@ export class TemperatureController {
     return this.temperatureService.getDataPointThresholds();
   }
 
-  @Patch("/thresholds")
-  updateThresholds(@Body() newVals: NewValsDTO) {
-    return this.temperatureService.updateThresholds(newVals);
+  @Post("/thresholds")
+  postThresholdRequest(@Body() newVals: NewValsDTO) {
+    return this.temperatureService.postThresholdRequest(newVals);
   }
 }
