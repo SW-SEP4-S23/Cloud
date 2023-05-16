@@ -16,8 +16,8 @@ export class Co2Service {
     return this.co2Repository.getDataPointThresholds();
   }
 
-  updateThresholds(newVals: NewValsDTO) {
+  postThresholdRequest(newVals: NewValsDTO) {
     newValsDTOChecker(newVals);
-    return this.co2Repository.updateThresholds(newVals);
+    return this.co2Repository.postThresholdRequest(newVals);
   }
 }
