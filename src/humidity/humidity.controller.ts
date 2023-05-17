@@ -8,7 +8,7 @@ export class HumidityController {
   constructor(private readonly humidityService: HumidityService) {}
 
   @Get()
-  findAllInterval(@Query() interval: IntervalQuery) {
+  findAllInterval(@Query() interval?: IntervalQuery) {
     return this.humidityService.findAllInterval(interval);
   }
 

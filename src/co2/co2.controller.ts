@@ -8,7 +8,7 @@ export class Co2Controller {
   constructor(private readonly co2Service: Co2Service) {}
 
   @Get()
-  findAllInterval(@Query() interval: IntervalQuery) {
+  findAllInterval(@Query() interval?: IntervalQuery) {
     return this.co2Service.findAllInterval(interval);
   }
 

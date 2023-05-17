@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { IntervalQuery, intervalQueryChecker } from "./interval-query";
+import { IntervalQuery, validate } from "./interval-query";
 
 describe("IntervalQuery", () => {
   let intervalQuery: IntervalQuery;
@@ -22,7 +22,7 @@ describe("IntervalQuery", () => {
     it("should throw an error if startDate is after endDate", () => {
       intervalQuery.startDate = new Date("2020-01-01");
       intervalQuery.endDate = new Date("2019-01-01");
-      expect(() => intervalQueryChecker(intervalQuery)).toThrowError(
+      expect(() => validate(intervalQuery)).toThrowError(
         "Start date cannot be after end date",
       );
     });
@@ -31,7 +31,7 @@ describe("IntervalQuery", () => {
   it("should not throw an error if startDate is before endDate", () => {
     intervalQuery.startDate = new Date("2019-01-01");
     intervalQuery.endDate = new Date("2020-01-01");
-    expect(() => intervalQueryChecker(intervalQuery)).not.toThrowError(
+    expect(() => validate(intervalQuery)).not.toThrowError(
       "Start date cannot be after end date",
     );
   });
