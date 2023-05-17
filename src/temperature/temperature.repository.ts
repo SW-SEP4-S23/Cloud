@@ -46,8 +46,8 @@ export class TemperatureRepository {
       data: {
         dataType: DataType.TEMPERATURE,
         requestDate: new Date(),
-        minValReq: newThreshold.minValue,
-        maxValReq: newThreshold.maxValue,
+        minValueReq: newThreshold.minValue,
+        maxValueReq: newThreshold.maxValue,
       },
     });
   }
