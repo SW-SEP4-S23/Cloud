@@ -11,6 +11,7 @@ export class Co2Repository {
   findAllInterval(interval: IntervalQuery) {
     return this.prisma.datapoint.findMany({
       where: {
+        type: DataType.CO2,
         timestamp: {
           gte: interval.startDate,
           lte: interval.endDate,
@@ -18,7 +19,7 @@ export class Co2Repository {
       },
       select: {
         timestamp: true,
-        co2: true,
+        value: true,
       },
     });
   }
@@ -27,7 +28,7 @@ export class Co2Repository {
     return this.prisma.datapoint.findMany({
       select: {
         timestamp: true,
-        co2: true,
+        value: true,
       },
     });
   }

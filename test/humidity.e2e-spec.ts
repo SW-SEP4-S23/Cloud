@@ -25,9 +25,9 @@ describe("HumidityController (e2e)", () => {
       )
       .expect(200)
       .expect([
-        { timestamp: "2021-01-01T00:00:00.000Z", humidity: 0.5 },
-        { timestamp: "2021-01-01T00:05:00.000Z", humidity: 0.6 },
-        { timestamp: "2021-01-01T00:10:00.000Z", humidity: 0.7 },
+        { timestamp: "2021-01-01T00:00:00.000Z", value: 0.5 },
+        { timestamp: "2021-01-01T00:05:00.000Z", value: 0.6 },
+        { timestamp: "2021-01-01T00:10:00.000Z", value: 0.7 },
       ]);
   });
 
@@ -39,27 +39,27 @@ describe("HumidityController (e2e)", () => {
       )
       .expect(200)
       .expect([
-        { timestamp: "2021-01-01T00:00:00.000Z", humidity: 0.5 },
-        { timestamp: "2021-01-01T00:05:00.000Z", humidity: 0.6 },
-        { timestamp: "2021-01-01T00:10:00.000Z", humidity: 0.7 },
-        { timestamp: "2021-01-01T00:15:00.000Z", humidity: 0.8 },
-        { timestamp: "2021-01-01T00:20:00.000Z", humidity: 0.9 },
-        { timestamp: "2021-01-01T00:25:00.000Z", humidity: 1 },
-        { timestamp: "2021-01-01T00:30:00.000Z", humidity: 1.1 },
-        { timestamp: "2021-01-01T00:35:00.000Z", humidity: 1.2 },
-        { timestamp: "2021-01-01T00:40:00.000Z", humidity: 1.3 },
-        { timestamp: "2021-01-01T00:45:00.000Z", humidity: 1.4 },
-        { timestamp: "2021-01-01T00:50:00.000Z", humidity: 1.5 },
-        { timestamp: "2021-01-01T00:55:00.000Z", humidity: 1.6 },
-        { timestamp: "2021-01-01T01:00:00.000Z", humidity: 1.7 },
-        { timestamp: "2021-01-01T01:05:00.000Z", humidity: 1.8 },
-        { timestamp: "2021-01-01T01:10:00.000Z", humidity: 1.9 },
-        { timestamp: "2021-01-01T01:15:00.000Z", humidity: 2 },
-        { timestamp: "2021-01-01T01:20:00.000Z", humidity: 2.1 },
-        { timestamp: "2021-01-01T01:25:00.000Z", humidity: 2.2 },
-        { timestamp: "2021-01-01T01:30:00.000Z", humidity: 2.3 },
-        { timestamp: "2021-01-01T01:35:00.000Z", humidity: 2.4 },
-        { timestamp: "2021-01-01T01:40:00.000Z", humidity: 2.5 },
+        { timestamp: "2021-01-01T00:00:00.000Z", value: 0.5 },
+        { timestamp: "2021-01-01T00:05:00.000Z", value: 0.6 },
+        { timestamp: "2021-01-01T00:10:00.000Z", value: 0.7 },
+        { timestamp: "2021-01-01T00:15:00.000Z", value: 0.8 },
+        { timestamp: "2021-01-01T00:20:00.000Z", value: 0.9 },
+        { timestamp: "2021-01-01T00:25:00.000Z", value: 1 },
+        { timestamp: "2021-01-01T00:30:00.000Z", value: 1.1 },
+        { timestamp: "2021-01-01T00:35:00.000Z", value: 1.2 },
+        { timestamp: "2021-01-01T00:40:00.000Z", value: 1.3 },
+        { timestamp: "2021-01-01T00:45:00.000Z", value: 1.4 },
+        { timestamp: "2021-01-01T00:50:00.000Z", value: 1.5 },
+        { timestamp: "2021-01-01T00:55:00.000Z", value: 1.6 },
+        { timestamp: "2021-01-01T01:00:00.000Z", value: 1.7 },
+        { timestamp: "2021-01-01T01:05:00.000Z", value: 1.8 },
+        { timestamp: "2021-01-01T01:10:00.000Z", value: 1.9 },
+        { timestamp: "2021-01-01T01:15:00.000Z", value: 2 },
+        { timestamp: "2021-01-01T01:20:00.000Z", value: 2.1 },
+        { timestamp: "2021-01-01T01:25:00.000Z", value: 2.2 },
+        { timestamp: "2021-01-01T01:30:00.000Z", value: 2.3 },
+        { timestamp: "2021-01-01T01:35:00.000Z", value: 2.4 },
+        { timestamp: "2021-01-01T01:40:00.000Z", value: 2.5 },
       ]);
   });
 

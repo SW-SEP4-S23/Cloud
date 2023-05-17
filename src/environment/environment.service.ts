@@ -8,9 +8,23 @@ import { DataType } from "@prisma/client";
 export class EnvironmentService {
   constructor(private readonly environmentRepository: EnvironmentRepository) {}
 
-  findAllInterval(interval: IntervalQuery) {
+  async findAllInterval(interval: IntervalQuery) {
     intervalQueryChecker(interval);
-    return this.environmentRepository.findAllInterval(interval);
+
+    const data = await this.environmentRepository.findAllInterval(interval);
+    const sortedData = {};
+    //sorts the result from data base into an object with the type as key and the values as an array of objects with timestamp and value
+    data.forEach((d) => {
+      if (!sortedData[d.type]) {
+        sortedData[d.type] = [];
+      }
+      sortedData[d.type].push({
+        timestamp: d.timestamp,
+        value: d.value,
+      });
+    });
+
+    return sortedData;
   }
 
   async setNewValues(newVals: allVariablesNewValsDTO) {

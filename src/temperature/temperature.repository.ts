@@ -11,6 +11,7 @@ export class TemperatureRepository {
   findAllInterval(interval: IntervalQuery) {
     return this.prisma.datapoint.findMany({
       where: {
+        type: DataType.TEMPERATURE,
         timestamp: {
           gte: interval.startDate,
           lte: interval.endDate,
@@ -18,7 +19,7 @@ export class TemperatureRepository {
       },
       select: {
         timestamp: true,
-        temperature: true,
+        value: true,
       },
     });
   }
@@ -27,7 +28,7 @@ export class TemperatureRepository {
     return this.prisma.datapoint.findMany({
       select: {
         timestamp: true,
-        temperature: true,
+        value: true,
       },
     });
   }
