@@ -45,8 +45,8 @@ export class HumidityRepository {
       data: {
         dataType: DataType.HUMIDITY,
         requestDate: new Date(),
-        minValReq: newThreshold.minValue,
-        maxValReq: newThreshold.maxValue,
+        minValueReq: newThreshold.minValue,
+        maxValueReq: newThreshold.maxValue,
       },
     });
   }

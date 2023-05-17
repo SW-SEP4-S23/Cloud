@@ -45,8 +45,8 @@ export class Co2Repository {
       data: {
         dataType: DataType.CO2,
         requestDate: new Date(),
-        minValReq: newThreshold.minValue,
-        maxValReq: newThreshold.maxValue,
+        minValueReq: newThreshold.minValue,
+        maxValueReq: newThreshold.maxValue,
       },
     });
   }

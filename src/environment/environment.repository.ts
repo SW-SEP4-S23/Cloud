@@ -23,26 +23,26 @@ export class EnvironmentRepository {
     const data = [
       {
         dataType: DataType.CO2,
-        minValReq: newThresholds.newCo2Threshold.minValue,
-        maxValReq: newThresholds.newCo2Threshold.maxValue,
+        minValueReq: newThresholds.newCo2Threshold.minValue,
+        maxValueReq: newThresholds.newCo2Threshold.maxValue,
         requestDate: new Date(),
       },
       {
         dataType: DataType.HUMIDITY,
-        minValReq: newThresholds.newHumidityThreshold.minValue,
-        maxValReq: newThresholds.newHumidityThreshold.maxValue,
+        minValueReq: newThresholds.newHumidityThreshold.minValue,
+        maxValueReq: newThresholds.newHumidityThreshold.maxValue,
         requestDate: new Date(),
       },
       {
         dataType: DataType.TEMPERATURE,
-        minValReq: newThresholds.newTemperatureThreshold.minValue,
-        maxValReq: newThresholds.newTemperatureThreshold.maxValue,
+        minValueReq: newThresholds.newTemperatureThreshold.minValue,
+        maxValueReq: newThresholds.newTemperatureThreshold.maxValue,
         requestDate: new Date(),
       },
     ];
 
     const filteredData = data.filter(
-      (item) => item.minValReq !== null && item.maxValReq !== null,
+      (item) => item.maxValueReq !== null && item.maxValueReq !== null,
     );
 
     return this.prismaService.thresholdRequests.createMany({
