@@ -16,7 +16,7 @@ export class NewThresholdDTO {
   maxValue: number;
 }
 
-export const newValsDTOChecker = (newThresholds: NewThresholdDTO) => {
+export const newThresholdChecker = (newThresholds: NewThresholdDTO) => {
   if (newThresholds.minValue > newThresholds.maxValue) {
     throw new HttpException(
       "tempMin must be less than tempMax",
