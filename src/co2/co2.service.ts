@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { IntervalQuery, intervalQueryChecker } from "../shared/interval-query";
 import { Co2Repository } from "./co2.repository";
-import { NewThresholdDTO, newValsDTOChecker } from "../shared/newThresholdDTO";
+import {
+  NewThresholdDTO,
+  newThresholdChecker,
+} from "../shared/newThresholdDTO";
 
 @Injectable()
 export class Co2Service {
@@ -17,7 +20,7 @@ export class Co2Service {
   }
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
-    newValsDTOChecker(newThreshold);
+    newThresholdChecker(newThreshold);
     return this.co2Repository.postThresholdRequest(newThreshold);
   }
 }

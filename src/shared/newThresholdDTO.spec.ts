@@ -1,15 +1,15 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { NewValsDTO, newValsDTOChecker } from "./newThresholdDTO";
+import { NewThresholdDTO, newThresholdChecker } from "./newThresholdDTO";
 
 describe("NewValsDTO", () => {
-  let provider: NewValsDTO;
+  let provider: NewThresholdDTO;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [NewValsDTO],
+      providers: [NewThresholdDTO],
     }).compile();
 
-    provider = module.get<NewValsDTO>(NewValsDTO);
+    provider = module.get<NewThresholdDTO>(NewThresholdDTO);
   });
 
   it("should be defined", () => {
@@ -19,12 +19,12 @@ describe("NewValsDTO", () => {
   it("should throw an error if tempMin > tempMax", () => {
     provider.minValue = 10;
     provider.maxValue = 5;
-    expect(() => newValsDTOChecker(provider)).toThrowError();
+    expect(() => newThresholdChecker(provider)).toThrowError();
   });
 
   it("should not throw an error if tempMin < tempMax", () => {
     provider.minValue = 5;
     provider.maxValue = 10;
-    expect(() => newValsDTOChecker(provider)).not.toThrowError();
+    expect(() => newThresholdChecker(provider)).not.toThrowError();
   });
 });
