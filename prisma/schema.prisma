@@ -40,10 +40,10 @@ model ThresholdRequests {
 }
 
 model Ack {
-  id               Int                 @id @default(autoincrement())
-  dateRecieved     DateTime
-  acked            Boolean
-  thresholdRequest ThresholdRequests[]
+  id                Int                 @id @default(autoincrement())
+  dateRecieved      DateTime?
+  acked             Boolean
+  thresholdRequests ThresholdRequests[]
 }
 
 enum DataType {
