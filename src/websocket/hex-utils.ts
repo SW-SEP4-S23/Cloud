@@ -1,22 +1,9 @@
 import { DataType } from "@prisma/client";
+import { DownlinkPayload } from "./dto/downlink-data";
 
 export function hexToNumberArray(hex: string, interval = 2): number[] {
   const hexArray = hex.match(new RegExp(`.{1,${interval}}`, "g"));
   return hexArray.map((hex) => parseInt(hex, 16));
-}
-
-type ThresholdValues = {
-  minVal: number;
-  maxVal: number;
-};
-
-export interface DownlinkPayload {
-  id: number;
-  thresholds: {
-    [DataType.TEMPERATURE]: ThresholdValues;
-    [DataType.CO2]: ThresholdValues;
-    [DataType.HUMIDITY]: ThresholdValues;
-  };
 }
 
 export function uplinkHexPayloadToData(hexPayload: string) {
@@ -28,18 +15,18 @@ export function uplinkHexPayloadToData(hexPayload: string) {
 // convert to this format: "TTTTCCCCHHHHUU"
 export function downlinkDataToHexPayload(downlinkData: DownlinkPayload) {
   const {
-    id,
+    ackId,
     thresholds: { TEMPERATURE, CO2, HUMIDITY },
   } = downlinkData;
 
   return (
-    numberToHex(TEMPERATURE.minVal) +
-    numberToHex(TEMPERATURE.maxVal) +
-    numberToHex(CO2.minVal) +
-    numberToHex(CO2.maxVal) +
-    numberToHex(HUMIDITY.minVal) +
-    numberToHex(HUMIDITY.maxVal) +
-    numberToHex(id, 2)
+    numberToHex(TEMPERATURE.minValue) +
+    numberToHex(TEMPERATURE.maxValue) +
+    numberToHex(CO2.minValue) +
+    numberToHex(CO2.maxValue) +
+    numberToHex(HUMIDITY.minValue) +
+    numberToHex(HUMIDITY.maxValue) +
+    numberToHex(ackId, 2)
   );
 }
 

@@ -1,16 +1,12 @@
 import { createWebSocket } from "./create-websocket";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import {
-  downlinkDataToHexPayload,
-  hexToNumberArray,
-  uplinkHexPayloadToData,
-} from "./hex-utils";
+import { downlinkDataToHexPayload, uplinkHexPayloadToData } from "./hex-utils";
 import { WebSocket } from "ws";
 import { plainToClass } from "class-transformer";
 import { UplinkData } from "./dto/uplink-data";
 import { validateSync } from "class-validator";
-import { IOT_EUI } from "../constants";
-import { DownlinkData } from "./dto/downlink-data";
+import { IOT_EUI, MAX_ACK_ID } from "../constants";
+import { DownlinkData, DownlinkThresholds } from "./dto/downlink-data";
 import { WebSocketRepository } from "./websocket.repository";
 
 @Injectable()
@@ -62,8 +58,9 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
     );
     const timestamp = new Date(uplinkData.ts);
 
+    await this.confirmDownlinkAck(id, timestamp);
+
     return Promise.all([
-      this.checkDownlinkAck(id),
       this.sendDownlink(),
       this.wsRepository.createDatapoint({
         timestamp,
@@ -75,36 +72,52 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   }
 
   async sendDownlink() {
-    // get threshold update requests
-    //
-    // if there is any requests, process them
-    //
+    const updateRequestArray =
+      await this.wsRepository.getLatestThresholdUpdateRequests();
+
+    if (updateRequestArray.length === 0) {
+      console.info("No unacked requests");
+      return;
+    }
+
+    const ack = await this.wsRepository.createAcksForThresholdUpdateRequests(
+      updateRequestArray,
+    );
+
     // transform the ack-id using modulo 256, so it will fit in two bytes
-    //
-    // create payload
-    // const payload = downlinkDataToHexPayload({
-    //   id: this.#lastAckId,
-    //   thresholds,
-    // });
-    //
-    // create full downlink data object
-    // const data: DownlinkData = {
-    //   cmd: "tx",
-    //   EUI: IOT_EUI,
-    //   port: 1,
-    //   confirmed: false,
-    //   data: payload,
-    // };
-    //
-    // send the downlink
-    // this.#socket.send(JSON.stringify(data));
+    const ackId = ack.id % MAX_ACK_ID;
+
+    const thresholds = updateRequestArray.reduce((acc, curr) => {
+      acc[curr.dataType] = {
+        minValue: curr.minValueReq,
+        maxValue: curr.maxValueReq,
+      };
+      return acc;
+    }, {} as DownlinkThresholds);
+
+    const payload = downlinkDataToHexPayload({
+      ackId,
+      thresholds,
+    });
+
+    const downlinkData: DownlinkData = {
+      cmd: "tx",
+      EUI: IOT_EUI,
+      port: 1,
+      confirmed: false,
+      data: payload,
+    };
+
+    this.#socket.send(JSON.stringify(downlinkData));
   }
 
-  async checkDownlinkAck(ackId: number) {
-    // get the size of the ack table
-    //
+  async confirmDownlinkAck(ackId: number, uplinkTimestamp: Date) {
+    const ackTableSize = await this.wsRepository.getAcksCount();
+
     // get the real ackId by reversing the modulo 256 operation
-    //
-    // set ack to true for the ackId
+    // e.g.: i recieve the ackId 2, but the ackId is actually 770 (2 + 256 * 3)
+    const realAckId = ackId + MAX_ACK_ID * (ackTableSize % MAX_ACK_ID);
+
+    await this.wsRepository.confirmAck(realAckId, uplinkTimestamp);
   }
 }

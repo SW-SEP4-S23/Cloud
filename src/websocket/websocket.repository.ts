@@ -13,34 +13,73 @@ export class WebSocketRepository {
     temperature: number;
   }) {
     const { timestamp, co2, humidity, temperature } = params;
-    return this.prisma.datapoint.create({
-      data: { timestamp, co2, humidity, temperature },
+    return this.prisma.datapoint.createMany({
+      data: [
+        { timestamp: timestamp, type: DataType.CO2, value: co2 },
+        { timestamp: timestamp, type: DataType.HUMIDITY, value: humidity },
+        {
+          timestamp: timestamp,
+          type: DataType.TEMPERATURE,
+          value: temperature,
+        },
+      ],
     });
   }
 
   async getLatestThresholdUpdateRequests() {
-    // TODO
     // Latest requests for all datatypes that haven't been acked
+    return this.prisma.thresholdRequests.findMany({
+      where: {
+        ackId: null,
+      },
+      select: {
+        id: true,
+        dataType: true,
+        minValueReq: true,
+        maxValueReq: true,
+      },
+      orderBy: {
+        requestDate: "desc",
+      },
+      distinct: ["dataType"],
+    });
   }
 
-  async setThresholdUpdateRequestsToBePending() {
-    // TODO
+  async createAcksForThresholdUpdateRequests(
+    requests: {
+      id: number;
+      dataType: DataType;
+    }[],
+  ) {
     // Create an ack (false) for the requests
+    return this.prisma.ack.create({
+      data: {
+        acked: false,
+        thresholdRequests: {
+          connect: requests.map((r) => ({
+            id_dataType: {
+              id: r.id,
+              dataType: r.dataType,
+            },
+          })),
+        },
+      },
+    });
   }
 
-  async setAckToTrue() {
-    // TODO
-    // Set the ack to true for the requests
+  async confirmAck(ackId: number, timestamp: Date) {
+    await this.prisma.ack.update({
+      where: {
+        id: ackId,
+      },
+      data: {
+        acked: true,
+        dateRecieved: timestamp,
+      },
+    });
   }
 
   async getAcksCount() {
-    // TODO
-    // Get the number of acks
-  }
-
-  async setThresholdsDateChanged(timestamp: Date) {
-    return this.prisma.dataPointThresholds.updateMany({
-      data: { dateChanged: timestamp },
-    });
+    return this.prisma.ack.count();
   }
 }
