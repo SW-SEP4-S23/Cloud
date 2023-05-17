@@ -19,6 +19,15 @@ export class EnvironmentRepository {
     });
   }
 
+  findLatest() {
+    return this.prismaService.datapoint.findMany({
+      take: 3, //Only works as long as we have 3 observation types. If we add/remove more, this needs to be changed
+      orderBy: {
+        timestamp: "desc",
+      },
+    });
+  }
+
   async setNewValues(dataType: DataType, newVals: NewValsDTO) {
     await this.prismaService.dataPointThresholds.upsert({
       where: { dataType: dataType },

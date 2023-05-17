@@ -24,6 +24,22 @@ export class Co2Repository {
     });
   }
 
+  findLatest() {
+    return this.prisma.datapoint.findFirst({
+      where: {
+        type: DataType.CO2,
+      },
+      orderBy: {
+        timestamp: "desc",
+      },
+      take: 1,
+      select: {
+        timestamp: true,
+        value: true,
+      },
+    });
+  }
+
   findAll() {
     return this.prisma.datapoint.findMany({
       select: {

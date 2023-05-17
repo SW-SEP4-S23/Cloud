@@ -1,14 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { TemperatureRepository } from "./temperature.repository";
 import { NewValsDTO, newValsDTOChecker } from "../shared/newValsDTO";
-import { IntervalQuery, intervalQueryChecker } from "../shared/interval-query";
+import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 
 @Injectable()
 export class TemperatureService {
   constructor(private readonly temperatureRepository: TemperatureRepository) {}
 
   findAllInterval(interval: IntervalQuery) {
-    intervalQueryChecker(interval);
+    if (!isDefined(interval)) return this.temperatureRepository.findLatest();
+    validate(interval);
     return this.temperatureRepository.findAllInterval(interval);
   }
 

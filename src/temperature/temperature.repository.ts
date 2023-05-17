@@ -24,6 +24,22 @@ export class TemperatureRepository {
     });
   }
 
+  findLatest() {
+    return this.prisma.datapoint.findFirst({
+      where: {
+        type: DataType.TEMPERATURE,
+      },
+      orderBy: {
+        timestamp: "desc",
+      },
+      take: 1,
+      select: {
+        timestamp: true,
+        value: true,
+      },
+    });
+  }
+
   findAll() {
     return this.prisma.datapoint.findMany({
       select: {

@@ -16,6 +16,47 @@ describe("Co2Controller (e2e)", () => {
   });
 
   //To see the seeded data, find the file in ../prisma/seed.ts
+  //Slight chance of failure if websucked recives data at the same time as the test is running
+  describe("Co2Controller (e2e) NO query Test", () => {
+    it("/environment/co2 (GET)", () => {
+      return request(app.getHttpServer())
+        .get("/environment/co2")
+        .expect(200)
+        .expect({ timestamp: "2021-01-01T01:40:00.000Z", value: 2400 });
+    });
+  });
+
+  describe("Co2Controller (e2e) Exception Testing", () => {
+    it("/environment/co2?startDate (GET)", () => {
+      return request(app.getHttpServer())
+        .get("/environment/co2?startDate=2021-01-01T00:10:00.000Z")
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Both startDate and endDate must be provided together.",
+        });
+    });
+    it("/environment/co2?endDate (GET)", () => {
+      return request(app.getHttpServer())
+        .get("/environment/co2?endDate=2021-01-01T00:10:00.000Z")
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Both startDate and endDate must be provided together.",
+        });
+    });
+    it("/environment/co2?startDate&endDate (GET)", () => {
+      return request(app.getHttpServer())
+        .get(
+          "/environment/co2?startDate=2021-02-01T00:10:00.000Z&endDate=2021-01-01T00:10:00.000Z",
+        )
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Start date cannot be after end date",
+        });
+    });
+  });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
   it("/environment/co2?startDate&endDate (GET)", () => {

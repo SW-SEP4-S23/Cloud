@@ -8,7 +8,7 @@ export class EnvironmentController {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   @Get()
-  findAllInterval(@Query() interval: IntervalQuery) {
+  findAllInterval(@Query() interval?: IntervalQuery) {
     return this.environmentService.findAllInterval(interval);
   }
 

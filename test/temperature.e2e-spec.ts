@@ -16,6 +16,47 @@ describe("TemperatureController (e2e)", () => {
   });
 
   //To see the seeded data, find the file in ../prisma/seed.ts
+  //Slight chance of failure if websucked recives data at the same time as the test is running
+  describe("TemperatureController (e2e) NO query Test", () => {
+    it("/environment/co2 (GET)", () => {
+      return request(app.getHttpServer())
+        .get("/environment/temperature")
+        .expect(200)
+        .expect({ timestamp: "2021-01-01T01:40:00.000Z", value: 60 });
+    });
+  });
+
+  describe("TemperatureController (e2e) Exception Testing", () => {
+    it("/environment/temperature?startDate (GET)", () => {
+      return request(app.getHttpServer())
+        .get("/environment/temperature?startDate=2021-01-01T00:10:00.000Z")
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Both startDate and endDate must be provided together.",
+        });
+    });
+    it("/environment/temperature?endDate (GET)", () => {
+      return request(app.getHttpServer())
+        .get("/environment/temperature?endDate=2021-01-01T00:10:00.000Z")
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Both startDate and endDate must be provided together.",
+        });
+    });
+    it("/environment/temperature?startDate&endDate (GET)", () => {
+      return request(app.getHttpServer())
+        .get(
+          "/environment/temperature?startDate=2021-02-01T00:10:00.000Z&endDate=2021-01-01T00:10:00.000Z",
+        )
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Start date cannot be after end date",
+        });
+    });
+  });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
   it("/environment/temperature?startDate&endDate get specific dates from seed data (GET)", () => {
