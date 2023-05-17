@@ -73,6 +73,62 @@ describe("HumidityController (e2e)", () => {
       .expect([]);
   });
 
+  //patch thresholds test
+  describe("/environment/humidity/thresholds (PATCH)", () => {
+    const toleranceInMilliseconds = 60000; // 1 minute
+
+    test("updates thresholds and validates requestDate", async () => {
+      const date = new Date();
+
+      const response = await request(app.getHttpServer())
+        .patch("/environment/humidity/thresholds")
+        .send({
+          minVal: 0.5,
+          maxVal: 0.6,
+        });
+
+      expect(response.body.minVal).toBe(0.5);
+      expect(response.body.maxVal).toBe(0.6);
+      expect(response.body.dateChanged).toBeNull();
+
+      const requestDate = new Date(response.body.requestDate);
+      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
+        date.getTime() - toleranceInMilliseconds,
+      );
+      expect(requestDate.getTime()).toBeLessThanOrEqual(
+        date.getTime() + toleranceInMilliseconds,
+      );
+    });
+  });
+
+  //get thresholds test
+  describe("/environment/humidity/thresholds (GET)", () => {
+    const toleranceInMilliseconds = 60000; // 1 minute
+
+    test("updates thresholds and validates requestDate", async () => {
+      const date = new Date();
+
+      const response = await request(app.getHttpServer())
+        .get("/environment/humidity/thresholds")
+        .send({
+          minVal: 0.5,
+          maxVal: 0.6,
+        });
+
+      expect(response.body.minVal).toBe(0.5);
+      expect(response.body.maxVal).toBe(0.6);
+      expect(response.body.dateChanged).toBeNull();
+
+      const requestDate = new Date(response.body.requestDate);
+      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
+        date.getTime() - toleranceInMilliseconds,
+      );
+      expect(requestDate.getTime()).toBeLessThanOrEqual(
+        date.getTime() + toleranceInMilliseconds,
+      );
+    });
+  });
+
   afterAll(async () => {
     await app.close();
   });

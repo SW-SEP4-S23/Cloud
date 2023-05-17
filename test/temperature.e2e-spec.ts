@@ -73,6 +73,62 @@ describe("TemperatureController (e2e)", () => {
       .expect([]);
   });
 
+  //patch thresholds test
+  describe("/environment/temperature/thresholds (PATCH)", () => {
+    const toleranceInMilliseconds = 60000; // 1 minute
+
+    test("updates thresholds and validates requestDate", async () => {
+      const date = new Date();
+
+      const response = await request(app.getHttpServer())
+        .patch("/environment/temperature/thresholds")
+        .send({
+          minVal: 20,
+          maxVal: 60,
+        });
+
+      expect(response.body.minVal).toBe(20);
+      expect(response.body.maxVal).toBe(60);
+      expect(response.body.dateChanged).toBeNull();
+
+      const requestDate = new Date(response.body.requestDate);
+      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
+        date.getTime() - toleranceInMilliseconds,
+      );
+      expect(requestDate.getTime()).toBeLessThanOrEqual(
+        date.getTime() + toleranceInMilliseconds,
+      );
+    });
+  });
+
+  //get thresholds test
+  describe("/environment/temperature/thresholds (GET)", () => {
+    const toleranceInMilliseconds = 60000; // 1 minute
+
+    test("updates thresholds and validates requestDate", async () => {
+      const date = new Date(Date.now());
+
+      const response = await request(app.getHttpServer())
+        .get("/environment/temperature/thresholds")
+        .send({
+          minVal: 20,
+          maxVal: 60,
+        });
+
+      expect(response.body.minVal).toBe(20);
+      expect(response.body.maxVal).toBe(60);
+      expect(response.body.dateChanged).toBeNull();
+
+      const requestDate = new Date(response.body.requestDate);
+      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
+        date.getTime() - toleranceInMilliseconds,
+      );
+      expect(requestDate.getTime()).toBeLessThanOrEqual(
+        date.getTime() + toleranceInMilliseconds,
+      );
+    });
+  });
+
   afterAll(async () => {
     await app.close();
   });

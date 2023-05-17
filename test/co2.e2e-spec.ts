@@ -73,6 +73,62 @@ describe("Co2Controller (e2e)", () => {
       .expect([]);
   });
 
+  //patch thresholds test
+  describe("/environment/co2/thresholds (PATCH)", () => {
+    const toleranceInMilliseconds = 60000; // 1 minute
+
+    test("updates thresholds and validates requestDate", async () => {
+      const date = new Date();
+
+      const response = await request(app.getHttpServer())
+        .patch("/environment/co2/thresholds")
+        .send({
+          minVal: 0.5,
+          maxVal: 10,
+        });
+
+      expect(response.body.minVal).toBe(0.5);
+      expect(response.body.maxVal).toBe(10);
+      expect(response.body.dateChanged).toBeNull();
+
+      const requestDate = new Date(response.body.requestDate);
+      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
+        date.getTime() - toleranceInMilliseconds,
+      );
+      expect(requestDate.getTime()).toBeLessThanOrEqual(
+        date.getTime() + toleranceInMilliseconds,
+      );
+    });
+  });
+
+  //get thresholds test
+  describe("/environment/co2/thresholds (GET)", () => {
+    const toleranceInMilliseconds = 60000; // 1 minute
+
+    test("updates thresholds and validates requestDate", async () => {
+      const date = new Date();
+
+      const response = await request(app.getHttpServer())
+        .get("/environment/co2/thresholds")
+        .send({
+          minVal: 0.5,
+          maxVal: 10,
+        });
+
+      expect(response.body.minVal).toBe(0.5);
+      expect(response.body.maxVal).toBe(10);
+      expect(response.body.dateChanged).toBeNull();
+
+      const requestDate = new Date(response.body.requestDate);
+      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
+        date.getTime() - toleranceInMilliseconds,
+      );
+      expect(requestDate.getTime()).toBeLessThanOrEqual(
+        date.getTime() + toleranceInMilliseconds,
+      );
+    });
+  });
+
   afterAll(async () => {
     await app.close();
   });
