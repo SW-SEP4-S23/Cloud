@@ -1,3 +1,4 @@
+import { Post } from "@nestjs/common";
 import { max } from "class-validator";
 import * as Request from "supertest";
 
@@ -45,7 +46,7 @@ export const commonTests: CommonTestsInterfaces = {
     async () => {
       const date = new Date();
 
-      const response = await request.patch(path).send({
+      const response = await request.Post(path).send({
         minValue,
         maxValue,
       });
