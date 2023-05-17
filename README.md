@@ -26,7 +26,7 @@
 
 6. The server should now be running at `localhost:3000`.
 
- **_NOTE_**: If an error occurs on the API, please try `npm run db:push` - this will seed the DB if possible
+ > **_NOTE_**: If an error occurs on the API, please try `npm run db:push` - this will seed the DB if possible
 
 ### Running tests
 
