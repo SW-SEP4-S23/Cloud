@@ -18,7 +18,7 @@
 
 4. Sync your database: `npm run db:migrate`
 
- **_NOTE_**: Bear in mind this also seeds the DataBase with essential records now.
+ > **_NOTE_**: Bear in mind this also seeds the database with essential records now.
 
 > **_NOTE_**: Like 3. authentication errors in db can also occur of the same reson try this: [Guide]
 
