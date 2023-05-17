@@ -27,13 +27,13 @@ model Thresholds {
 model ThresholdRequests {
   id          Int        @default(autoincrement())
   //I think this is neccesary?
-  dataTypeFK  Thresholds @relation(fields: [dataType], references: [dataType])
+  thresholds  Thresholds @relation(fields: [dataType], references: [dataType])
   dataType    DataType
   minValReq   Float
   maxValReq   Float
   requestDate DateTime
-  ack_idFK    Ack?       @relation(fields: [ack_id], references: [id])
-  ack_id      Int?
+  ack         Ack?       @relation(fields: [ackId], references: [id])
+  ackId       Int?
 
   @@id([id, dataType])
 }
