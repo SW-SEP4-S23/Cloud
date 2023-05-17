@@ -24,6 +24,22 @@ export class HumidityRepository {
     });
   }
 
+  findLatest() {
+    return this.prisma.datapoint.findFirst({
+      where: {
+        type: DataType.HUMIDITY,
+      },
+      orderBy: {
+        timestamp: "desc",
+      },
+      take: 1,
+      select: {
+        timestamp: true,
+        value: true,
+      },
+    });
+  }
+
   findAll() {
     return this.prisma.datapoint.findMany({
       select: {

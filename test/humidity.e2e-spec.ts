@@ -17,6 +17,47 @@ describe("HumidityController (e2e)", () => {
   });
 
   //To see the seeded data, find the file in ../prisma/seed.ts
+  //Slight chance of failure if websucked recives data at the same time as the test is running
+  describe("HumidityController (e2e) NO query Test", () => {
+    it("/environment/humidity (GET)", () => {
+      return request(app.getHttpServer())
+        .get("/environment/humidity")
+        .expect(200)
+        .expect({ timestamp: "2021-01-01T01:40:00.000Z", value: 2.5 });
+    });
+  });
+
+  describe("HumidityController (e2e) Exception Testing", () => {
+    it("/environment/humidity?startDate (GET)", () => {
+      return request(app.getHttpServer())
+        .get("/environment/humidity?startDate=2021-01-01T00:10:00.000Z")
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Both startDate and endDate must be provided together.",
+        });
+    });
+    it("/environment/humidity?endDate (GET)", () => {
+      return request(app.getHttpServer())
+        .get("/environment/humidity?endDate=2021-01-01T00:10:00.000Z")
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Both startDate and endDate must be provided together.",
+        });
+    });
+    it("/environment/humidity?startDate&endDate (GET)", () => {
+      return request(app.getHttpServer())
+        .get(
+          "/environment/humidity?startDate=2021-02-01T00:10:00.000Z&endDate=2021-01-01T00:10:00.000Z",
+        )
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Start date cannot be after end date",
+        });
+    });
+  });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
   test("/environment/humidity?startDate&endDate (GET)", () => {

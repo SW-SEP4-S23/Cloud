@@ -8,7 +8,7 @@ export class TemperatureController {
   constructor(private readonly temperatureService: TemperatureService) {}
 
   @Get()
-  findAllInterval(@Query() interval: IntervalQuery) {
+  findAllInterval(@Query() interval?: IntervalQuery) {
     return this.temperatureService.findAllInterval(interval);
   }
 
