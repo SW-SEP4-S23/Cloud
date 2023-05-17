@@ -3,6 +3,7 @@ import { Type } from "class-transformer";
 import { IsNumber } from "class-validator";
 import { HttpException, HttpStatus } from "@nestjs/common";
 
+//milo kan ikke lide navnet :()
 export class NewThresholdDTO {
   @IsNumber()
   @ApiProperty()
