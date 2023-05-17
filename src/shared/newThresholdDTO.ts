@@ -3,20 +3,21 @@ import { Type } from "class-transformer";
 import { IsNumber } from "class-validator";
 import { HttpException, HttpStatus } from "@nestjs/common";
 
-export class NewValsDTO {
+//milo kan ikke lide navnet :()
+export class NewThresholdDTO {
   @IsNumber()
   @ApiProperty()
   @Type(() => Number)
-  minVal: number;
+  minValue: number;
 
   @IsNumber()
   @ApiProperty()
   @Type(() => Number)
-  maxVal: number;
+  maxValue: number;
 }
 
-export const newValsDTOChecker = (newVals: NewValsDTO) => {
-  if (newVals.minVal > newVals.maxVal) {
+export const newThresholdChecker = (newThresholds: NewThresholdDTO) => {
+  if (newThresholds.minValue > newThresholds.maxValue) {
     throw new HttpException(
       "tempMin must be less than tempMax",
       HttpStatus.BAD_REQUEST,

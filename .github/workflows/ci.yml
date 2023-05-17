@@ -43,7 +43,7 @@ jobs:
         run: npm run db:push
 
       - name: Seed database
-        run: npm run db:seed
+        run: npm run db:mock
 
       - name: Lint code
         run: npm run lint

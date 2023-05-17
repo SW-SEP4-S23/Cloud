@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
+import { CommonTestsInterfaces, commonTests } from "./commonTests";
 
 describe("HumidityController (e2e)", () => {
   let app: INestApplication;
@@ -59,7 +60,7 @@ describe("HumidityController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
-  it("/environment/humidity?startDate&endDate (GET)", () => {
+  test("/environment/humidity?startDate&endDate (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/humidity?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
@@ -73,7 +74,7 @@ describe("HumidityController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return all 21 records
-  it("/environment/humidity?startDate&endDate (GET)", () => {
+  test("/environment/humidity?startDate&endDate (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/humidity?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
@@ -105,13 +106,68 @@ describe("HumidityController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2020-01-01 to 2020-01-10, which should return 0 records
-  it("/environment/humidity?startDate&endDate get dates not in seed data(GET)", () => {
+  test("/environment/humidity?startDate&endDate get dates not in seed data(GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/humidity?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T00:10:00.000Z",
       )
       .expect(200)
       .expect([]);
+  });
+
+  //Testing using generalized methods from commonTests.ts
+  describe("/environment/humidity using generalized methods (GET,PATCH)", () => {
+    //Values to be used in the tests
+    //This leaves possibility to make more tests with different values
+    let humidityPath: string;
+    let humidityMinValue: number;
+    let humidityMaxValue: number;
+    let toleranceInMilliseconds: number; // 1 minute
+    let request: any;
+
+    //patch thresholds test
+    describe("/environment/humidity/thresholds (PATCH)", () => {
+      test("Update patched value, check thresholdsRequest for the new request", async () => {
+        humidityPath = "/environment/humidity";
+        humidityMinValue = 10;
+        humidityMaxValue = 30;
+
+        //For date validation
+        toleranceInMilliseconds = 60000; // 1 minute
+
+        request = app.getHttpServer();
+
+        (commonTests as CommonTestsInterfaces).patchThresholds(
+          request,
+          humidityPath,
+          humidityMinValue,
+          humidityMaxValue,
+          toleranceInMilliseconds,
+        );
+      });
+    });
+
+    //get thresholds test
+    describe("/environment/humidity/thresholds (GET) method", () => {
+      test("GET Thresholds", async () => {
+        humidityPath = "/environment/humidity";
+        humidityMinValue = 10;
+        humidityMaxValue = 30;
+
+        //For date validation
+        toleranceInMilliseconds = 60000; // 1 minute
+
+        request = app.getHttpServer();
+
+        (commonTests as CommonTestsInterfaces).getThresholds(
+          request,
+          humidityPath,
+          humidityMinValue,
+          humidityMaxValue,
+          toleranceInMilliseconds,
+        );
+      });
+    });
   });
 
   afterAll(async () => {

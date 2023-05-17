@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
+import { CommonTestsInterfaces, commonTests } from "./commonTests";
 
 describe("TemperatureController (e2e)", () => {
   let app: INestApplication;
@@ -59,7 +60,7 @@ describe("TemperatureController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
-  it("/environment/temperature?startDate&endDate get specific dates from seed data (GET)", () => {
+  test("/environment/temperature?startDate&endDate get specific dates from seed data (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
@@ -73,7 +74,7 @@ describe("TemperatureController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01T00:00:00.000Z to 2021-01-01T01:40:00.000Z, which should return all 21 records from the seeding
-  it("/environment/temperature get all dates from seed data (GET)", () => {
+  test("/environment/temperature get all dates from seed data (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
@@ -104,14 +105,69 @@ describe("TemperatureController (e2e)", () => {
       ]);
   });
 
-  //Testing for a 404 error since there is no seeded data from 2020 to 2020.
-  it("/environment/temperature?startDate&endDate get dates not in seed data (GET)", () => {
+  //In this case, the seed data is from 2020-01-01 to 2020-01-10, which should return 0 records
+  test("/environment/temperature?startDate&endDate get dates not in seed data (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/temperature?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T01:40:00.000Z",
       )
       .expect(200)
       .expect([]);
+  });
+
+  // Testing using generalized methods from commonTests.ts
+  describe("/environment/temperature using generalized methods (GET, PATCH)", () => {
+    // Values to be used in the tests
+    // This leaves the possibility to make more tests with different values
+    let temperaturePath: string;
+    let temperatureMinValue: number;
+    let temperatureMaxValue: number;
+    let toleranceInMilliseconds: number; // 1 minute
+    let request: any;
+
+    // PATCH thresholds test
+    describe("/environment/temperature/thresholds (PATCH)", () => {
+      test("Update patched value, check thresholdsRequest for the new request", async () => {
+        temperaturePath = "/environment/temperature";
+        temperatureMinValue = 0.5;
+        temperatureMaxValue = 10;
+
+        // For date validation
+        toleranceInMilliseconds = 60000; // 1 minute
+
+        request = app.getHttpServer();
+
+        (commonTests as CommonTestsInterfaces).patchThresholds(
+          request,
+          temperaturePath,
+          temperatureMinValue,
+          temperatureMaxValue,
+          toleranceInMilliseconds,
+        );
+      });
+    });
+
+    // GET thresholds test
+    describe("/environment/temperature/thresholds (GET) method", () => {
+      test("GET Thresholds", async () => {
+        temperaturePath = "/environment/temperature";
+        temperatureMinValue = 0.5;
+        temperatureMaxValue = 10;
+
+        // For date validation
+        toleranceInMilliseconds = 60000; // 1 minute
+
+        request = app.getHttpServer();
+
+        (commonTests as CommonTestsInterfaces).getThresholds(
+          request,
+          temperaturePath,
+          temperatureMinValue,
+          temperatureMaxValue,
+          toleranceInMilliseconds,
+        );
+      });
+    });
   });
 
   afterAll(async () => {

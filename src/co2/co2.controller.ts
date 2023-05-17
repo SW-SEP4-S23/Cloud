@@ -1,7 +1,7 @@
-import { Controller, Get, Query, Patch, Body } from "@nestjs/common";
+import { Controller, Get, Query, Post, Body } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { Co2Service } from "./co2.service";
-import { NewValsDTO } from "../shared/newValsDTO";
+import { NewThresholdDTO } from "../shared/newThresholdDTO";
 
 @Controller("environment/co2")
 export class Co2Controller {
@@ -12,13 +12,14 @@ export class Co2Controller {
     return this.co2Service.findAllInterval(interval);
   }
 
+  //Skal opdateres med PENDING
   @Get("/thresholds")
   getDataPointThresholds() {
     return this.co2Service.getDataPointThresholds();
   }
 
-  @Patch("/thresholds")
-  updateThresholds(@Body() newVals: NewValsDTO) {
-    return this.co2Service.updateThresholds(newVals);
+  @Post("/thresholds")
+  postThresholdRequest(@Body() newThreshold: NewThresholdDTO) {
+    return this.co2Service.postThresholdRequest(newThreshold);
   }
 }
