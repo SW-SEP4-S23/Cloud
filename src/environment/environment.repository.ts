@@ -51,6 +51,29 @@ export class EnvironmentRepository {
   }
 
   findAllThresholds() {
-    return this.prismaService.thresholds.findMany();
+    return Promise.all([this.getUpToDateThresholds, this.getPendingThresholds])
+      .then(([data1, data2]) => {
+        const combinedData = [data1, data2];
+
+        return combinedData;
+      })
+      .catch((error) => {
+        // Handle any errors that occurred during retrieval
+        console.error(error);
+      });
+  }
+
+  getUpToDateThresholds() {
+    return new Promise((resolve) => {
+      const data1 = this.prismaService.thresholds.findMany({});
+      resolve(data1);
+    });
+  }
+
+  getPendingThresholds() {
+    return new Promise((resolve) => {
+      const data2 = this.prismaService.thresholds.findMany({});
+      resolve(data2);
+    });
   }
 }
