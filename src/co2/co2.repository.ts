@@ -1,3 +1,4 @@
+import { getDatapointThresholds } from "./../utils/thresholdQueryUtils";
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
@@ -33,70 +34,8 @@ export class Co2Repository {
     });
   }
 
-  async getDatapointThresholds() {
-    return await Promise.all([
-      this.getUpToDateThresholds(),
-      this.getPendingThresholds(),
-    ])
-      .then(([upToDateThreshold, pendingThreshold]) => {
-        const combinedData = [upToDateThreshold, pendingThreshold];
-
-        return combinedData;
-      })
-      .catch((error) => {
-        // Handle any errors that occurred during retrieval
-        console.error(error);
-      });
-  }
-
-  getUpToDateThresholds() {
-    return new Promise((resolve) => {
-      this.prisma.thresholds
-        .findUnique({
-          where: {
-            dataType: DataType.CO2,
-          },
-        })
-        .then((upToDateThreshold) => {
-          resolve(upToDateThreshold);
-        });
-    });
-  }
-
-  getPendingThresholds() {
-    return new Promise((resolve, reject) => {
-      this.prisma.thresholdRequests
-        .findFirst({
-          where: {
-            dataType: DataType.CO2,
-          },
-          orderBy: { requestDate: "desc" },
-          select: {
-            dataType: true,
-            maxValueReq: true,
-            minValueReq: true,
-            ackId: true,
-            ack: {
-              select: {
-                acked: true,
-              },
-            },
-          },
-        })
-        .then((pendingThreshold) => {
-          // Check if pendingThreshold is valid and if ack is true or false
-          if (pendingThreshold.ackId == null || !pendingThreshold.ack.acked) {
-            //Omitting ackId and ack from result
-            const { ackId, ack, ...result } = pendingThreshold;
-            resolve(result);
-          } else {
-            resolve(null); // No pending thresholds found
-          }
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+  getDatapointThresholds() {
+    return getDatapointThresholds(DataType.CO2, this.prisma);
   }
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
