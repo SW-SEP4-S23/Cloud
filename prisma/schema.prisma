@@ -19,8 +19,8 @@ model Datapoint {
 
 model Thresholds {
   dataType          DataType            @id
-  minVal            Float?
-  maxVal            Float?
+  minValue          Float?
+  maxValue          Float?
   thresholdRequests ThresholdRequests[]
 }
 
@@ -29,8 +29,8 @@ model ThresholdRequests {
   //I think this is neccesary?
   thresholds  Thresholds @relation(fields: [dataType], references: [dataType])
   dataType    DataType
-  minValReq   Float
-  maxValReq   Float
+  minValueReq Float
+  maxValueReq Float
   requestDate DateTime
   ack         Ack?       @relation(fields: [ackId], references: [id])
   ackId       Int?
