@@ -6,8 +6,8 @@ export const getDatapointThresholds = (
   prisma: PrismaService,
 ) => {
   return Promise.all([
-    getUpToDateThresholds(dataType, prisma),
-    getPendingThresholds(dataType, prisma),
+    getUpToDateThreshold(dataType, prisma),
+    getPendingThreshold(dataType, prisma),
   ])
     .then(([upToDateThreshold, pendingThreshold]) => {
       const combinedData = [upToDateThreshold, pendingThreshold];
@@ -20,8 +20,8 @@ export const getDatapointThresholds = (
     });
 };
 
-const getUpToDateThresholds = (dataType: DataType, prisma: PrismaService) => {
-  return new Promise((resolve) => {
+const getUpToDateThreshold = (dataType: DataType, prisma: PrismaService) => {
+  return new Promise((resolve, reject) => {
     prisma.thresholds
       .findUnique({
         where: {
@@ -30,11 +30,17 @@ const getUpToDateThresholds = (dataType: DataType, prisma: PrismaService) => {
       })
       .then((upToDateThreshold) => {
         resolve(upToDateThreshold);
+      })
+      .catch((error) => {
+        reject(error);
       });
   });
 };
 
-const getPendingThresholds = (dataType: DataType, prisma: PrismaService) => {
+export const getPendingThreshold = (
+  dataType: DataType,
+  prisma: PrismaService,
+) => {
   return new Promise((resolve, reject) => {
     prisma.thresholdRequests
       .findFirst({

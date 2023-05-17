@@ -3,7 +3,7 @@ import { IntervalQuery } from "../shared/interval-query";
 import { PrismaService } from "nestjs-prisma";
 import { DataType } from "@prisma/client";
 import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
-
+import { getPendingThreshold } from "../utils/thresholdQueryUtils";
 @Injectable()
 export class EnvironmentRepository {
   constructor(private readonly prismaService: PrismaService) {}
@@ -51,9 +51,12 @@ export class EnvironmentRepository {
   }
 
   findAllThresholds() {
-    return Promise.all([this.getUpToDateThresholds, this.getPendingThresholds])
-      .then(([data1, data2]) => {
-        const combinedData = [data1, data2];
+    return Promise.all([
+      this.getUpToDateThresholds(),
+      this.getPendingThresholds(),
+    ])
+      .then(([upToDateThresholds, pendingThreshold]) => {
+        const combinedData = [upToDateThresholds, pendingThreshold];
 
         return combinedData;
       })
@@ -64,16 +67,26 @@ export class EnvironmentRepository {
   }
 
   getUpToDateThresholds() {
-    return new Promise((resolve) => {
-      const data1 = this.prismaService.thresholds.findMany({});
-      resolve(data1);
+    return new Promise((resolve, reject) => {
+      this.prismaService.thresholds
+        .findMany({})
+        .then((upToDateThreshold) => {
+          resolve(upToDateThreshold);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
   }
 
   getPendingThresholds() {
-    return new Promise((resolve) => {
-      const data2 = this.prismaService.thresholds.findMany({});
-      resolve(data2);
+    return Promise.all([
+      getPendingThreshold(DataType.CO2, this.prismaService),
+      getPendingThreshold(DataType.HUMIDITY, this.prismaService),
+      getPendingThreshold(DataType.TEMPERATURE, this.prismaService),
+    ]).then(([co2, humidity, temperature]) => {
+      const pendingThresholds = [co2, humidity, temperature];
+      return pendingThresholds;
     });
   }
 }
