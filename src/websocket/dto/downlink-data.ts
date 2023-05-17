@@ -13,7 +13,7 @@ export interface ThresholdValues {
   maxValue: number;
 }
 
-export interface DownlinkThresholds {
+export interface Thresholds {
   [DataType.CO2]: ThresholdValues;
   [DataType.HUMIDITY]: ThresholdValues;
   [DataType.TEMPERATURE]: ThresholdValues;
@@ -21,5 +21,5 @@ export interface DownlinkThresholds {
 
 export interface DownlinkPayload {
   ackId: number;
-  thresholds: DownlinkThresholds;
+  thresholds: Thresholds;
 }

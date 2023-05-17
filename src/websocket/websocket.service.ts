@@ -6,7 +6,7 @@ import { plainToClass } from "class-transformer";
 import { UplinkData } from "./dto/uplink-data";
 import { validateSync } from "class-validator";
 import { IOT_EUI, MAX_ACK_ID } from "../constants";
-import { DownlinkData, DownlinkThresholds } from "./dto/downlink-data";
+import { DownlinkData, Thresholds } from "./dto/downlink-data";
 import { WebSocketRepository } from "./websocket.repository";
 
 @Injectable()
@@ -93,7 +93,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
         maxValue: curr.maxValueReq,
       };
       return acc;
-    }, {} as DownlinkThresholds);
+    }, {} as Thresholds);
 
     const payload = downlinkDataToHexPayload({
       ackId,
@@ -119,5 +119,8 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
     const realAckId = ackId + MAX_ACK_ID * (ackTableSize % MAX_ACK_ID);
 
     await this.wsRepository.confirmAck(realAckId, uplinkTimestamp);
+    const newThresholds =
+      await this.wsRepository.getLatestAckedThresholdRequests();
+    await this.wsRepository.updateThresholds(newThresholds);
   }
 }

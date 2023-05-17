@@ -1,6 +1,7 @@
 import { PrismaService } from "nestjs-prisma";
 import { Injectable } from "@nestjs/common";
 import { DataType } from "@prisma/client";
+import { ThresholdValues } from "./dto/downlink-data";
 
 @Injectable()
 export class WebSocketRepository {
@@ -77,6 +78,47 @@ export class WebSocketRepository {
         dateRecieved: timestamp,
       },
     });
+  }
+
+  async getLatestAckedThresholdRequests() {
+    return this.prisma.thresholdRequests.findMany({
+      where: {
+        ack: {
+          acked: true,
+        },
+      },
+      select: {
+        dataType: true,
+        minValueReq: true,
+        maxValueReq: true,
+      },
+      orderBy: {
+        requestDate: "desc",
+      },
+      distinct: ["dataType"],
+    });
+  }
+
+  async updateThresholds(
+    thresholdsRequests: {
+      dataType: DataType;
+      minValueReq: number;
+      maxValueReq: number;
+    }[],
+  ) {
+    return Promise.all(
+      thresholdsRequests.map((t) =>
+        this.prisma.thresholds.update({
+          where: {
+            dataType: t.dataType,
+          },
+          data: {
+            minValue: t.minValueReq,
+            maxValue: t.maxValueReq,
+          },
+        }),
+      ),
+    );
   }
 
   async getAcksCount() {
