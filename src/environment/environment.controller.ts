@@ -1,7 +1,7 @@
 import { EnvironmentService } from "./environment.service";
 import { IntervalQuery } from "../shared/interval-query";
-import { Body, Controller, Get, Patch, Query } from "@nestjs/common";
-import { allVariablesNewValsDTO } from "../shared/allVariablesNewValsDTO";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
 
 @Controller("environment")
 export class EnvironmentController {
@@ -12,9 +12,9 @@ export class EnvironmentController {
     return this.environmentService.findAllInterval(interval);
   }
 
-  @Patch("/thresholds")
-  putAllNewValues(@Body() body: allVariablesNewValsDTO) {
-    return this.environmentService.setNewValues(body);
+  @Post("/thresholds")
+  postThresholdsRequests(@Body() body: NewThresholdWrapperDTO) {
+    return this.environmentService.postThresholdsRequests(body);
   }
 
   @Get("/treshholds")

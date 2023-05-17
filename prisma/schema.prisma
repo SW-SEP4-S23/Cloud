@@ -18,12 +18,32 @@ model Datapoint {
   @@id([timestamp, type])
 }
 
-model DataPointThresholds {
-  dataType    DataType  @id
-  minVal      Float
-  maxVal      Float
-  dateChanged DateTime?
-  requestDate DateTime?
+model Thresholds {
+  dataType          DataType            @id
+  minValue          Float?
+  maxValue          Float?
+  thresholdRequests ThresholdRequests[]
+}
+
+model ThresholdRequests {
+  id          Int        @default(autoincrement())
+  //I think this is neccesary?
+  thresholds  Thresholds @relation(fields: [dataType], references: [dataType])
+  dataType    DataType
+  minValueReq Float
+  maxValueReq Float
+  requestDate DateTime
+  ack         Ack?       @relation(fields: [ackId], references: [id])
+  ackId       Int?
+
+  @@id([id, dataType])
+}
+
+model Ack {
+  id               Int                 @id @default(autoincrement())
+  dateRecieved     DateTime
+  acked            Boolean
+  thresholdRequest ThresholdRequests[]
 }
 
 enum DataType {
