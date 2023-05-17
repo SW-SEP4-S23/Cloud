@@ -1,10 +1,9 @@
 import { createWebSocket } from "./create-websocket";
-import { DatapointRepository } from "./datapoint.repository";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import {
-  DownlinkPayload,
-  downlinkPayloadToHex,
-  translateHex,
+  downlinkDataToHexPayload,
+  hexToNumberArray,
+  uplinkHexPayloadToData,
 } from "./hex-utils";
 import { WebSocket } from "ws";
 import { plainToClass } from "class-transformer";
@@ -12,12 +11,13 @@ import { UplinkData } from "./dto/uplink-data";
 import { validateSync } from "class-validator";
 import { IOT_EUI } from "../constants";
 import { DownlinkData } from "./dto/downlink-data";
+import { WebSocketRepository } from "./websocket.repository";
 
 @Injectable()
 export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   #socket: WebSocket;
 
-  constructor(private datapointRepository: DatapointRepository) {}
+  constructor(private wsRepository: WebSocketRepository) {}
 
   async onModuleDestroy() {
     await this.#socket.close();
@@ -46,61 +46,65 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
           return;
         }
 
-        await Promise.all([
-          this.updateIotThresholds(),
-          this.onUplinkData(uplinkData),
-        ]);
+        this.onUplink(uplinkData);
       }
     });
   }
 
-  async onUplinkData(uplinkData: UplinkData) {
+  async onUplink(uplinkData: UplinkData) {
     if (!uplinkData.data) {
       console.error("No data in uplink data");
       return;
     }
 
-    const [temperature, co2, humidity] = translateHex(uplinkData.data);
+    const { id, temperature, co2, humidity } = uplinkHexPayloadToData(
+      uplinkData.data,
+    );
     const timestamp = new Date(uplinkData.ts);
 
-    return this.datapointRepository.createDatapoint({
-      timestamp,
-      temperature,
-      co2,
-      humidity,
-    });
+    return Promise.all([
+      this.checkDownlinkAck(id),
+      this.sendDownlink(),
+      this.wsRepository.createDatapoint({
+        timestamp,
+        temperature,
+        co2,
+        humidity,
+      }),
+    ]);
   }
 
-  async updateIotThresholds() {
-    // placeholder input
-    const newThresholds: DownlinkPayload = {
-      id: "01",
-      temperature: {
-        minValue: 10,
-        maxValue: 20,
-      },
-      co2: {
-        minValue: 10,
-        maxValue: 20,
-      },
-      humidity: {
-        minValue: 10,
-        maxValue: 20,
-      },
-    };
+  async sendDownlink() {
+    // get threshold update requests
+    //
+    // if there is any requests, process them
+    //
+    // transform the ack-id using modulo 256, so it will fit in two bytes
+    //
+    // create payload
+    // const payload = downlinkDataToHexPayload({
+    //   id: this.#lastAckId,
+    //   thresholds,
+    // });
+    //
+    // create full downlink data object
+    // const data: DownlinkData = {
+    //   cmd: "tx",
+    //   EUI: IOT_EUI,
+    //   port: 1,
+    //   confirmed: false,
+    //   data: payload,
+    // };
+    //
+    // send the downlink
+    // this.#socket.send(JSON.stringify(data));
+  }
 
-    const payload = downlinkPayloadToHex(newThresholds);
-
-    const data: DownlinkData = {
-      cmd: "tx",
-      EUI: IOT_EUI,
-      port: 1,
-      confirmed: false,
-      data: payload,
-    };
-
-    this.#socket.send(JSON.stringify(data));
-
-    console.log("sent");
+  async checkDownlinkAck(ackId: number) {
+    // get the size of the ack table
+    //
+    // get the real ackId by reversing the modulo 256 operation
+    //
+    // set ack to true for the ackId
   }
 }

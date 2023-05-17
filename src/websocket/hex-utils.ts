@@ -1,55 +1,48 @@
-export function translateHex(transformedData: string): number[] {
-  // Get the first 6 hex digits (3 bytes) from the input string
-  const hexSubstring = transformedData.substring(0, 6);
+import { DataType } from "@prisma/client";
 
-  // Convert the hex substring to a number
-  const hexValue = parseInt(hexSubstring, 16);
-
-  // Create an array to store the result values
-  const result = new Array<number>(3);
-
-  // Extract the bytes from the value
-  for (let i = 0; i < 3; i++) {
-    const byte = (hexValue >> (8 * (2 - i))) & 0xff;
-    result[i] = byte;
-  }
-
-  // Return the result array
-  return result;
+export function hexToNumberArray(hex: string, interval = 2): number[] {
+  const hexArray = hex.match(new RegExp(`.{1,${interval}}`, "g"));
+  return hexArray.map((hex) => parseInt(hex, 16));
 }
 
-// Temporary interface
+type ThresholdValues = {
+  minVal: number;
+  maxVal: number;
+};
+
 export interface DownlinkPayload {
-  id: string;
-  temperature: {
-    minValue: number;
-    maxValue: number;
+  id: number;
+  thresholds: {
+    [DataType.TEMPERATURE]: ThresholdValues;
+    [DataType.CO2]: ThresholdValues;
+    [DataType.HUMIDITY]: ThresholdValues;
   };
-  co2: {
-    minValue: number;
-    maxValue: number;
-  };
-  humidity: {
-    minValue: number;
-    maxValue: number;
-  };
+}
+
+export function uplinkHexPayloadToData(hexPayload: string) {
+  const numbers = hexToNumberArray(hexPayload);
+  const [temperature, co2, humidity, id] = numbers;
+  return { id, temperature, co2, humidity };
 }
 
 // convert to this format: "TTTTCCCCHHHHUU"
-export function downlinkPayloadToHex(downlinkData: DownlinkPayload) {
-  const { id, temperature, co2, humidity } = downlinkData;
+export function downlinkDataToHexPayload(downlinkData: DownlinkPayload) {
+  const {
+    id,
+    thresholds: { TEMPERATURE, CO2, HUMIDITY },
+  } = downlinkData;
 
   return (
-    numberToHex(temperature.minValue) +
-    numberToHex(temperature.maxValue) +
-    numberToHex(co2.minValue) +
-    numberToHex(co2.maxValue) +
-    numberToHex(humidity.minValue) +
-    numberToHex(humidity.maxValue) +
-    id
+    numberToHex(TEMPERATURE.minVal) +
+    numberToHex(TEMPERATURE.maxVal) +
+    numberToHex(CO2.minVal) +
+    numberToHex(CO2.maxVal) +
+    numberToHex(HUMIDITY.minVal) +
+    numberToHex(HUMIDITY.maxVal) +
+    numberToHex(id, 2)
   );
 }
 
-function numberToHex(value: number) {
-  return value.toString(16).padStart(4, "0");
+function numberToHex(value: number, padding = 4) {
+  return value.toString(16).padStart(padding, "0");
 }

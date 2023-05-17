@@ -1,9 +1,8 @@
 import { Module } from "@nestjs/common";
-import { PrismaService } from "../prisma.service";
-import { DatapointRepository } from "./datapoint.repository";
 import { WebSocketService } from "./websocket.service";
+import { WebSocketRepository } from "./websocket.repository";
 
 @Module({
-  providers: [PrismaService, DatapointRepository, WebSocketService],
+  providers: [WebSocketRepository, WebSocketService],
 })
 export class WebSocketModule {}
