@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
+import { CommonTestsInterfaces, commonTests } from "./commonTests";
 
 describe("TemperatureController (e2e)", () => {
   let app: INestApplication;
@@ -18,7 +19,7 @@ describe("TemperatureController (e2e)", () => {
   //To see the seeded data, find the file in ../prisma/seed.ts
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
-  it("/environment/temperature?startDate&endDate get specific dates from seed data (GET)", () => {
+  test("/environment/temperature?startDate&endDate get specific dates from seed data (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
@@ -32,7 +33,7 @@ describe("TemperatureController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01T00:00:00.000Z to 2021-01-01T01:40:00.000Z, which should return all 21 records from the seeding
-  it("/environment/temperature get all dates from seed data (GET)", () => {
+  test("/environment/temperature get all dates from seed data (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
@@ -63,8 +64,8 @@ describe("TemperatureController (e2e)", () => {
       ]);
   });
 
-  //Testing for a 404 error since there is no seeded data from 2020 to 2020.
-  it("/environment/temperature?startDate&endDate get dates not in seed data (GET)", () => {
+  //In this case, the seed data is from 2020-01-01 to 2020-01-10, which should return 0 records
+  test("/environment/temperature?startDate&endDate get dates not in seed data (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/temperature?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T01:40:00.000Z",
@@ -73,59 +74,58 @@ describe("TemperatureController (e2e)", () => {
       .expect([]);
   });
 
-  //patch thresholds test
-  describe("/environment/temperature/thresholds (PATCH)", () => {
-    const toleranceInMilliseconds = 60000; // 1 minute
+  // Testing using generalized methods from commonTests.ts
+  describe("/environment/temperature using generalized methods (GET, PATCH)", () => {
+    // Values to be used in the tests
+    // This leaves the possibility to make more tests with different values
+    let temperaturePath: string;
+    let temperatureMinValue: number;
+    let temperatureMaxValue: number;
+    let toleranceInMilliseconds: number; // 1 minute
+    let request: any;
 
-    test("updates thresholds and validates requestDate", async () => {
-      const date = new Date();
+    // PATCH thresholds test
+    describe("/environment/temperature/thresholds (PATCH)", () => {
+      test("Update patched value, check thresholdsRequest for the new request", async () => {
+        temperaturePath = "/environment/temperature";
+        temperatureMinValue = 0.5;
+        temperatureMaxValue = 10;
 
-      const response = await request(app.getHttpServer())
-        .patch("/environment/temperature/thresholds")
-        .send({
-          minVal: 20,
-          maxVal: 60,
-        });
+        // For date validation
+        toleranceInMilliseconds = 60000; // 1 minute
 
-      expect(response.body.minVal).toBe(20);
-      expect(response.body.maxVal).toBe(60);
-      expect(response.body.dateChanged).toBeNull();
+        request = app.getHttpServer();
 
-      const requestDate = new Date(response.body.requestDate);
-      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
-        date.getTime() - toleranceInMilliseconds,
-      );
-      expect(requestDate.getTime()).toBeLessThanOrEqual(
-        date.getTime() + toleranceInMilliseconds,
-      );
+        (commonTests as CommonTestsInterfaces).patchThresholds(
+          request,
+          temperaturePath,
+          temperatureMinValue,
+          temperatureMaxValue,
+          toleranceInMilliseconds,
+        );
+      });
     });
-  });
 
-  //get thresholds test
-  describe("/environment/temperature/thresholds (GET)", () => {
-    const toleranceInMilliseconds = 60000; // 1 minute
+    // GET thresholds test
+    describe("/environment/temperature/thresholds (GET) method", () => {
+      test("GET Thresholds", async () => {
+        temperaturePath = "/environment/temperature";
+        temperatureMinValue = 0.5;
+        temperatureMaxValue = 10;
 
-    test("updates thresholds and validates requestDate", async () => {
-      const date = new Date(Date.now());
+        // For date validation
+        toleranceInMilliseconds = 60000; // 1 minute
 
-      const response = await request(app.getHttpServer())
-        .get("/environment/temperature/thresholds")
-        .send({
-          minVal: 20,
-          maxVal: 60,
-        });
+        request = app.getHttpServer();
 
-      expect(response.body.minVal).toBe(20);
-      expect(response.body.maxVal).toBe(60);
-      expect(response.body.dateChanged).toBeNull();
-
-      const requestDate = new Date(response.body.requestDate);
-      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
-        date.getTime() - toleranceInMilliseconds,
-      );
-      expect(requestDate.getTime()).toBeLessThanOrEqual(
-        date.getTime() + toleranceInMilliseconds,
-      );
+        (commonTests as CommonTestsInterfaces).getThresholds(
+          request,
+          temperaturePath,
+          temperatureMinValue,
+          temperatureMaxValue,
+          toleranceInMilliseconds,
+        );
+      });
     });
   });
 

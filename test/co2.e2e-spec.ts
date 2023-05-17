@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
+import { CommonTestsInterfaces, commonTests } from "./commonTests";
 
 describe("Co2Controller (e2e)", () => {
   let app: INestApplication;
@@ -18,7 +19,7 @@ describe("Co2Controller (e2e)", () => {
   //To see the seeded data, find the file in ../prisma/seed.ts
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
-  it("/environment/co2?startDate&endDate (GET)", () => {
+  test("/environment/co2?startDate&endDate (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/co2?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
@@ -32,7 +33,7 @@ describe("Co2Controller (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return all 21 records
-  it("/environment/co2?startDate&endDate (GET)", () => {
+  test("/environment/co2?startDate&endDate (GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/co2?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
@@ -64,7 +65,7 @@ describe("Co2Controller (e2e)", () => {
   });
 
   //In this case, the seed data is from 2020-01-01 to 2020-01-10, which should return 0 records
-  it("/environment/co2?startDate&endDate get dates not in seed data(GET)", () => {
+  test("/environment/co2?startDate&endDate get dates not in seed data(GET)", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/co2?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T00:10:00.000Z",
@@ -73,59 +74,58 @@ describe("Co2Controller (e2e)", () => {
       .expect([]);
   });
 
-  //patch thresholds test
-  describe("/environment/co2/thresholds (PATCH)", () => {
-    const toleranceInMilliseconds = 60000; // 1 minute
+  //Testing using generalized methods from commonTests.ts
+  describe("/environment/co2 using generalized methods (GET,PATCH)", () => {
+    //Values to be used in the tests
+    //This leaves possibility to make more tests with different values
+    let co2Path: string;
+    let co2MinValue: number;
+    let co2MaxValue: number;
+    let toleranceInMilliseconds: number; // 1 minute
+    let request: any;
 
-    test("updates thresholds and validates requestDate", async () => {
-      const date = new Date();
+    //patch thresholds test
+    describe("/environment/co2/thresholds (PATCH)", () => {
+      test("Update patched value, check thresholdsRequest for the new request", async () => {
+        co2Path = "/environment/co2";
+        co2MinValue = 0.5;
+        co2MaxValue = 10;
 
-      const response = await request(app.getHttpServer())
-        .patch("/environment/co2/thresholds")
-        .send({
-          minVal: 0.5,
-          maxVal: 10,
-        });
+        //For date validation
+        toleranceInMilliseconds = 60000; // 1 minute
 
-      expect(response.body.minVal).toBe(0.5);
-      expect(response.body.maxVal).toBe(10);
-      expect(response.body.dateChanged).toBeNull();
+        request = app.getHttpServer();
 
-      const requestDate = new Date(response.body.requestDate);
-      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
-        date.getTime() - toleranceInMilliseconds,
-      );
-      expect(requestDate.getTime()).toBeLessThanOrEqual(
-        date.getTime() + toleranceInMilliseconds,
-      );
+        (commonTests as CommonTestsInterfaces).patchThresholds(
+          request,
+          co2Path,
+          co2MinValue,
+          co2MaxValue,
+          toleranceInMilliseconds,
+        );
+      });
     });
-  });
 
-  //get thresholds test
-  describe("/environment/co2/thresholds (GET)", () => {
-    const toleranceInMilliseconds = 60000; // 1 minute
+    //get thresholds test
+    describe("/environment/co2/thresholds (GET) method", () => {
+      test("GET Thresholds", async () => {
+        co2Path = "/environment/co2";
+        co2MinValue = 0.5;
+        co2MaxValue = 10;
 
-    test("updates thresholds and validates requestDate", async () => {
-      const date = new Date();
+        //For date validation
+        toleranceInMilliseconds = 60000; // 1 minute
 
-      const response = await request(app.getHttpServer())
-        .get("/environment/co2/thresholds")
-        .send({
-          minVal: 0.5,
-          maxVal: 10,
-        });
+        request = app.getHttpServer();
 
-      expect(response.body.minVal).toBe(0.5);
-      expect(response.body.maxVal).toBe(10);
-      expect(response.body.dateChanged).toBeNull();
-
-      const requestDate = new Date(response.body.requestDate);
-      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
-        date.getTime() - toleranceInMilliseconds,
-      );
-      expect(requestDate.getTime()).toBeLessThanOrEqual(
-        date.getTime() + toleranceInMilliseconds,
-      );
+        (commonTests as CommonTestsInterfaces).getThresholds(
+          request,
+          co2Path,
+          co2MinValue,
+          co2MaxValue,
+          toleranceInMilliseconds,
+        );
+      });
     });
   });
 
