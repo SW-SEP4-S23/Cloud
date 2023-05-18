@@ -17,15 +17,11 @@ export class Co2Repository {
   constructor(private readonly prisma: PrismaService) {}
 
   findAllInterval(interval: IntervalQuery) {
-    return findDataPointsByInterval(
-      this.prisma.datapoint,
-      interval,
-      DataType.CO2,
-    );
+    return findDataPointsByInterval(this.prisma, interval, DataType.CO2);
   }
 
   findLatest() {
-    return findLatestDataPoint(this.prisma.datapoint, DataType.CO2);
+    return findLatestDataPoint(this.prisma, DataType.CO2);
   }
 
   getDatapointThresholds() {

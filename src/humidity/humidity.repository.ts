@@ -17,15 +17,11 @@ export class HumidityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   findAllInterval(interval: IntervalQuery) {
-    return findDataPointsByInterval(
-      this.prisma.datapoint,
-      interval,
-      DataType.HUMIDITY,
-    );
+    return findDataPointsByInterval(this.prisma, interval, DataType.HUMIDITY);
   }
 
   findLatest() {
-    return findLatestDataPoint(this.prisma.datapoint, DataType.HUMIDITY);
+    return findLatestDataPoint(this.prisma, DataType.HUMIDITY);
   }
 
   getDatapointThresholds() {

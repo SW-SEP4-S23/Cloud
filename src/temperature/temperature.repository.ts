@@ -18,14 +18,14 @@ export class TemperatureRepository {
 
   findAllInterval(interval: IntervalQuery) {
     return findDataPointsByInterval(
-      this.prisma.datapoint,
+      this.prisma,
       interval,
       DataType.TEMPERATURE,
     );
   }
 
   findLatest() {
-    return findLatestDataPoint(this.prisma.datapoint, DataType.TEMPERATURE);
+    return findLatestDataPoint(this.prisma, DataType.TEMPERATURE);
   }
 
   getDatapointThresholds() {

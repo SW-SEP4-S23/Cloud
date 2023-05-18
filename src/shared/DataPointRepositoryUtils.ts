@@ -1,13 +1,14 @@
+import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "./interval-query";
 import { DataType } from "@prisma/client";
 
 //Environment should not use these functions, since they are build for specific data types -->
 export const findDataPointsByInterval = (
-  dataPoint: any,
+  prisma: PrismaService,
   IntervalQuery: IntervalQuery,
   dataType: DataType,
 ) => {
-  return dataPoint.findMany({
+  return prisma.datapoint.findMany({
     where: {
       type: dataType,
       timestamp: {
@@ -22,8 +23,11 @@ export const findDataPointsByInterval = (
   });
 };
 
-export const findLatestDataPoint = (dataPoint: any, dataType: DataType) => {
-  return dataPoint.findFirst({
+export const findLatestDataPoint = (
+  prisma: PrismaService,
+  dataType: DataType,
+) => {
+  return prisma.datapoint.findFirst({
     where: {
       type: dataType,
     },
