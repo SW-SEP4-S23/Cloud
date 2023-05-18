@@ -1,3 +1,7 @@
+import {
+  getDatapointThresholds,
+  postThresholdRequest,
+} from "./../utils/thresholdQueryUtils";
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
@@ -33,22 +37,11 @@ export class Co2Repository {
     });
   }
 
-  getDataPointThresholds() {
-    return this.prisma.thresholds.findUnique({
-      where: {
-        dataType: DataType.CO2,
-      },
-    });
+  getDatapointThresholds() {
+    return getDatapointThresholds(DataType.CO2, this.prisma);
   }
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
-    return this.prisma.thresholdRequests.create({
-      data: {
-        dataType: DataType.CO2,
-        requestDate: new Date(),
-        minValueReq: newThreshold.minValue,
-        maxValueReq: newThreshold.maxValue,
-      },
-    });
+    return postThresholdRequest(DataType.CO2, newThreshold, this.prisma);
   }
 }

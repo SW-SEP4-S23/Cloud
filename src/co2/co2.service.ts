@@ -16,7 +16,7 @@ export class Co2Service {
   }
 
   getDataPointThresholds() {
-    return this.co2Repository.getDataPointThresholds();
+    return this.co2Repository.getDatapointThresholds();
   }
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
