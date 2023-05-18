@@ -1,11 +1,16 @@
 import { createWebSocket } from "./create-websocket";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { downlinkDataToHexPayload, uplinkHexPayloadToData } from "./hex-utils";
+import {
+  downlinkDataToHexPayload,
+  originalIdFromPayloadId,
+  payloadIdFromOriginalId,
+  uplinkHexPayloadToData,
+} from "./payload-utils";
 import { WebSocket } from "ws";
 import { plainToClass } from "class-transformer";
 import { UplinkData } from "./dto/uplink-data";
 import { validateSync } from "class-validator";
-import { IOT_EUI, MAX_ACK_ID } from "../constants";
+import { IOT_EUI } from "../constants";
 import { DownlinkData, Thresholds } from "./dto/downlink-data";
 import { WebSocketRepository } from "./websocket.repository";
 
@@ -16,7 +21,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   constructor(private wsRepository: WebSocketRepository) {}
 
   async onModuleDestroy() {
-    await this.#socket.close();
+    this.#socket.close();
   }
 
   async onModuleInit() {
@@ -84,8 +89,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
       updateRequestArray,
     );
 
-    // transform the ack-id using modulo 256, so it will fit in two bytes
-    const ackId = ack.id % MAX_ACK_ID;
+    const ackId = payloadIdFromOriginalId(ack.id);
 
     const thresholds = updateRequestArray.reduce((acc, curr) => {
       acc[curr.dataType] = {
@@ -113,14 +117,11 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
 
   async confirmDownlinkAck(ackId: number, uplinkTimestamp: Date) {
     const ackTableSize = await this.wsRepository.getAcksCount();
+    const originalId = originalIdFromPayloadId(ackId, ackTableSize);
 
-    // get the real ackId by reversing the modulo 256 operation
-    // e.g.: i recieve the ackId 2, but the ackId is actually 770 (2 + 256 * 3)
-    const realAckId = ackId + MAX_ACK_ID * (ackTableSize % MAX_ACK_ID);
-
-    await this.wsRepository.confirmAck(realAckId, uplinkTimestamp);
+    await this.wsRepository.confirmAck(originalId, uplinkTimestamp);
     const newThresholds =
-      await this.wsRepository.getLatestAckedThresholdRequests();
+      await this.wsRepository.getNewThresholdsFromRequests();
     await this.wsRepository.updateThresholds(newThresholds);
   }
 }

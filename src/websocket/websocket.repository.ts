@@ -80,7 +80,7 @@ export class WebSocketRepository {
     });
   }
 
-  async getLatestAckedThresholdRequests() {
+  async getNewThresholdsFromRequests() {
     return this.prisma.thresholdRequests.findMany({
       where: {
         ack: {
