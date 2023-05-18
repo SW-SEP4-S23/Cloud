@@ -11,7 +11,6 @@ import { PrismaModule } from "nestjs-prisma";
   imports: [
     ConfigModule.forRoot(),
     PrismaModule.forRoot({ isGlobal: true }),
-    ExampleModule,
     TemperatureModule,
     HumidityModule,
     Co2Module,
