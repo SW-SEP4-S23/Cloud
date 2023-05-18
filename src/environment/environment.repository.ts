@@ -3,7 +3,8 @@ import { IntervalQuery } from "../shared/interval-query";
 import { PrismaService } from "nestjs-prisma";
 import { DataType } from "@prisma/client";
 import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
-
+import { getPendingThreshold } from "../utils/thresholdQueryUtils";
+import { newThresholdChecker } from "../shared/newThresholdDTO";
 @Injectable()
 export class EnvironmentRepository {
   constructor(private readonly prismaService: PrismaService) {}
@@ -40,7 +41,6 @@ export class EnvironmentRepository {
         requestDate: new Date(),
       },
     ];
-
     const filteredData = data.filter(
       (item) => item.maxValueReq !== null && item.maxValueReq !== null,
     );
@@ -51,6 +51,54 @@ export class EnvironmentRepository {
   }
 
   findAllThresholds() {
-    return this.prismaService.thresholds.findMany();
+    return Promise.all([
+      this.getUpToDateThresholds(),
+      this.getPendingThresholds(),
+    ])
+      .then(([upToDateThresholds, pendingThreshold]) => {
+        const combinedData = [
+          { upToDateThresholds: upToDateThresholds },
+          { pendingThresholds: pendingThreshold },
+        ];
+
+        return combinedData;
+      })
+      .catch((error) => {
+        // Handle any errors that occurred during retrieval
+        console.error(error);
+      });
+  }
+
+  getUpToDateThresholds() {
+    return new Promise((resolve, reject) => {
+      this.prismaService.thresholds
+        .findMany({})
+        .then((thresholds) => {
+          const namedThresholds = {};
+          thresholds.forEach((threshold) => {
+            const propertyName = threshold.dataType.toLowerCase();
+            namedThresholds[propertyName] = threshold;
+          });
+          resolve(namedThresholds);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
+  getPendingThresholds() {
+    return Promise.all([
+      getPendingThreshold(DataType.CO2, this.prismaService),
+      getPendingThreshold(DataType.HUMIDITY, this.prismaService),
+      getPendingThreshold(DataType.TEMPERATURE, this.prismaService),
+    ]).then(([co2, humidity, temperature]) => {
+      const pendingThresholds = [
+        { co2: co2 },
+        { humidity: humidity },
+        { temperature: temperature },
+      ];
+      return pendingThresholds;
+    });
   }
 }
