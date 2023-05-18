@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { CommonTestsInterfaces, commonTests } from "./commonTests";
+import { getThresholds, postThresholds } from "./commonTests";
 
 describe("HumidityController (e2e)", () => {
   let app: INestApplication;
@@ -137,7 +137,7 @@ describe("HumidityController (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).patchThresholds(
+        await postThresholds(
           request,
           humidityPath,
           humidityMinValue,
@@ -150,7 +150,7 @@ describe("HumidityController (e2e)", () => {
     //get thresholds test
     describe("/environment/humidity/thresholds (GET) method", () => {
       test("GET Thresholds", async () => {
-        humidityPath = "/environment/humidity";
+        humidityPath = "/environment/humidity/thresholds";
         humidityMinValue = 10;
         humidityMaxValue = 30;
 
@@ -159,7 +159,7 @@ describe("HumidityController (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).getThresholds(
+        await getThresholds(
           request,
           humidityPath,
           humidityMinValue,

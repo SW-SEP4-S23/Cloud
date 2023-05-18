@@ -1,65 +1,57 @@
-import { Post } from "@nestjs/common";
-import { max } from "class-validator";
 import * as Request from "supertest";
 
-export interface CommonTestsInterfaces {
-  getThresholds: (
-    request: any, //What is the type of this? I tried Request.SuperTest<Request.Test> but it didn't work :(
-    path: string,
-    minValue: number,
-    maxValue: number,
-    toleranceInMilliseconds: number,
-  ) => void;
+export const postThresholds = async (
+  httpServer: any,
+  path: string,
+  minValue: number,
+  maxValue: number,
+  toleranceInMilliseconds: number,
+) => {
+  const date = new Date();
 
-  patchThresholds: (
-    request: any,
-    path: string,
-    minValue: number,
-    maxValue: number,
-    toleranceInMilliseconds: number,
-  ) => void;
-}
+  const httpRequest = Request(httpServer);
 
-export const commonTests: CommonTestsInterfaces = {
-  getThresholds:
-    (request, path, minValue, maxValue, toleranceInMilliseconds) =>
-    async () => {
-      const date = new Date();
+  const response = await httpRequest
+    .post(path)
+    .send({
+      minValue,
+      maxValue,
+    })
+    .expect(201);
 
-      const response = await request.get(path);
+  expect(response.body.minValueReq).toBe(minValue);
+  expect(response.body.maxValueReq).toBe(maxValue);
 
-      expect(response.body.minVal).toBe(minValue);
-      expect(response.body.maxVal).toBe(maxValue);
-      expect(response.body.dateChanged).toBeNull();
+  const requestDate = new Date(response.body.requestDate);
+  expect(requestDate.getTime()).toBeGreaterThanOrEqual(
+    date.getTime() - toleranceInMilliseconds,
+  );
+  expect(requestDate.getTime()).toBeLessThanOrEqual(
+    date.getTime() + toleranceInMilliseconds,
+  );
+};
 
-      const requestDate = new Date(response.body.requestDate);
-      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
-        date.getTime() - toleranceInMilliseconds,
-      );
-      expect(requestDate.getTime()).toBeLessThanOrEqual(
-        date.getTime() + toleranceInMilliseconds,
-      );
-    },
+export const getThresholds = async (
+  httpServer: any,
+  path: string,
+  minValue: number,
+  maxValue: number,
+  toleranceInMilliseconds: number,
+) => {
+  const date = new Date();
 
-  patchThresholds:
-    (request, path, minValue, maxValue, toleranceInMilliseconds) =>
-    async () => {
-      const date = new Date();
+  const httpRequest = Request(httpServer);
 
-      const response = await request.Post(path).send({
-        minValue,
-        maxValue,
-      });
+  const response = await httpRequest.get(path);
 
-      expect(response.body.minValueReq).toBe(minValue);
-      expect(response.body.maxValueReq).toBe(maxValue);
+  expect(response.body.minValue).toBe(minValue);
+  expect(response.body.maxValue).toBe(maxValue);
 
-      const requestDate = new Date(response.body.requestDate);
-      expect(requestDate.getTime()).toBeGreaterThanOrEqual(
-        date.getTime() - toleranceInMilliseconds,
-      );
-      expect(requestDate.getTime()).toBeLessThanOrEqual(
-        date.getTime() + toleranceInMilliseconds,
-      );
-    },
+  const requestDate = new Date(response.body.requestDate);
+  expect(requestDate.getTime()).toBeGreaterThanOrEqual(
+    date.getTime() - toleranceInMilliseconds,
+  );
+  expect(requestDate.getTime()).toBeLessThanOrEqual(
+    date.getTime() + toleranceInMilliseconds,
+  );
 };

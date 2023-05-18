@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { CommonTestsInterfaces, commonTests } from "./commonTests";
+import { getThresholds, postThresholds } from "./commonTests";
 
 describe("Co2Controller (e2e)", () => {
   let app: INestApplication;
@@ -126,9 +126,9 @@ describe("Co2Controller (e2e)", () => {
     let request: any;
 
     //patch thresholds test
-    describe("/environment/co2/thresholds (PATCH)", () => {
-      test("Update patched value, check thresholdsRequest for the new request", async () => {
-        co2Path = "/environment/co2";
+    describe("/environment/co2/thresholds (POST)", () => {
+      test("Checking if POST succeeds, then checking if it is pending properly", async () => {
+        co2Path = "/environment/co2/thresholds";
         co2MinValue = 0.5;
         co2MaxValue = 10;
 
@@ -137,7 +137,7 @@ describe("Co2Controller (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).patchThresholds(
+        await postThresholds(
           request,
           co2Path,
           co2MinValue,
@@ -159,7 +159,7 @@ describe("Co2Controller (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).getThresholds(
+        await getThresholds(
           request,
           co2Path,
           co2MinValue,
