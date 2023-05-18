@@ -19,7 +19,16 @@ export class NewThresholdDTO {
 export const newThresholdChecker = (newThresholds: NewThresholdDTO) => {
   if (newThresholds.minValue > newThresholds.maxValue) {
     throw new HttpException(
-      "tempMin must be less than tempMax",
+      "minValue must be less than maxValue",
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+  if (
+    (newThresholds.minValue == null && newThresholds.maxValue !== null) ||
+    (newThresholds.minValue !== null && newThresholds.maxValue == null)
+  ) {
+    throw new HttpException(
+      "minValue and maxValue must either be fully null or not null at the same time",
       HttpStatus.BAD_REQUEST,
     );
   }

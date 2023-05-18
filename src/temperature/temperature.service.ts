@@ -17,7 +17,7 @@ export class TemperatureService {
   }
 
   getDataPointThresholds() {
-    return this.temperatureRepository.getDataPointThresholds();
+    return this.temperatureRepository.getDatapointThresholds();
   }
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
