@@ -8,7 +8,7 @@ export class EnvironmentController {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   @Get()
-  findAllInterval(@Query() interval: IntervalQuery) {
+  findAllInterval(@Query() interval?: IntervalQuery) {
     return this.environmentService.findAllInterval(interval);
   }
 
@@ -17,7 +17,7 @@ export class EnvironmentController {
     return this.environmentService.postThresholdsRequests(body);
   }
 
-  @Get("/treshholds")
+  @Get("/thresholds")
   findAllThresholds() {
     return this.environmentService.findAllThresholds();
   }

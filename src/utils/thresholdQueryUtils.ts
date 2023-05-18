@@ -11,10 +11,10 @@ export const getDatapointThresholds = (
     getPendingThreshold(dataType, prisma),
   ])
     .then(([upToDateThreshold, pendingThreshold]) => {
-      const combinedData = [
-        { upToDateThreshold: upToDateThreshold },
-        { pendingThreshold: pendingThreshold },
-      ];
+      const combinedData = {
+        upToDateThreshold: upToDateThreshold,
+        pendingThreshold: pendingThreshold,
+      };
 
       return combinedData;
     })

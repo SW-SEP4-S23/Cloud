@@ -18,7 +18,7 @@
 
 4. Sync your database: `npm run db:migrate`
 
- > **_NOTE_**: Bear in mind this also seeds the database with essential records now.
+> **_NOTE_**: Bear in mind this also seeds the database with essential records now.
 
 > **_NOTE_**: Like 3. authentication errors in db can also occur of the same reson try this: [Guide]
 (https://stackoverflow.com/a/39633428).
@@ -27,7 +27,7 @@
 
 6. The server should now be running at `localhost:3000`.
 
- > **_NOTE_**: If an error occurs on the API, please try `npm run db:push` - this will seed the DB if possible
+> **_NOTE_**: If an error occurs on the API, please try `npm run db:push` - this will seed the DB if possible
 
 ### Running tests
 
@@ -36,7 +36,7 @@
 $ npm run test
 
 # e2e tests
-# local testing e2e: remember to seed the database before running these tests (npm run db:seed)
+# local testing e2e: remember to seed the database before running these tests (npm run db:mock)
 $ npm run test:e2e
 
 # test coverage

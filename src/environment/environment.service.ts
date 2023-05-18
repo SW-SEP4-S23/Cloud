@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { IntervalQuery, intervalQueryChecker } from "../shared/interval-query";
+import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 import { EnvironmentRepository } from "./environment.repository";
 import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
 import { newThresholdChecker } from "../shared/newThresholdDTO";
@@ -9,7 +9,10 @@ export class EnvironmentService {
   constructor(private readonly environmentRepository: EnvironmentRepository) {}
 
   async findAllInterval(interval: IntervalQuery) {
-    intervalQueryChecker(interval);
+    if (!isDefined(interval))
+      return await this.environmentRepository.findLatest();
+
+    validate(interval);
 
     const data = await this.environmentRepository.findAllInterval(interval);
     const sortedData = {};

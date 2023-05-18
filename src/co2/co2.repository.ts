@@ -7,34 +7,21 @@ import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
 import { NewThresholdDTO } from "../shared/newThresholdDTO";
 import { DataType } from "@prisma/client";
+import {
+  findDataPointsByInterval,
+  findLatestDataPoint,
+} from "../shared/DataPointRepositoryUtils";
 
 @Injectable()
 export class Co2Repository {
   constructor(private readonly prisma: PrismaService) {}
 
   findAllInterval(interval: IntervalQuery) {
-    return this.prisma.datapoint.findMany({
-      where: {
-        type: DataType.CO2,
-        timestamp: {
-          gte: interval.startDate,
-          lte: interval.endDate,
-        },
-      },
-      select: {
-        timestamp: true,
-        value: true,
-      },
-    });
+    return findDataPointsByInterval(this.prisma, interval, DataType.CO2);
   }
 
-  findAll() {
-    return this.prisma.datapoint.findMany({
-      select: {
-        timestamp: true,
-        value: true,
-      },
-    });
+  findLatest() {
+    return findLatestDataPoint(this.prisma, DataType.CO2);
   }
 
   getDatapointThresholds() {

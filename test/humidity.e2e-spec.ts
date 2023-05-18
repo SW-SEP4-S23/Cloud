@@ -1,9 +1,15 @@
+import { DataType } from "@prisma/client";
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
+import {
+  getThresholds,
+  postAndCheckForPendingThresholds,
+  postThresholds,
+} from "./commonTests";
 
-describe("HumidityController (e2e)", () => {
+describe("Humidity Controller", () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -16,9 +22,50 @@ describe("HumidityController (e2e)", () => {
   });
 
   //To see the seeded data, find the file in ../prisma/seed.ts
+  //Slight chance of failure if websucked recives data at the same time as the test is running
+  describe("(GET) Datapoints", () => {
+    test("Only the latest entry", () => {
+      return request(app.getHttpServer())
+        .get("/environment/humidity")
+        .expect(200)
+        .expect({ timestamp: "2021-01-01T01:40:00.000Z", value: 2.5 });
+    });
+  });
+
+  describe("Exception Testing", () => {
+    test("Path should always take start and end dates, not just STARTDATE", () => {
+      return request(app.getHttpServer())
+        .get("/environment/humidity?startDate=2021-01-01T00:10:00.000Z")
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Both startDate and endDate must be provided together.",
+        });
+    });
+    test("Path should always take start and end dates, not just ENDDATE", () => {
+      return request(app.getHttpServer())
+        .get("/environment/humidity?endDate=2021-01-01T00:10:00.000Z")
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Both startDate and endDate must be provided together.",
+        });
+    });
+    test("Start date must be before end date", () => {
+      return request(app.getHttpServer())
+        .get(
+          "/environment/humidity?startDate=2021-02-01T00:10:00.000Z&endDate=2021-01-01T00:10:00.000Z",
+        )
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          message: "Start date cannot be after end date",
+        });
+    });
+  });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
-  it("/environment/humidity?startDate&endDate (GET)", () => {
+  test("Return 3 records from dates", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/humidity?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
@@ -32,7 +79,7 @@ describe("HumidityController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return all 21 records
-  it("/environment/humidity?startDate&endDate (GET)", () => {
+  test("Return 21 records from dates", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/humidity?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
@@ -64,13 +111,67 @@ describe("HumidityController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2020-01-01 to 2020-01-10, which should return 0 records
-  it("/environment/humidity?startDate&endDate get dates not in seed data(GET)", () => {
+  test("Finding empty list", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/humidity?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T00:10:00.000Z",
       )
       .expect(200)
       .expect([]);
+  });
+
+  //Testing using generalized methods from commonTests.ts
+  describe("(GET, POST) Thresholds", () => {
+    //Values to be used in the tests
+    //This leaves possibility to make more tests with different values
+    let humidityPath: string;
+    let humidityMinValue: number;
+    let humidityMaxValue: number;
+    let request: any;
+
+    describe("(POST) Thresholds", () => {
+      test("Checking if POST succeeds", async () => {
+        humidityPath = "/environment/humidity/thresholds";
+        humidityMinValue = 10;
+        humidityMaxValue = 30;
+
+        request = app.getHttpServer();
+
+        await postThresholds(
+          request,
+          humidityPath,
+          humidityMinValue,
+          humidityMaxValue,
+          DataType.HUMIDITY,
+        );
+      });
+    });
+
+    test("GET Thresholds", async () => {
+      humidityPath = "/environment/humidity/thresholds";
+      humidityMinValue = 10;
+      humidityMaxValue = 30;
+
+      request = app.getHttpServer();
+
+      await getThresholds(request, humidityPath, DataType.HUMIDITY);
+    });
+
+    test("POST then check for pending", async () => {
+      const humidityPath = "/environment/humidity/thresholds";
+      const humidityMinValue = 5;
+      const humidityMaxValue = 10;
+
+      const request = app.getHttpServer();
+
+      await postAndCheckForPendingThresholds(
+        request,
+        humidityPath,
+        DataType.HUMIDITY,
+        humidityMinValue,
+        humidityMaxValue,
+      );
+    });
   });
 
   afterAll(async () => {
