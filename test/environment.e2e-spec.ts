@@ -231,4 +231,8 @@ describe("Environment Controller", () => {
       });
     });
   });
+
+  afterAll(async () => {
+    await app.close();
+  });
 });
