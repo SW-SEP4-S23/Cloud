@@ -4,6 +4,10 @@ import { IntervalQuery } from "../shared/interval-query";
 import { NewThresholdDTO } from "../shared/newThresholdDTO";
 import { DataType } from "@prisma/client";
 import {
+  findDataPointsByInterval,
+  findLatestDataPoint,
+} from "../shared/DataPointRepositoryUtils";
+import {
   getDatapointThresholds,
   postThresholdRequest,
 } from "../utils/thresholdQueryUtils";
@@ -13,44 +17,11 @@ export class HumidityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   findAllInterval(interval: IntervalQuery) {
-    return this.prisma.datapoint.findMany({
-      where: {
-        type: DataType.HUMIDITY,
-        timestamp: {
-          gte: interval.startDate,
-          lte: interval.endDate,
-        },
-      },
-      select: {
-        timestamp: true,
-        value: true,
-      },
-    });
+    return findDataPointsByInterval(this.prisma, interval, DataType.HUMIDITY);
   }
 
   findLatest() {
-    return this.prisma.datapoint.findFirst({
-      where: {
-        type: DataType.HUMIDITY,
-      },
-      orderBy: {
-        timestamp: "desc",
-      },
-      take: 1,
-      select: {
-        timestamp: true,
-        value: true,
-      },
-    });
-  }
-
-  findAll() {
-    return this.prisma.datapoint.findMany({
-      select: {
-        timestamp: true,
-        value: true,
-      },
-    });
+    return findLatestDataPoint(this.prisma, DataType.HUMIDITY);
   }
 
   getDatapointThresholds() {
