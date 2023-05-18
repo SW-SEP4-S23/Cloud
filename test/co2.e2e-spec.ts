@@ -18,7 +18,7 @@ describe("Co2Controller (e2e)", () => {
   });
 
   //To see the seeded data, find the file in ../prisma/seed.ts
-  //Slight chance of failure if websucked recives data at the same time as the test is running
+  //Slight chance of failure if websocket receives data at the same time as the test is running
   describe("Co2Controller (e2e) NO query Test", () => {
     it("/environment/co2 (GET)", () => {
       return request(app.getHttpServer())
