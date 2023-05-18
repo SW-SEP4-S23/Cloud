@@ -17,7 +17,7 @@ describe("EnvironmentController (e2e)", () => {
   });
 
   //To see the seeded data, find the file in ../prisma/seed.ts
-  //Slight chance of failure if websucked recives data at the same time as the test is running
+  //Slight chance of failure if websocket receives data at the same time as the test is running
   describe("EnvironmentController (e2e) NO query Test", () => {
     it("/environment (GET)", () => {
       return request(app.getHttpServer())
@@ -40,6 +40,44 @@ describe("EnvironmentController (e2e)", () => {
             value: 60,
           },
         ]);
+    });
+  });
+
+  describe("EnvironmentController (e2e) Query", () => {
+    it("/environment?startDate&endDate (GET) -> Get 5 Elements from startDate = 2021-01-01T00:00:00.000Z and endDate 2021-01-01T00:20:00.000Z", async () => {
+      const startDate = "2021-01-01T00:00:00.000Z";
+      const endDate = "2021-01-01T00:20:00.000Z";
+      const response = await request(app.getHttpServer())
+        .get(`/environment?startDate=${startDate}&endDate=${endDate}`)
+        .expect(200);
+      expect(response.status).toBe(200);
+      expect(response.body.CO2.length).toBe(5);
+      expect(response.body.HUMIDITY.length).toBe(5);
+      expect(response.body.TEMPERATURE.length).toBe(5);
+
+      expect(response.body.CO2).toEqual([
+        { timestamp: "2021-01-01T00:00:00.000Z", value: 400 },
+        { timestamp: "2021-01-01T00:05:00.000Z", value: 500 },
+        { timestamp: "2021-01-01T00:10:00.000Z", value: 600 },
+        { timestamp: "2021-01-01T00:15:00.000Z", value: 700 },
+        { timestamp: "2021-01-01T00:20:00.000Z", value: 800 },
+      ]);
+
+      expect(response.body.HUMIDITY).toEqual([
+        { timestamp: "2021-01-01T00:00:00.000Z", value: 0.5 },
+        { timestamp: "2021-01-01T00:05:00.000Z", value: 0.6 },
+        { timestamp: "2021-01-01T00:10:00.000Z", value: 0.7 },
+        { timestamp: "2021-01-01T00:15:00.000Z", value: 0.8 },
+        { timestamp: "2021-01-01T00:20:00.000Z", value: 0.9 },
+      ]);
+
+      expect(response.body.TEMPERATURE).toEqual([
+        { timestamp: "2021-01-01T00:00:00.000Z", value: 20 },
+        { timestamp: "2021-01-01T00:05:00.000Z", value: 22 },
+        { timestamp: "2021-01-01T00:10:00.000Z", value: 24 },
+        { timestamp: "2021-01-01T00:15:00.000Z", value: 26 },
+        { timestamp: "2021-01-01T00:20:00.000Z", value: 28 },
+      ]);
     });
   });
 
