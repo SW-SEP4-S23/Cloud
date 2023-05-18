@@ -3,6 +3,7 @@ import { IntervalQuery } from "../shared/interval-query";
 import { PrismaService } from "nestjs-prisma";
 import { DataType } from "@prisma/client";
 import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
+import { findDataPointsByInterval } from "../shared/DataPointRepositoryUtils";
 
 @Injectable()
 export class EnvironmentRepository {
