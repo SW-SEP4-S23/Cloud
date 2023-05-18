@@ -88,13 +88,13 @@ export const postThresholdRequest = (
   prisma: PrismaService,
 ) => {
   if (newThreshold.minValue !== null && newThreshold.maxValue !== null) {
+    return prisma.thresholdRequests.create({
+      data: {
+        dataType: dataType,
+        requestDate: new Date(),
+        minValueReq: newThreshold.minValue,
+        maxValueReq: newThreshold.maxValue,
+      },
+    });
   }
-  return prisma.thresholdRequests.create({
-    data: {
-      dataType: dataType,
-      requestDate: new Date(),
-      minValueReq: newThreshold.minValue,
-      maxValueReq: newThreshold.maxValue,
-    },
-  });
 };

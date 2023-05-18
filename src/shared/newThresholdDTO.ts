@@ -1,18 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
 import { IsNumber } from "class-validator";
 import { HttpException, HttpStatus } from "@nestjs/common";
 
-//milo kan ikke lide navnet :()
 export class NewThresholdDTO {
   @IsNumber()
   @ApiProperty()
-  @Type(() => Number)
   minValue: number;
 
   @IsNumber()
   @ApiProperty()
-  @Type(() => Number)
   maxValue: number;
 }
 
