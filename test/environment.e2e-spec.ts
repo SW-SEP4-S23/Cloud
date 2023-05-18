@@ -2,6 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
+import { stringify } from "querystring";
+import { DataType } from "@prisma/client";
 // import { CommonTestsInterfaces, commonTests } from "./commonTests"; DEPRECATED
 
 describe("Environment Controller", () => {
@@ -107,6 +109,124 @@ describe("Environment Controller", () => {
           .expect({
             statusCode: 400,
             message: "Start date cannot be after end date",
+          });
+      });
+    });
+  });
+
+  //Testing using generelized tests from commonTests.ts
+  describe("(GET, POST) Thresholds", () => {
+    //Values to be used in the tests
+    //This leaves possiblity to make more tests with different values
+    let minMaxValuesObject: {
+      newTemperatureThreshold: {
+        minValue: number;
+        maxValue: number;
+      };
+      newHumidityThreshold: {
+        minValue: number;
+        maxValue: number;
+      };
+      newCo2Threshold: {
+        minValue: number;
+        maxValue: number;
+      };
+    };
+
+    describe("(POST) Thresholds", () => {
+      test("Checking if POST succeeds", () => {
+        minMaxValuesObject = {
+          newTemperatureThreshold: {
+            minValue: 10,
+            maxValue: 30,
+          },
+          newHumidityThreshold: {
+            minValue: 0.3,
+            maxValue: 0.7,
+          },
+          newCo2Threshold: {
+            minValue: 1000,
+            maxValue: 2000,
+          },
+        };
+
+        return request(app.getHttpServer())
+          .post("/environment/thresholds")
+          .send(minMaxValuesObject)
+          .expect(201)
+          .expect({
+            count: 3,
+          });
+      });
+
+      test("GET Thresholds,", () => {
+        return request(app.getHttpServer())
+          .get("/environment/thresholds")
+          .expect(200)
+          .expect((requestBody) => {
+            expect(requestBody.body.upToDateThresholds).toEqual({
+              CO2: {
+                dataType: DataType.CO2,
+                minValue: null,
+                maxValue: null,
+              },
+              TEMPERATURE: {
+                dataType: DataType.TEMPERATURE,
+                minValue: null,
+                maxValue: null,
+              },
+              HUMIDITY: {
+                dataType: DataType.HUMIDITY,
+                minValue: null,
+                maxValue: null,
+              },
+            });
+          });
+      });
+
+      test("POST Thresholds, then GET to check if they are pending", () => {
+        minMaxValuesObject = {
+          newTemperatureThreshold: {
+            minValue: 10,
+            maxValue: 30,
+          },
+          newHumidityThreshold: {
+            minValue: 0.3,
+            maxValue: 0.7,
+          },
+          newCo2Threshold: {
+            minValue: 1000,
+            maxValue: 2000,
+          },
+        };
+
+        return request(app.getHttpServer())
+          .post("/environment/thresholds")
+          .send(minMaxValuesObject)
+          .expect(201)
+          .then(() => {
+            return request(app.getHttpServer())
+              .get("/environment/thresholds")
+              .expect(200)
+              .expect((requestBody) => {
+                expect(requestBody.body.pendingThresholds).toEqual({
+                  co2: {
+                    dataType: DataType.CO2,
+                    minValueReq: 1000,
+                    maxValueReq: 2000,
+                  },
+                  temperature: {
+                    dataType: DataType.TEMPERATURE,
+                    minValueReq: 10,
+                    maxValueReq: 30,
+                  },
+                  humidity: {
+                    dataType: DataType.HUMIDITY,
+                    minValueReq: 0.3,
+                    maxValueReq: 0.7,
+                  },
+                });
+              });
           });
       });
     });
