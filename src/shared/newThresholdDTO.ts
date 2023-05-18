@@ -1,12 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber } from "class-validator";
+import { IsDefined, IsNumber } from "class-validator";
 import { HttpException, HttpStatus } from "@nestjs/common";
 
 export class NewThresholdDTO {
+  @IsDefined()
   @IsNumber()
   @ApiProperty()
   minValue: number;
 
+  @IsDefined()
   @IsNumber()
   @ApiProperty()
   maxValue: number;

@@ -9,7 +9,7 @@ describe("NewValsDTO", () => {
       providers: [NewThresholdDTO],
     }).compile();
 
-    provider = module.get<NewThresholdDTO>(NewThresholdDTO);
+    provider = module.get(NewThresholdDTO);
   });
 
   it("should be defined", () => {

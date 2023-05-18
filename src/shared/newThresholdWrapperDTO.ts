@@ -1,17 +1,23 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
 import { NewThresholdDTO } from "./newThresholdDTO";
+import { IsOptional } from "class-validator";
 
 export class NewThresholdWrapperDTO {
-  @ApiProperty()
-  @Type(() => NewThresholdDTO)
-  newTemperatureThreshold: NewThresholdDTO;
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+  })
+  newTemperatureThreshold?: NewThresholdDTO;
 
-  @ApiProperty()
-  @Type(() => NewThresholdDTO)
-  newCo2Threshold: NewThresholdDTO;
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+  })
+  newCo2Threshold?: NewThresholdDTO;
 
-  @ApiProperty()
-  @Type(() => NewThresholdDTO)
-  newHumidityThreshold: NewThresholdDTO;
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+  })
+  newHumidityThreshold?: NewThresholdDTO;
 }
