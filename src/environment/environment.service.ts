@@ -3,6 +3,7 @@ import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 import { EnvironmentRepository } from "./environment.repository";
 import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
 import { newThresholdChecker } from "../shared/newThresholdDTO";
+import { DataType } from "@prisma/client";
 
 @Injectable()
 export class EnvironmentService {
@@ -15,17 +16,19 @@ export class EnvironmentService {
     validate(interval);
 
     const data = await this.environmentRepository.findAllInterval(interval);
-    const sortedData = {};
-    //sorts the result from data base into an object with the type as key and the values as an array of objects with timestamp and value
-    data.forEach((d) => {
-      if (!sortedData[d.type]) {
-        sortedData[d.type] = [];
+
+    // Transforms the result from database into an object with the
+    // datatype as key and the values as an array of objects with timestamp and value
+    const sortedData = data.reduce((acc, curr) => {
+      if (!acc[curr.type]) {
+        acc[curr.type] = [];
       }
-      sortedData[d.type].push({
-        timestamp: d.timestamp,
-        value: d.value,
+      acc[curr.type].push({
+        timestamp: curr.timestamp,
+        value: curr.value,
       });
-    });
+      return acc;
+    }, {} as Record<DataType, { timestamp: Date; value: number }[]>);
 
     return sortedData;
   }
