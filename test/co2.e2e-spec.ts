@@ -3,7 +3,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { getThresholds, postThresholds } from "./commonTests";
+import {
+  getThresholds,
+  postAndCheckForPendingThresholds,
+  postThresholds,
+} from "./commonTests";
 
 describe("Co2Controller (e2e)", () => {
   let app: INestApplication;
@@ -123,7 +127,6 @@ describe("Co2Controller (e2e)", () => {
     let co2Path: string;
     let co2MinValue: number;
     let co2MaxValue: number;
-    let toleranceInMilliseconds: number; // 1 minute
     let request: any;
 
     //patch thresholds test
@@ -133,9 +136,6 @@ describe("Co2Controller (e2e)", () => {
         co2MinValue = 0.5;
         co2MaxValue = 10;
 
-        //For date validation
-        toleranceInMilliseconds = 60000; // 1 minute
-
         request = app.getHttpServer();
 
         await postThresholds(
@@ -143,7 +143,6 @@ describe("Co2Controller (e2e)", () => {
           co2Path,
           co2MinValue,
           co2MaxValue,
-          toleranceInMilliseconds,
           DataType.CO2,
         );
       });
@@ -152,16 +151,34 @@ describe("Co2Controller (e2e)", () => {
     //get thresholds test
     describe("/environment/co2/thresholds (GET) method", () => {
       test("GET Thresholds", async () => {
-        co2Path = "/environment/co2";
+        co2Path = "/environment/co2/thresholds";
         co2MinValue = 0.5;
         co2MaxValue = 10;
 
         //For date validation
-        toleranceInMilliseconds = 60000; // 1 minute
 
         request = app.getHttpServer();
 
         await getThresholds(request, co2Path, DataType.CO2);
+      });
+    });
+
+    //post and then check pending test
+    describe("/environment/co2 (POST) then check for pending (GET)", () => {
+      test("POST then check for pending", async () => {
+        co2Path = "/environment/co2/thresholds";
+        co2MinValue = 5;
+        co2MaxValue = 10;
+
+        request = app.getHttpServer();
+
+        await postAndCheckForPendingThresholds(
+          request,
+          co2Path,
+          DataType.CO2,
+          co2MinValue,
+          co2MaxValue,
+        );
       });
     });
   });

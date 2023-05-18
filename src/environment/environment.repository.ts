@@ -65,10 +65,10 @@ export class EnvironmentRepository {
       this.getPendingThresholds(),
     ])
       .then(([upToDateThresholds, pendingThreshold]) => {
-        const combinedData = [
-          { upToDateThresholds: upToDateThresholds },
-          { pendingThresholds: pendingThreshold },
-        ];
+        const combinedData = {
+          upToDateThresholds: upToDateThresholds,
+          pendingThresholds: pendingThreshold,
+        };
 
         return combinedData;
       })
@@ -83,9 +83,12 @@ export class EnvironmentRepository {
       this.prismaService.thresholds
         .findMany({})
         .then((thresholds) => {
-          const namedThresholds = {};
+          const namedThresholds = {} as Record<
+            DataType,
+            { dataType: DataType; maxValue: number; minValue: number }
+          >;
           thresholds.forEach((threshold) => {
-            const propertyName = threshold.dataType.toLowerCase();
+            const propertyName = threshold.dataType;
             namedThresholds[propertyName] = threshold;
           });
           resolve(namedThresholds);
@@ -102,11 +105,11 @@ export class EnvironmentRepository {
       getPendingThreshold(DataType.HUMIDITY, this.prismaService),
       getPendingThreshold(DataType.TEMPERATURE, this.prismaService),
     ]).then(([co2, humidity, temperature]) => {
-      const pendingThresholds = [
-        { co2: co2 },
-        { humidity: humidity },
-        { temperature: temperature },
-      ];
+      const pendingThresholds = {
+        co2: co2,
+        humidity: humidity,
+        temperature: temperature,
+      };
       return pendingThresholds;
     });
   }

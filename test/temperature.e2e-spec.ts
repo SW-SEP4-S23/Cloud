@@ -1,9 +1,9 @@
-import { DataType } from '@prisma/client';
+import { DataType } from "@prisma/client";
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { getThresholds, postThresholds } from "./commonTests";
+import { getThresholds, postAndCheckForPendingThresholds, postThresholds } from "./commonTests";
 
 describe("TemperatureController (e2e)", () => {
   let app: INestApplication;
@@ -123,18 +123,14 @@ describe("TemperatureController (e2e)", () => {
     let temperaturePath: string;
     let temperatureMinValue: number;
     let temperatureMaxValue: number;
-    let toleranceInMilliseconds: number; // 1 minute
     let request: any;
 
     // PATCH thresholds test
     describe("/environment/temperature/thresholds (POST)", () => {
       test("Update patched value, check thresholdsRequest for the new request", async () => {
-        temperaturePath = "/environment/temperature";
+        temperaturePath = "/environment/temperature/thresholds";
         temperatureMinValue = 0.5;
         temperatureMaxValue = 10;
-
-        // For date validation
-        toleranceInMilliseconds = 60000; // 1 minute
 
         request = app.getHttpServer();
 
@@ -143,7 +139,6 @@ describe("TemperatureController (e2e)", () => {
           temperaturePath,
           temperatureMinValue,
           temperatureMaxValue,
-          toleranceInMilliseconds,
           DataType.TEMPERATURE,
         );
       });
@@ -156,12 +151,28 @@ describe("TemperatureController (e2e)", () => {
         temperatureMinValue = 0.5;
         temperatureMaxValue = 10;
 
-        // For date validation
-        toleranceInMilliseconds = 60000; // 1 minute
-
         request = app.getHttpServer();
 
         await getThresholds(request, temperaturePath, DataType.TEMPERATURE);
+      });
+    });
+
+    //post and then check pending test
+    describe("/environment/temperature (POST) then check for pending (GET)", () => {
+      test("POST then check for pending", async () => {
+        const temperaturePath = "/environment/temperature/thresholds";
+        const temperatureMinValue = 5;
+        const temperatureMaxValue = 10;
+
+        const request = app.getHttpServer();
+
+        await postAndCheckForPendingThresholds(
+          request,
+          temperaturePath,
+          DataType.TEMPERATURE,
+          temperatureMinValue,
+          temperatureMaxValue,
+        );
       });
     });
   });

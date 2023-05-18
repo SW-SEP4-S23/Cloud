@@ -3,7 +3,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { getThresholds, postThresholds } from "./commonTests";
+import {
+  getThresholds,
+  postAndCheckForPendingThresholds,
+  postThresholds,
+} from "./commonTests";
 
 describe("HumidityController (e2e)", () => {
   let app: INestApplication;
@@ -123,7 +127,6 @@ describe("HumidityController (e2e)", () => {
     let humidityPath: string;
     let humidityMinValue: number;
     let humidityMaxValue: number;
-    let toleranceInMilliseconds: number; // 1 minute
     let request: any;
 
     //patch thresholds test
@@ -133,9 +136,6 @@ describe("HumidityController (e2e)", () => {
         humidityMinValue = 10;
         humidityMaxValue = 30;
 
-        //For date validation
-        toleranceInMilliseconds = 60000; // 1 minute
-
         request = app.getHttpServer();
 
         await postThresholds(
@@ -143,7 +143,6 @@ describe("HumidityController (e2e)", () => {
           humidityPath,
           humidityMinValue,
           humidityMaxValue,
-          toleranceInMilliseconds,
           DataType.HUMIDITY,
         );
       });
@@ -156,12 +155,28 @@ describe("HumidityController (e2e)", () => {
         humidityMinValue = 10;
         humidityMaxValue = 30;
 
-        //For date validation
-        toleranceInMilliseconds = 60000; // 1 minute
-
         request = app.getHttpServer();
 
         await getThresholds(request, humidityPath, DataType.HUMIDITY);
+      });
+    });
+
+    //post and then check pending test
+    describe("/environment/humidity (POST) then check for pending (GET)", () => {
+      test("POST then check for pending", async () => {
+        const humidityPath = "/environment/humidity/thresholds";
+        const humidityMinValue = 5;
+        const humidityMaxValue = 10;
+
+        const request = app.getHttpServer();
+
+        await postAndCheckForPendingThresholds(
+          request,
+          humidityPath,
+          DataType.HUMIDITY,
+          humidityMinValue,
+          humidityMaxValue,
+        );
       });
     });
   });

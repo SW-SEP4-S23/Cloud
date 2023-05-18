@@ -17,7 +17,7 @@ export class EnvironmentController {
     return this.environmentService.postThresholdsRequests(body);
   }
 
-  @Get("/treshholds")
+  @Get("/thresholds")
   findAllThresholds() {
     return this.environmentService.findAllThresholds();
   }
