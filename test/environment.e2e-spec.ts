@@ -4,7 +4,7 @@ import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 // import { CommonTestsInterfaces, commonTests } from "./commonTests"; DEPRECATED
 
-describe("EnvironmentController (e2e)", () => {
+describe("Environment Controller", () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -18,8 +18,8 @@ describe("EnvironmentController (e2e)", () => {
 
   //To see the seeded data, find the file in ../prisma/seed.ts
   //Slight chance of failure if websocket receives data at the same time as the test is running
-  describe("EnvironmentController (e2e) NO query Test", () => {
-    it("/environment (GET)", () => {
+  describe("(GET) Datapoints", () => {
+    test("Only the latest entries", () => {
       return request(app.getHttpServer())
         .get("/environment")
         .expect(200)
@@ -41,10 +41,9 @@ describe("EnvironmentController (e2e)", () => {
           },
         ]);
     });
-  });
 
-  describe("EnvironmentController (e2e) Query", () => {
-    it("/environment?startDate&endDate (GET) -> Get 5 Elements from startDate = 2021-01-01T00:00:00.000Z and endDate 2021-01-01T00:20:00.000Z", async () => {
+    //Get 5 records from the startDate = 2021-01-01T00:00:00.000Z and endDate 2021-01-01T00:20:00.000Z
+    test("Get 5 records from dates ", async () => {
       const startDate = "2021-01-01T00:00:00.000Z";
       const endDate = "2021-01-01T00:20:00.000Z";
       const response = await request(app.getHttpServer())
@@ -79,37 +78,37 @@ describe("EnvironmentController (e2e)", () => {
         { timestamp: "2021-01-01T00:20:00.000Z", value: 28 },
       ]);
     });
-  });
 
-  describe("EnvironmentController (e2e) Exception Testing", () => {
-    it("/environment?startDate (GET)", () => {
-      return request(app.getHttpServer())
-        .get("/environment?startDate=2021-01-01T00:10:00.000Z")
-        .expect(400)
-        .expect({
-          statusCode: 400,
-          message: "Both startDate and endDate must be provided together.",
-        });
-    });
-    it("/environment?endDate (GET)", () => {
-      return request(app.getHttpServer())
-        .get("/environment?endDate=2021-01-01T00:10:00.000Z")
-        .expect(400)
-        .expect({
-          statusCode: 400,
-          message: "Both startDate and endDate must be provided together.",
-        });
-    });
-    it("/environment?startDate&endDate (GET)", () => {
-      return request(app.getHttpServer())
-        .get(
-          "/environment?startDate=2021-02-01T00:10:00.000Z&endDate=2021-01-01T00:10:00.000Z",
-        )
-        .expect(400)
-        .expect({
-          statusCode: 400,
-          message: "Start date cannot be after end date",
-        });
+    describe("Exception Testing", () => {
+      test("Path should always take start and end dates, not just STARTDATE", () => {
+        return request(app.getHttpServer())
+          .get("/environment?startDate=2021-01-01T00:10:00.000Z")
+          .expect(400)
+          .expect({
+            statusCode: 400,
+            message: "Both startDate and endDate must be provided together.",
+          });
+      });
+      test("Path should always take start and end dates not just ENDDATE", () => {
+        return request(app.getHttpServer())
+          .get("/environment?endDate=2021-01-01T00:10:00.000Z")
+          .expect(400)
+          .expect({
+            statusCode: 400,
+            message: "Both startDate and endDate must be provided together.",
+          });
+      });
+      test("Start date must be before end date", () => {
+        return request(app.getHttpServer())
+          .get(
+            "/environment?startDate=2021-02-01T00:10:00.000Z&endDate=2021-01-01T00:10:00.000Z",
+          )
+          .expect(400)
+          .expect({
+            statusCode: 400,
+            message: "Start date cannot be after end date",
+          });
+      });
     });
   });
 });
