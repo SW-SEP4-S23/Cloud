@@ -1,8 +1,9 @@
+import { DataType } from "@prisma/client";
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { CommonTestsInterfaces, commonTests } from "./commonTests";
+import { getThresholds, postThresholds } from "./commonTests";
 
 describe("Co2Controller (e2e)", () => {
   let app: INestApplication;
@@ -116,7 +117,7 @@ describe("Co2Controller (e2e)", () => {
   });
 
   //Testing using generalized methods from commonTests.ts
-  describe("/environment/co2 using generalized methods (GET,PATCH)", () => {
+  describe("/environment/co2 using generalized methods (GET, POST)", () => {
     //Values to be used in the tests
     //This leaves possibility to make more tests with different values
     let co2Path: string;
@@ -126,9 +127,9 @@ describe("Co2Controller (e2e)", () => {
     let request: any;
 
     //patch thresholds test
-    describe("/environment/co2/thresholds (PATCH)", () => {
-      test("Update patched value, check thresholdsRequest for the new request", async () => {
-        co2Path = "/environment/co2";
+    describe("/environment/co2/thresholds (POST)", () => {
+      test("Checking if POST succeeds, then checking if it is pending properly", async () => {
+        co2Path = "/environment/co2/thresholds";
         co2MinValue = 0.5;
         co2MaxValue = 10;
 
@@ -137,12 +138,13 @@ describe("Co2Controller (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).patchThresholds(
+        await postThresholds(
           request,
           co2Path,
           co2MinValue,
           co2MaxValue,
           toleranceInMilliseconds,
+          DataType.CO2,
         );
       });
     });
@@ -159,13 +161,7 @@ describe("Co2Controller (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).getThresholds(
-          request,
-          co2Path,
-          co2MinValue,
-          co2MaxValue,
-          toleranceInMilliseconds,
-        );
+        await getThresholds(request, co2Path, DataType.CO2);
       });
     });
   });

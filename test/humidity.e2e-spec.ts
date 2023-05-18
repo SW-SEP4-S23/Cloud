@@ -1,8 +1,9 @@
+import { DataType } from "@prisma/client";
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { CommonTestsInterfaces, commonTests } from "./commonTests";
+import { getThresholds, postThresholds } from "./commonTests";
 
 describe("HumidityController (e2e)", () => {
   let app: INestApplication;
@@ -116,7 +117,7 @@ describe("HumidityController (e2e)", () => {
   });
 
   //Testing using generalized methods from commonTests.ts
-  describe("/environment/humidity using generalized methods (GET,PATCH)", () => {
+  describe("/environment/humidity using generalized methods (GET,POST)", () => {
     //Values to be used in the tests
     //This leaves possibility to make more tests with different values
     let humidityPath: string;
@@ -126,9 +127,9 @@ describe("HumidityController (e2e)", () => {
     let request: any;
 
     //patch thresholds test
-    describe("/environment/humidity/thresholds (PATCH)", () => {
+    describe("/environment/humidity/thresholds (POST)", () => {
       test("Update patched value, check thresholdsRequest for the new request", async () => {
-        humidityPath = "/environment/humidity";
+        humidityPath = "/environment/humidity/thresholds";
         humidityMinValue = 10;
         humidityMaxValue = 30;
 
@@ -137,12 +138,13 @@ describe("HumidityController (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).patchThresholds(
+        await postThresholds(
           request,
           humidityPath,
           humidityMinValue,
           humidityMaxValue,
           toleranceInMilliseconds,
+          DataType.HUMIDITY,
         );
       });
     });
@@ -150,7 +152,7 @@ describe("HumidityController (e2e)", () => {
     //get thresholds test
     describe("/environment/humidity/thresholds (GET) method", () => {
       test("GET Thresholds", async () => {
-        humidityPath = "/environment/humidity";
+        humidityPath = "/environment/humidity/thresholds";
         humidityMinValue = 10;
         humidityMaxValue = 30;
 
@@ -159,13 +161,7 @@ describe("HumidityController (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).getThresholds(
-          request,
-          humidityPath,
-          humidityMinValue,
-          humidityMaxValue,
-          toleranceInMilliseconds,
-        );
+        await getThresholds(request, humidityPath, DataType.HUMIDITY);
       });
     });
   });

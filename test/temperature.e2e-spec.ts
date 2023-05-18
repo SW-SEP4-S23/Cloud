@@ -1,8 +1,9 @@
+import { DataType } from '@prisma/client';
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { CommonTestsInterfaces, commonTests } from "./commonTests";
+import { getThresholds, postThresholds } from "./commonTests";
 
 describe("TemperatureController (e2e)", () => {
   let app: INestApplication;
@@ -116,7 +117,7 @@ describe("TemperatureController (e2e)", () => {
   });
 
   // Testing using generalized methods from commonTests.ts
-  describe("/environment/temperature using generalized methods (GET, PATCH)", () => {
+  describe("/environment/temperature using generalized methods (GET, POST)", () => {
     // Values to be used in the tests
     // This leaves the possibility to make more tests with different values
     let temperaturePath: string;
@@ -126,7 +127,7 @@ describe("TemperatureController (e2e)", () => {
     let request: any;
 
     // PATCH thresholds test
-    describe("/environment/temperature/thresholds (PATCH)", () => {
+    describe("/environment/temperature/thresholds (POST)", () => {
       test("Update patched value, check thresholdsRequest for the new request", async () => {
         temperaturePath = "/environment/temperature";
         temperatureMinValue = 0.5;
@@ -137,12 +138,13 @@ describe("TemperatureController (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).patchThresholds(
+        await postThresholds(
           request,
           temperaturePath,
           temperatureMinValue,
           temperatureMaxValue,
           toleranceInMilliseconds,
+          DataType.TEMPERATURE,
         );
       });
     });
@@ -150,7 +152,7 @@ describe("TemperatureController (e2e)", () => {
     // GET thresholds test
     describe("/environment/temperature/thresholds (GET) method", () => {
       test("GET Thresholds", async () => {
-        temperaturePath = "/environment/temperature";
+        temperaturePath = "/environment/temperature/thresholds";
         temperatureMinValue = 0.5;
         temperatureMaxValue = 10;
 
@@ -159,13 +161,7 @@ describe("TemperatureController (e2e)", () => {
 
         request = app.getHttpServer();
 
-        (commonTests as CommonTestsInterfaces).getThresholds(
-          request,
-          temperaturePath,
-          temperatureMinValue,
-          temperatureMaxValue,
-          toleranceInMilliseconds,
-        );
+        await getThresholds(request, temperaturePath, DataType.TEMPERATURE);
       });
     });
   });

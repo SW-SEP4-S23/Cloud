@@ -7,6 +7,10 @@ import {
   findDataPointsByInterval,
   findLatestDataPoint,
 } from "../shared/DataPointRepositoryUtils";
+import {
+  getDatapointThresholds,
+  postThresholdRequest,
+} from "../utils/thresholdQueryUtils";
 
 @Injectable()
 export class HumidityRepository {
@@ -24,22 +28,11 @@ export class HumidityRepository {
     return findLatestDataPoint(this.prisma.datapoint, DataType.HUMIDITY);
   }
 
-  getDataPointThresholds() {
-    return this.prisma.thresholds.findUnique({
-      where: {
-        dataType: DataType.HUMIDITY,
-      },
-    });
+  getDatapointThresholds() {
+    return getDatapointThresholds(DataType.HUMIDITY, this.prisma);
   }
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
-    return this.prisma.thresholdRequests.create({
-      data: {
-        dataType: DataType.HUMIDITY,
-        requestDate: new Date(),
-        minValueReq: newThreshold.minValue,
-        maxValueReq: newThreshold.maxValue,
-      },
-    });
+    return postThresholdRequest(DataType.HUMIDITY, newThreshold, this.prisma);
   }
 }
