@@ -3,9 +3,13 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { getThresholds, postAndCheckForPendingThresholds, postThresholds } from "./commonTests";
+import {
+  getThresholds,
+  postAndCheckForPendingThresholds,
+  postThresholds,
+} from "./commonTests";
 
-describe("TemperatureController (e2e)", () => {
+describe("Temperature Controller", () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -19,8 +23,8 @@ describe("TemperatureController (e2e)", () => {
 
   //To see the seeded data, find the file in ../prisma/seed.ts
   //Slight chance of failure if websucked recives data at the same time as the test is running
-  describe("TemperatureController (e2e) NO query Test", () => {
-    it("/environment/co2 (GET)", () => {
+  describe("(GET) Datapoints", () => {
+    test("Only the latest entry", () => {
       return request(app.getHttpServer())
         .get("/environment/temperature")
         .expect(200)
@@ -28,8 +32,8 @@ describe("TemperatureController (e2e)", () => {
     });
   });
 
-  describe("TemperatureController (e2e) Exception Testing", () => {
-    it("/environment/temperature?startDate (GET)", () => {
+  describe("Exception Testing", () => {
+    test("Path should always take start and end dates, not just STARTDATE", () => {
       return request(app.getHttpServer())
         .get("/environment/temperature?startDate=2021-01-01T00:10:00.000Z")
         .expect(400)
@@ -38,7 +42,7 @@ describe("TemperatureController (e2e)", () => {
           message: "Both startDate and endDate must be provided together.",
         });
     });
-    it("/environment/temperature?endDate (GET)", () => {
+    test("Path should always take start and end dates not just ENDDATE", () => {
       return request(app.getHttpServer())
         .get("/environment/temperature?endDate=2021-01-01T00:10:00.000Z")
         .expect(400)
@@ -47,7 +51,7 @@ describe("TemperatureController (e2e)", () => {
           message: "Both startDate and endDate must be provided together.",
         });
     });
-    it("/environment/temperature?startDate&endDate (GET)", () => {
+    test("Start date must be before end date", () => {
       return request(app.getHttpServer())
         .get(
           "/environment/temperature?startDate=2021-02-01T00:10:00.000Z&endDate=2021-01-01T00:10:00.000Z",
@@ -61,7 +65,7 @@ describe("TemperatureController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01 to 2021-01-10, which should return 3 records
-  test("/environment/temperature?startDate&endDate get specific dates from seed data (GET)", () => {
+  test("Return 3 records from dates", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T00:10:00.000Z",
@@ -75,7 +79,7 @@ describe("TemperatureController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2021-01-01T00:00:00.000Z to 2021-01-01T01:40:00.000Z, which should return all 21 records from the seeding
-  test("/environment/temperature get all dates from seed data (GET)", () => {
+  test("Return 21 records from dates", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/temperature?startDate=2021-01-01T00:00:00.000Z&endDate=2021-01-01T01:40:00.000Z",
@@ -107,7 +111,7 @@ describe("TemperatureController (e2e)", () => {
   });
 
   //In this case, the seed data is from 2020-01-01 to 2020-01-10, which should return 0 records
-  test("/environment/temperature?startDate&endDate get dates not in seed data (GET)", () => {
+  test("Finding empty list", () => {
     return request(app.getHttpServer())
       .get(
         "/environment/temperature?startDate=2020-01-01T00:00:00.000Z&endDate=2020-01-01T01:40:00.000Z",
@@ -117,7 +121,7 @@ describe("TemperatureController (e2e)", () => {
   });
 
   // Testing using generalized methods from commonTests.ts
-  describe("/environment/temperature using generalized methods (GET, POST)", () => {
+  describe("(GET, POST) Thresholds", () => {
     // Values to be used in the tests
     // This leaves the possibility to make more tests with different values
     let temperaturePath: string;
@@ -125,9 +129,8 @@ describe("TemperatureController (e2e)", () => {
     let temperatureMaxValue: number;
     let request: any;
 
-    // PATCH thresholds test
-    describe("/environment/temperature/thresholds (POST)", () => {
-      test("Update patched value, check thresholdsRequest for the new request", async () => {
+    describe("(POST) Thresholds", () => {
+      test("Checking if POST succeeds", async () => {
         temperaturePath = "/environment/temperature/thresholds";
         temperatureMinValue = 0.5;
         temperatureMaxValue = 10;
@@ -144,36 +147,30 @@ describe("TemperatureController (e2e)", () => {
       });
     });
 
-    // GET thresholds test
-    describe("/environment/temperature/thresholds (GET) method", () => {
-      test("GET Thresholds", async () => {
-        temperaturePath = "/environment/temperature/thresholds";
-        temperatureMinValue = 0.5;
-        temperatureMaxValue = 10;
+    test("GET Thresholds", async () => {
+      temperaturePath = "/environment/temperature/thresholds";
+      temperatureMinValue = 0.5;
+      temperatureMaxValue = 10;
 
-        request = app.getHttpServer();
+      request = app.getHttpServer();
 
-        await getThresholds(request, temperaturePath, DataType.TEMPERATURE);
-      });
+      await getThresholds(request, temperaturePath, DataType.TEMPERATURE);
     });
 
-    //post and then check pending test
-    describe("/environment/temperature (POST) then check for pending (GET)", () => {
-      test("POST then check for pending", async () => {
-        const temperaturePath = "/environment/temperature/thresholds";
-        const temperatureMinValue = 5;
-        const temperatureMaxValue = 10;
+    test("POST then check for pending", async () => {
+      const temperaturePath = "/environment/temperature/thresholds";
+      const temperatureMinValue = 5;
+      const temperatureMaxValue = 10;
 
-        const request = app.getHttpServer();
+      const request = app.getHttpServer();
 
-        await postAndCheckForPendingThresholds(
-          request,
-          temperaturePath,
-          DataType.TEMPERATURE,
-          temperatureMinValue,
-          temperatureMaxValue,
-        );
-      });
+      await postAndCheckForPendingThresholds(
+        request,
+        temperaturePath,
+        DataType.TEMPERATURE,
+        temperatureMinValue,
+        temperatureMaxValue,
+      );
     });
   });
 
