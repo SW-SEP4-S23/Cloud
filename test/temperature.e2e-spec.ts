@@ -1,8 +1,9 @@
+import { DataType } from '@prisma/client';
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { getThresholds, postThresholds} from "./commonTests";
+import { getThresholds, postThresholds } from "./commonTests";
 
 describe("TemperatureController (e2e)", () => {
   let app: INestApplication;
@@ -143,6 +144,7 @@ describe("TemperatureController (e2e)", () => {
           temperatureMinValue,
           temperatureMaxValue,
           toleranceInMilliseconds,
+          DataType.TEMPERATURE,
         );
       });
     });
@@ -159,13 +161,7 @@ describe("TemperatureController (e2e)", () => {
 
         request = app.getHttpServer();
 
-        await getThresholds(
-          request,
-          temperaturePath,
-          temperatureMinValue,
-          temperatureMaxValue,
-          toleranceInMilliseconds,
-        );
+        await getThresholds(request, temperaturePath, DataType.TEMPERATURE);
       });
     });
   });

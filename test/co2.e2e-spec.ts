@@ -1,3 +1,4 @@
+import { DataType } from "@prisma/client";
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
@@ -116,7 +117,7 @@ describe("Co2Controller (e2e)", () => {
   });
 
   //Testing using generalized methods from commonTests.ts
-  describe("/environment/co2 using generalized methods (GET,PATCH)", () => {
+  describe("/environment/co2 using generalized methods (GET, POST)", () => {
     //Values to be used in the tests
     //This leaves possibility to make more tests with different values
     let co2Path: string;
@@ -143,6 +144,7 @@ describe("Co2Controller (e2e)", () => {
           co2MinValue,
           co2MaxValue,
           toleranceInMilliseconds,
+          DataType.CO2,
         );
       });
     });
@@ -159,13 +161,7 @@ describe("Co2Controller (e2e)", () => {
 
         request = app.getHttpServer();
 
-        await getThresholds(
-          request,
-          co2Path,
-          co2MinValue,
-          co2MaxValue,
-          toleranceInMilliseconds,
-        );
+        await getThresholds(request, co2Path, DataType.CO2);
       });
     });
   });

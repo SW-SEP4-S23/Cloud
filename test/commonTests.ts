@@ -1,11 +1,13 @@
+import { DataType } from "@prisma/client";
 import * as Request from "supertest";
 
 export const postThresholds = async (
   httpServer: any,
   path: string,
-  minValue: number,
-  maxValue: number,
+  minimumValue: number,
+  maximumValue: number,
   toleranceInMilliseconds: number,
+  DataType: DataType,
 ) => {
   const date = new Date();
 
@@ -14,13 +16,14 @@ export const postThresholds = async (
   const response = await httpRequest
     .post(path)
     .send({
-      minValue,
-      maxValue,
+      minValue: minimumValue,
+      maxValue: maximumValue,
     })
     .expect(201);
 
-  expect(response.body.minValueReq).toBe(minValue);
-  expect(response.body.maxValueReq).toBe(maxValue);
+  expect(response.body.minValueReq).toBe(minimumValue);
+  expect(response.body.maxValueReq).toBe(maximumValue);
+  expect(response.body.dataType).toBe(DataType);
 
   const requestDate = new Date(response.body.requestDate);
   expect(requestDate.getTime()).toBeGreaterThanOrEqual(
@@ -34,24 +37,15 @@ export const postThresholds = async (
 export const getThresholds = async (
   httpServer: any,
   path: string,
-  minValue: number,
-  maxValue: number,
-  toleranceInMilliseconds: number,
+  dataType: string,
 ) => {
-  const date = new Date();
-
   const httpRequest = Request(httpServer);
 
   const response = await httpRequest.get(path);
 
-  expect(response.body.minValue).toBe(minValue);
-  expect(response.body.maxValue).toBe(maxValue);
+  //Currently only will get NULL values, since the "Thresholds" table is empty until an ACK is received
+  expect(response.body.minValue).toBe(null);
+  expect(response.body.maxValue).toBe(null);
 
-  const requestDate = new Date(response.body.requestDate);
-  expect(requestDate.getTime()).toBeGreaterThanOrEqual(
-    date.getTime() - toleranceInMilliseconds,
-  );
-  expect(requestDate.getTime()).toBeLessThanOrEqual(
-    date.getTime() + toleranceInMilliseconds,
-  );
+  expect(response.body.dataType).toBe(dataType);
 };
