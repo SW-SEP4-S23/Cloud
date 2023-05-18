@@ -3,7 +3,10 @@ import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
 import { NewThresholdDTO } from "../shared/newThresholdDTO";
 import { DataType } from "@prisma/client";
-import { getDatapointThresholds } from "../utils/thresholdQueryUtils";
+import {
+  getDatapointThresholds,
+  postThresholdRequest,
+} from "../utils/thresholdQueryUtils";
 
 @Injectable()
 export class HumidityRepository {
@@ -39,13 +42,6 @@ export class HumidityRepository {
   }
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
-    return this.prisma.thresholdRequests.create({
-      data: {
-        dataType: DataType.HUMIDITY,
-        requestDate: new Date(),
-        minValueReq: newThreshold.minValue,
-        maxValueReq: newThreshold.maxValue,
-      },
-    });
+    return postThresholdRequest(DataType.HUMIDITY, newThreshold, this.prisma);
   }
 }

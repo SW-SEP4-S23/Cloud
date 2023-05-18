@@ -1,5 +1,6 @@
 import { DataType } from "@prisma/client";
 import { PrismaService } from "nestjs-prisma";
+import { NewThresholdDTO } from "../shared/newThresholdDTO";
 
 export const getDatapointThresholds = (
   dataType: DataType,
@@ -10,7 +11,10 @@ export const getDatapointThresholds = (
     getPendingThreshold(dataType, prisma),
   ])
     .then(([upToDateThreshold, pendingThreshold]) => {
-      const combinedData = [upToDateThreshold, pendingThreshold];
+      const combinedData = [
+        { upToDateThreshold: upToDateThreshold },
+        { pendingThreshold: pendingThreshold },
+      ];
 
       return combinedData;
     })
@@ -65,6 +69,7 @@ export const getPendingThreshold = (
         if (pendingThreshold) {
           if (pendingThreshold.ack == null || !pendingThreshold.ack.acked) {
             // Omitting ackId and ack from result
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { ack, ackId, ...result } = pendingThreshold;
             resolve(result);
           }
@@ -74,5 +79,22 @@ export const getPendingThreshold = (
       .catch((error) => {
         reject(error);
       });
+  });
+};
+
+export const postThresholdRequest = (
+  dataType: DataType,
+  newThreshold: NewThresholdDTO,
+  prisma: PrismaService,
+) => {
+  if (newThreshold.minValue !== null && newThreshold.maxValue !== null) {
+  }
+  return prisma.thresholdRequests.create({
+    data: {
+      dataType: dataType,
+      requestDate: new Date(),
+      minValueReq: newThreshold.minValue,
+      maxValueReq: newThreshold.maxValue,
+    },
   });
 };

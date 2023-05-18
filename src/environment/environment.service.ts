@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { IntervalQuery, intervalQueryChecker } from "../shared/interval-query";
 import { EnvironmentRepository } from "./environment.repository";
 import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
+import { newThresholdChecker } from "../shared/newThresholdDTO";
 
 @Injectable()
 export class EnvironmentService {
@@ -27,6 +28,12 @@ export class EnvironmentService {
   }
 
   postThresholdsRequests(newThresholds: NewThresholdWrapperDTO) {
+    for (const key in newThresholds) {
+      if (newThresholds.hasOwnProperty(key)) {
+        const thresholdDTO = newThresholds[key];
+        newThresholdChecker(thresholdDTO);
+      }
+    }
     return this.environmentRepository.postThresholdRequests(newThresholds);
   }
 
