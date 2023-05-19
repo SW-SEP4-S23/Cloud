@@ -7,7 +7,7 @@ import {
   getThresholds,
   postAndCheckForPendingThresholds,
   postThresholds,
-} from "./commonTests";
+} from "./common-tests";
 
 describe("Co2 Controller", () => {
   let app: INestApplication;

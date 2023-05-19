@@ -1,6 +1,6 @@
 import { DataType } from "@prisma/client";
 import { PrismaService } from "nestjs-prisma";
-import { NewThresholdDTO } from "../shared/newThresholdDTO";
+import { NewThresholdDTO } from "../shared/new-threshold-dto";
 
 export const getDatapointThresholds = async (
   dataType: DataType,

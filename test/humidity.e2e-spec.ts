@@ -7,7 +7,7 @@ import {
   getThresholds,
   postAndCheckForPendingThresholds,
   postThresholds,
-} from "./commonTests";
+} from "./common-tests";
 
 describe("Humidity Controller", () => {
   let app: INestApplication;

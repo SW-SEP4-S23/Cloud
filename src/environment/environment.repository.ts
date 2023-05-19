@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { PrismaService } from "nestjs-prisma";
 import { DataType, Thresholds } from "@prisma/client";
-import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
-import { getPendingThreshold } from "../utils/thresholdQueryUtils";
+import { NewThresholdWrapperDTO } from "../shared/new-threshold-wrapper-dto";
+import { getPendingThreshold } from "../utils/threshold-query-utils";
 
 @Injectable()
 export class EnvironmentRepository {

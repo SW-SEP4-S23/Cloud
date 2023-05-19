@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "prisma": {
-    "seed": "ts-node prisma/thresholdSeed.ts"
+    "seed": "ts-node prisma/threshold-seed.ts"
   },
   "scripts": {
     "build": "nest build",

@@ -5,12 +5,12 @@ import { DataType } from "@prisma/client";
 import {
   findDataPointsByInterval,
   findLatestDataPoint,
-} from "../shared/DataPointRepositoryUtils";
+} from "../shared/datapoint-repository-utils";
 import {
   getDatapointThresholds,
   postThresholdRequest,
-} from "../utils/thresholdQueryUtils";
-import { NewThresholdDTO } from "../shared/newThresholdDTO";
+} from "../utils/threshold-query-utils";
+import { NewThresholdDTO } from "../shared/new-threshold-dto";
 
 @Injectable()
 export class TemperatureRepository {

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { NewThresholdDTO } from "./newThresholdDTO";
+import { NewThresholdDTO } from "./new-threshold-dto";
 import { IsOptional } from "class-validator";
 
 export class NewThresholdWrapperDTO {

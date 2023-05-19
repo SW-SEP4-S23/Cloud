@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { NewThresholdDTO, newThresholdChecker } from "./newThresholdDTO";
+import { NewThresholdDTO, newThresholdChecker } from "./new-threshold-dto";
 
 describe("NewValsDTO", () => {
   let provider: NewThresholdDTO;

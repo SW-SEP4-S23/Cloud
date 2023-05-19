@@ -4,7 +4,7 @@ import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 import {
   NewThresholdDTO,
   newThresholdChecker,
-} from "../shared/newThresholdDTO";
+} from "../shared/new-threshold-dto";
 
 @Injectable()
 export class TemperatureService {
