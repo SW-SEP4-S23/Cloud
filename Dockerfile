@@ -19,10 +19,13 @@ COPY --chown=node:node prisma ./prisma/
 
 # Create a .env file and write envrioment variables to it
 RUN touch .env
-RUN echo "DATABASE_URL=$DATABASE_URL" > ./.env
+RUN echo "DATABASE_URL=$DATABASE_URL" >./.env
 
 # Install app dependencies using the `npm ci` command instead of `npm install`
 RUN npm ci
+
+# Seed the database with essential production data
+RUN npm run db:seed
 
 # Bundle app source
 COPY --chown=node:node . .
@@ -71,4 +74,4 @@ COPY --chown=node:node --from=build /usr/src/app/prisma ./prisma/
 COPY --chown=node:node --from=build /usr/src/app/.env ./.env
 
 # Start the server using the production build
-CMD [ "npm", "run", "start:migrate:prod" ]  
+CMD [ "npm", "run", "start:migrate:prod" ]
