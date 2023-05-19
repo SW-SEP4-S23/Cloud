@@ -1,4 +1,3 @@
-import { getPendingThreshold } from "./../src/utils/thresholdQueryUtils";
 import { DataType } from "@prisma/client";
 import * as Request from "supertest";
 

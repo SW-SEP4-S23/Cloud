@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { PrismaService } from "nestjs-prisma";
-import { DataType } from "@prisma/client";
-import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
-import { getPendingThreshold } from "../utils/thresholdQueryUtils";
+import { DataType, Thresholds } from "@prisma/client";
+import { NewThresholdWrapperDTO } from "../shared/new-threshold-wrapper-dto";
+import { getPendingThreshold } from "../utils/threshold-query-utils";
 
 @Injectable()
 export class EnvironmentRepository {
@@ -30,26 +30,29 @@ export class EnvironmentRepository {
   }
 
   postThresholdRequests(newThresholds: NewThresholdWrapperDTO) {
+    const now = new Date();
+
     const data = [
       {
         dataType: DataType.CO2,
         minValueReq: newThresholds.newCo2Threshold.minValue,
         maxValueReq: newThresholds.newCo2Threshold.maxValue,
-        requestDate: new Date(),
+        requestDate: now,
       },
       {
         dataType: DataType.HUMIDITY,
         minValueReq: newThresholds.newHumidityThreshold.minValue,
         maxValueReq: newThresholds.newHumidityThreshold.maxValue,
-        requestDate: new Date(),
+        requestDate: now,
       },
       {
         dataType: DataType.TEMPERATURE,
         minValueReq: newThresholds.newTemperatureThreshold.minValue,
         maxValueReq: newThresholds.newTemperatureThreshold.maxValue,
-        requestDate: new Date(),
+        requestDate: now,
       },
     ];
+
     const filteredData = data.filter(
       (item) => item.maxValueReq !== null && item.maxValueReq !== null,
     );
@@ -59,58 +62,41 @@ export class EnvironmentRepository {
     });
   }
 
-  findAllThresholds() {
-    return Promise.all([
+  async findAllThresholds() {
+    const [upToDateThresholds, pendingThresholds] = await Promise.all([
       this.getUpToDateThresholds(),
       this.getPendingThresholds(),
-    ])
-      .then(([upToDateThresholds, pendingThreshold]) => {
-        const combinedData = {
-          upToDateThresholds: upToDateThresholds,
-          pendingThresholds: pendingThreshold,
-        };
+    ]);
 
-        return combinedData;
-      })
-      .catch((error) => {
-        // Handle any errors that occurred during retrieval
-        console.error(error);
-      });
+    return {
+      upToDateThresholds,
+      pendingThresholds,
+    };
   }
 
-  getUpToDateThresholds() {
-    return new Promise((resolve, reject) => {
-      this.prismaService.thresholds
-        .findMany({})
-        .then((thresholds) => {
-          const namedThresholds = {} as Record<
-            DataType,
-            { dataType: DataType; maxValue: number; minValue: number }
-          >;
-          thresholds.forEach((threshold) => {
-            const propertyName = threshold.dataType;
-            namedThresholds[propertyName] = threshold;
-          });
-          resolve(namedThresholds);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+  async getUpToDateThresholds() {
+    const thresholds = await this.prismaService.thresholds.findMany();
+
+    // map the thresholds to an object with the datatype as key
+    const namedThresholds = thresholds.reduce((acc, curr) => {
+      acc[curr.dataType] = curr;
+      return acc;
+    }, {} as Record<DataType, Thresholds>);
+
+    return namedThresholds;
   }
 
-  getPendingThresholds() {
-    return Promise.all([
+  async getPendingThresholds() {
+    const [co2, humidity, temperature] = await Promise.all([
       getPendingThreshold(DataType.CO2, this.prismaService),
       getPendingThreshold(DataType.HUMIDITY, this.prismaService),
       getPendingThreshold(DataType.TEMPERATURE, this.prismaService),
-    ]).then(([co2, humidity, temperature]) => {
-      const pendingThresholds = {
-        co2: co2,
-        humidity: humidity,
-        temperature: temperature,
-      };
-      return pendingThresholds;
-    });
+    ]);
+
+    return {
+      co2,
+      humidity,
+      temperature,
+    };
   }
 }
