@@ -7,28 +7,66 @@ on:
 
 jobs:
   tests:
+    permissions: write-all
+
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Start containers
-        run: docker-compose -f "docker-compose.ci.yml" up -d --build
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Create .env file
+        run: |
+          echo "DATABASE_URL=postgres://postgres:@localhost:5432/postgres" > .env
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync database schema
+        run: npm run db:push
+
+      - name: Seed database
+        run: npm run db:mock
 
       - name: Lint code
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run lint
+        run: npm run lint
 
       - name: Format code
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run format
+        run: npm run format
 
-      - name: Setup Prisma
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run migrate:dev
+      - name: Typecheck code
+        run: npm run typecheck
 
-      - name: Run unit tests
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run test
+      - name: Build
+        run: npm run build --if-present
 
-      - name: Run E2E tests
-        run: docker-compose -f "docker-compose.ci.yml" run app npm run test:e2e
+      - name: E2E tests
+        run: npm run test:e2e
 
-      - name: Stop containers
-        run: docker-compose -f "docker-compose.ci.yml" down
+      - name: Unit tests
+        run: npx jest --ci --json --coverage --testLocationInResults --outputFile=report.json
+
+      - name: Coverage report
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          skip-step: all
+          annotations: none
+          coverage-file: report.json
+          base-coverage-file: report.json

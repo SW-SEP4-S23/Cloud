@@ -1,14 +1,27 @@
 import { Injectable } from "@nestjs/common";
 import { TemperatureRepository } from "./temperature.repository";
-import { IntervalQuery } from "../shared/interval-query";
+import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
+import {
+  NewThresholdDTO,
+  newThresholdChecker,
+} from "../shared/new-threshold-dto";
 
 @Injectable()
 export class TemperatureService {
   constructor(private readonly temperatureRepository: TemperatureRepository) {}
 
   findAllInterval(interval: IntervalQuery) {
-    // TODO : if interval is null, return all temperatures
-    //if statements to check if the interval is valid
+    if (!isDefined(interval)) return this.temperatureRepository.findLatest();
+    validate(interval);
     return this.temperatureRepository.findAllInterval(interval);
+  }
+
+  getDataPointThresholds() {
+    return this.temperatureRepository.getDatapointThresholds();
+  }
+
+  postThresholdRequest(newThreshold: NewThresholdDTO) {
+    newThresholdChecker(newThreshold);
+    return this.temperatureRepository.postThresholdRequest(newThreshold);
   }
 }

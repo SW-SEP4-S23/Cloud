@@ -1,15 +1,40 @@
 import { Type } from "class-transformer";
-import { IsDate } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsDate, IsOptional } from "class-validator";
+import { ApiPropertyOptional } from "@nestjs/swagger";
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 export class IntervalQuery {
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsDate()
   @Type(() => Date)
-  startDate: Date;
+  startDate?: Date;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsDate()
   @Type(() => Date)
-  endDate: Date;
+  endDate?: Date;
 }
+
+export const isDefined = (interval: IntervalQuery): boolean => {
+  if (interval === undefined) return false;
+  if (interval.startDate === undefined && interval.endDate === undefined)
+    return false;
+  return true;
+};
+
+export const validate = (interval: IntervalQuery): void => {
+  if (interval.startDate === undefined || interval.endDate === undefined) {
+    throw new HttpException(
+      "Both startDate and endDate must be provided together.",
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+  if (interval.startDate > interval.endDate) {
+    throw new HttpException(
+      "Start date cannot be after end date",
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+};
