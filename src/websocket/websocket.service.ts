@@ -63,7 +63,12 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
     );
     const timestamp = new Date(uplinkData.ts);
 
-    await this.confirmDownlinkAck(id, timestamp);
+    if (id) {
+      console.log("Ack id from payload: ", id);
+      await this.confirmDownlinkAck(id, timestamp);
+    } else {
+      console.info("No ack id");
+    }
 
     return Promise.all([
       this.sendDownlink(),
@@ -90,6 +95,8 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
     );
 
     const ackId = payloadIdFromOriginalId(ack.id);
+
+    console.log("SEND ACK ID: ", ackId);
 
     const thresholds = updateRequestArray.reduce((acc, curr) => {
       acc[curr.dataType] = {
@@ -118,6 +125,8 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   async confirmDownlinkAck(ackId: number, uplinkTimestamp: Date) {
     const ackTableSize = await this.wsRepository.getAcksCount();
     const originalId = originalIdFromPayloadId(ackId, ackTableSize);
+
+    console.log("RECEIVED ACK ID: ", originalId);
 
     await this.wsRepository.confirmAck(originalId, uplinkTimestamp);
     const newThresholds =

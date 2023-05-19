@@ -4,7 +4,7 @@ export interface DownlinkData {
   cmd: "tx";
   EUI: string;
   port: number;
-  confirmed: false;
+  confirmed: boolean;
   data: string;
 }
 
