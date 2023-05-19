@@ -26,7 +26,6 @@
     "db:seed": "npx prisma db seed",
     "db:start": "docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres",
     "db:stop": "docker stop postgres && docker rm postgres",
-    "postinstall": "npx prisma generate",
     "db:mock": "ts-node prisma/seed.ts"
   },
   "dependencies": {
