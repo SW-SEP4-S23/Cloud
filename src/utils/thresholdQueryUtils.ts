@@ -2,84 +2,61 @@ import { DataType } from "@prisma/client";
 import { PrismaService } from "nestjs-prisma";
 import { NewThresholdDTO } from "../shared/newThresholdDTO";
 
-export const getDatapointThresholds = (
+export const getDatapointThresholds = async (
   dataType: DataType,
   prisma: PrismaService,
 ) => {
-  return Promise.all([
+  const [upToDateThreshold, pendingThreshold] = await Promise.all([
     getUpToDateThreshold(dataType, prisma),
     getPendingThreshold(dataType, prisma),
-  ])
-    .then(([upToDateThreshold, pendingThreshold]) => {
-      const combinedData = {
-        upToDateThreshold: upToDateThreshold,
-        pendingThreshold: pendingThreshold,
-      };
+  ]);
 
-      return combinedData;
-    })
-    .catch((error) => {
-      // Handle any errors that occurred during retrieval
-      console.error(error);
-    });
+  return {
+    upToDateThreshold,
+    pendingThreshold,
+  };
 };
 
 const getUpToDateThreshold = (dataType: DataType, prisma: PrismaService) => {
-  return new Promise((resolve, reject) => {
-    prisma.thresholds
-      .findUnique({
-        where: {
-          dataType: dataType,
-        },
-      })
-      .then((upToDateThreshold) => {
-        resolve(upToDateThreshold);
-      })
-      .catch((error) => {
-        reject(error);
-      });
+  return prisma.thresholds.findUnique({
+    where: {
+      dataType,
+    },
   });
 };
 
-export const getPendingThreshold = (
+export const getPendingThreshold = async (
   dataType: DataType,
   prisma: PrismaService,
 ) => {
-  return new Promise((resolve, reject) => {
-    prisma.thresholdRequests
-      .findFirst({
-        where: {
-          dataType: dataType,
-        },
-        orderBy: { requestDate: "desc" },
-        select: {
-          dataType: true,
-          maxValueReq: true,
-          minValueReq: true,
-          ackId: true,
-          ack: {
-            select: {
-              acked: true,
-            },
+  try {
+    const pendingThreshold = await prisma.thresholdRequests.findFirstOrThrow({
+      where: {
+        dataType: dataType,
+      },
+      orderBy: { requestDate: "desc" },
+      select: {
+        dataType: true,
+        maxValueReq: true,
+        minValueReq: true,
+        ackId: true,
+        ack: {
+          select: {
+            acked: true,
           },
         },
-      })
-      .then((pendingThreshold) => {
-        // Check if pendingThreshold is valid and if ack is true or false
-        if (pendingThreshold) {
-          if (pendingThreshold.ack == null || !pendingThreshold.ack.acked) {
-            // Omitting ackId and ack from result
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { ack, ackId, ...result } = pendingThreshold;
-            resolve(result);
-          }
-        }
-        resolve(null); // No pending thresholds found
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+      },
+    });
+
+    if (pendingThreshold.ack == null || !pendingThreshold.ack.acked) {
+      // Omitting ackId and ack from result
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { ackId, ack, ...result } = pendingThreshold;
+      return result;
+    }
+  } catch {
+    console.info("No pending threshold found");
+  }
 };
 
 export const postThresholdRequest = (
