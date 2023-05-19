@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { PrismaService } from "nestjs-prisma";
-import { DataType } from "@prisma/client";
+import { DataType, Thresholds } from "@prisma/client";
 import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
 import { getPendingThreshold } from "../utils/thresholdQueryUtils";
 
@@ -30,26 +30,29 @@ export class EnvironmentRepository {
   }
 
   postThresholdRequests(newThresholds: NewThresholdWrapperDTO) {
+    const now = new Date();
+
     const data = [
       {
         dataType: DataType.CO2,
         minValueReq: newThresholds.newCo2Threshold.minValue,
         maxValueReq: newThresholds.newCo2Threshold.maxValue,
-        requestDate: new Date(),
+        requestDate: now,
       },
       {
         dataType: DataType.HUMIDITY,
         minValueReq: newThresholds.newHumidityThreshold.minValue,
         maxValueReq: newThresholds.newHumidityThreshold.maxValue,
-        requestDate: new Date(),
+        requestDate: now,
       },
       {
         dataType: DataType.TEMPERATURE,
         minValueReq: newThresholds.newTemperatureThreshold.minValue,
         maxValueReq: newThresholds.newTemperatureThreshold.maxValue,
-        requestDate: new Date(),
+        requestDate: now,
       },
     ];
+
     const filteredData = data.filter(
       (item) => item.maxValueReq !== null && item.maxValueReq !== null,
     );
@@ -76,12 +79,9 @@ export class EnvironmentRepository {
 
     // map the thresholds to an object with the datatype as key
     const namedThresholds = thresholds.reduce((acc, curr) => {
-      acc[curr.dataType] = {
-        minValue: curr.minValue,
-        maxValue: curr.maxValue,
-      };
+      acc[curr.dataType] = curr;
       return acc;
-    }, {} as Record<DataType, { minValue: number; maxValue: number }>);
+    }, {} as Record<DataType, Thresholds>);
 
     return namedThresholds;
   }
