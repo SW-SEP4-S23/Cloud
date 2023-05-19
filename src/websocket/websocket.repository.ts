@@ -1,7 +1,6 @@
 import { PrismaService } from "nestjs-prisma";
 import { Injectable } from "@nestjs/common";
 import { DataType } from "@prisma/client";
-import { ThresholdValues } from "./dto/downlink-data";
 
 @Injectable()
 export class WebSocketRepository {
