@@ -4,7 +4,7 @@ import { PrismaService } from "nestjs-prisma";
 import { DataType } from "@prisma/client";
 import { NewThresholdWrapperDTO } from "../shared/newThresholdWrapperDTO";
 import { getPendingThreshold } from "../utils/thresholdQueryUtils";
-import { newThresholdChecker } from "../shared/newThresholdDTO";
+
 @Injectable()
 export class EnvironmentRepository {
   constructor(private readonly prismaService: PrismaService) {}

@@ -1,20 +1,27 @@
 import { createWebSocket } from "./create-websocket";
-import { DatapointRepository } from "./datapoint.repository";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { translateHex } from "./hex-utils";
+import {
+  downlinkDataToHexPayload,
+  originalIdFromPayloadId,
+  payloadIdFromOriginalId,
+  uplinkHexPayloadToData,
+} from "./payload-utils";
 import { WebSocket } from "ws";
 import { plainToClass } from "class-transformer";
 import { UplinkData } from "./dto/uplink-data";
 import { validateSync } from "class-validator";
+import { IOT_EUI } from "../constants";
+import { DownlinkData, Thresholds } from "./dto/downlink-data";
+import { WebSocketRepository } from "./websocket.repository";
 
 @Injectable()
 export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   #socket: WebSocket;
 
-  constructor(private dpRep: DatapointRepository) {}
+  constructor(private wsRepository: WebSocketRepository) {}
 
   async onModuleDestroy() {
-    await this.#socket.close();
+    this.#socket.close();
   }
 
   async onModuleInit() {
@@ -25,8 +32,10 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   }
 
   async initSocket(): Promise<void> {
-    this.#socket.on("message", (buffer: Buffer) => {
+    this.#socket.on("message", async (buffer: Buffer) => {
       const data = JSON.parse(buffer.toString());
+
+      console.log("Data: ", data);
 
       // Only handle the data packet of the uplink.
       if (data?.cmd === "rx" && data?.port == 1) {
@@ -38,30 +47,90 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
           return;
         }
 
-        this.onUplinkData(uplinkData);
-        return;
+        this.onUplink(uplinkData);
       }
-
-      console.info("Messsage wasn't handled: ", data);
     });
   }
 
-  async onUplinkData(uplinkData: UplinkData) {
+  async onUplink(uplinkData: UplinkData) {
     if (!uplinkData.data) {
       console.error("No data in uplink data");
       return;
     }
 
-    console.info("Uplink data: ", uplinkData.data);
-
-    const [temperature, co2, humidity] = translateHex(uplinkData.data);
+    const { id, temperature, co2, humidity } = uplinkHexPayloadToData(
+      uplinkData.data,
+    );
     const timestamp = new Date(uplinkData.ts);
 
-    return this.dpRep.createDatapoint({
-      timestamp,
-      temperature,
-      co2,
-      humidity,
+    if (id) {
+      console.log("Ack id from payload: ", id);
+      await this.confirmDownlinkAck(id, timestamp);
+    } else {
+      console.info("No ack id");
+    }
+
+    return Promise.all([
+      this.sendDownlink(),
+      this.wsRepository.createDatapoint({
+        timestamp,
+        temperature,
+        co2,
+        humidity,
+      }),
+    ]);
+  }
+
+  async sendDownlink() {
+    const updateRequestArray =
+      await this.wsRepository.getLatestThresholdUpdateRequests();
+
+    if (updateRequestArray.length === 0) {
+      console.info("No unacked requests");
+      return;
+    }
+
+    const ack = await this.wsRepository.createAcksForThresholdUpdateRequests(
+      updateRequestArray,
+    );
+
+    const ackId = payloadIdFromOriginalId(ack.id);
+
+    console.log("SEND ACK ID: ", ackId);
+
+    const thresholds = updateRequestArray.reduce((acc, curr) => {
+      acc[curr.dataType] = {
+        minValue: curr.minValueReq,
+        maxValue: curr.maxValueReq,
+      };
+      return acc;
+    }, {} as Thresholds);
+
+    const payload = downlinkDataToHexPayload({
+      ackId,
+      thresholds,
     });
+
+    const downlinkData: DownlinkData = {
+      cmd: "tx",
+      EUI: IOT_EUI,
+      port: 1,
+      confirmed: false,
+      data: payload,
+    };
+
+    this.#socket.send(JSON.stringify(downlinkData));
+  }
+
+  async confirmDownlinkAck(ackId: number, uplinkTimestamp: Date) {
+    const ackTableSize = await this.wsRepository.getAcksCount();
+    const originalId = originalIdFromPayloadId(ackId, ackTableSize);
+
+    console.log("RECEIVED ACK ID: ", originalId);
+
+    await this.wsRepository.confirmAck(originalId, uplinkTimestamp);
+    const newThresholds =
+      await this.wsRepository.getNewThresholdsFromRequests();
+    await this.wsRepository.updateThresholds(newThresholds);
   }
 }
