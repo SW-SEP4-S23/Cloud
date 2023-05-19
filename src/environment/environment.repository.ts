@@ -59,58 +59,44 @@ export class EnvironmentRepository {
     });
   }
 
-  findAllThresholds() {
-    return Promise.all([
+  async findAllThresholds() {
+    const [upToDateThresholds, pendingThresholds] = await Promise.all([
       this.getUpToDateThresholds(),
       this.getPendingThresholds(),
-    ])
-      .then(([upToDateThresholds, pendingThreshold]) => {
-        const combinedData = {
-          upToDateThresholds: upToDateThresholds,
-          pendingThresholds: pendingThreshold,
-        };
+    ]);
 
-        return combinedData;
-      })
-      .catch((error) => {
-        // Handle any errors that occurred during retrieval
-        console.error(error);
-      });
+    return {
+      upToDateThresholds,
+      pendingThresholds,
+    };
   }
 
-  getUpToDateThresholds() {
-    return new Promise((resolve, reject) => {
-      this.prismaService.thresholds
-        .findMany({})
-        .then((thresholds) => {
-          const namedThresholds = {} as Record<
-            DataType,
-            { dataType: DataType; maxValue: number; minValue: number }
-          >;
-          thresholds.forEach((threshold) => {
-            const propertyName = threshold.dataType;
-            namedThresholds[propertyName] = threshold;
-          });
-          resolve(namedThresholds);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+  async getUpToDateThresholds() {
+    const thresholds = await this.prismaService.thresholds.findMany();
+
+    // map the thresholds to an object with the datatype as key
+    const namedThresholds = thresholds.reduce((acc, curr) => {
+      acc[curr.dataType] = {
+        minValue: curr.minValue,
+        maxValue: curr.maxValue,
+      };
+      return acc;
+    }, {} as Record<DataType, { minValue: number; maxValue: number }>);
+
+    return namedThresholds;
   }
 
-  getPendingThresholds() {
-    return Promise.all([
+  async getPendingThresholds() {
+    const [co2, humidity, temperature] = await Promise.all([
       getPendingThreshold(DataType.CO2, this.prismaService),
       getPendingThreshold(DataType.HUMIDITY, this.prismaService),
       getPendingThreshold(DataType.TEMPERATURE, this.prismaService),
-    ]).then(([co2, humidity, temperature]) => {
-      const pendingThresholds = {
-        co2: co2,
-        humidity: humidity,
-        temperature: temperature,
-      };
-      return pendingThresholds;
-    });
+    ]);
+
+    return {
+      co2,
+      humidity,
+      temperature,
+    };
   }
 }
