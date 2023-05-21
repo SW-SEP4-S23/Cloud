@@ -21,7 +21,7 @@ COPY --chown=node:node prisma ./prisma/
 
 # Create a .env file and write envrioment variables to it
 RUN touch .env
-RUN echo "DATABASE_URL=$DATABASE_URL" > ./.env
+RUN echo "DATABASE_URL=$DATABASE_URL" >.env
 
 # Install app dependencies using the `npm ci` command instead of `npm install`
 RUN npm ci
@@ -76,4 +76,4 @@ COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 COPY --chown=node:node --from=build /usr/src/app/.env ./.env
 
 # Start the server using the production build
-CMD [ "node", "dist/main.js" ]
+CMD [ "node", "dist/src/main.js" ]
