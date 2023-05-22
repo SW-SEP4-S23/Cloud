@@ -38,6 +38,7 @@ async function main() {
   const datapoints = await prisma.datapoint.createMany({
     data: data,
   });
+
   console.log("Just created: " + JSON.stringify(datapoints));
 }
 
