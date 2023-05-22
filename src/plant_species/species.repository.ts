@@ -1,5 +1,5 @@
 import { NewSpeciesDTO } from "./../shared/new-species-dto";
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "nestjs-prisma";
 
@@ -7,9 +7,9 @@ import { PrismaService } from "nestjs-prisma";
 export class SpeciesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  createSpecies(newSpeciesDTO: NewSpeciesDTO) {
+  async createSpecies(newSpeciesDTO: NewSpeciesDTO) {
     try {
-      return this.prisma.plantSpecies.create({
+      return await this.prisma.plantSpecies.create({
         data: {
           name: newSpeciesDTO.name,
           OptimalCo2: newSpeciesDTO.optimalCo2
@@ -23,13 +23,13 @@ export class SpeciesRepository {
             : null,
         },
       });
-      //THIS DOES NOT WORK YET FIX LATER :)
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         // The .code property can be accessed in a type-safe manner
         if (e.code === "P2002") {
-          console.log(
-            "There is a unique constraint violation, a new user cannot be created with this email",
+          throw new HttpException(
+            "Species with this name already exists",
+            HttpStatus.BAD_REQUEST,
           );
         }
       }
@@ -37,23 +37,36 @@ export class SpeciesRepository {
     }
   }
 
-  updateSpecies(newSpeciesDTO: NewSpeciesDTO) {
-    const data = {};
+  async updateSpecies(newSpeciesDTO: NewSpeciesDTO) {
+    try {
+      const data = {};
 
-    if (newSpeciesDTO.optimalCo2 !== null) {
-      data["OptimalCo2"] = newSpeciesDTO.optimalCo2;
-    }
-    if (newSpeciesDTO.optimalTemperature !== null) {
-      data["optimalTemperature"] = newSpeciesDTO.optimalTemperature;
-    }
-    if (newSpeciesDTO.optimalHumidity !== null) {
-      data["optimalHumidity"] = newSpeciesDTO.optimalHumidity;
-    }
+      if (newSpeciesDTO.optimalCo2 !== null) {
+        data["OptimalCo2"] = newSpeciesDTO.optimalCo2;
+      }
+      if (newSpeciesDTO.optimalTemperature !== null) {
+        data["optimalTemperature"] = newSpeciesDTO.optimalTemperature;
+      }
+      if (newSpeciesDTO.optimalHumidity !== null) {
+        data["optimalHumidity"] = newSpeciesDTO.optimalHumidity;
+      }
 
-    return this.prisma.plantSpecies.update({
-      where: { name: newSpeciesDTO.name },
-      data,
-    });
+      return await this.prisma.plantSpecies.update({
+        where: { name: newSpeciesDTO.name },
+        data,
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        // The .code property can be accessed in a type-safe manner
+        if (e.code === "P2025") {
+          throw new HttpException(
+            "Species with this name does not exist",
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
+      throw e;
+    }
   }
 
   async getAllSpecies() {
