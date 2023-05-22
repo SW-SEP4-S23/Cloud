@@ -126,9 +126,13 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
     const ackTableSize = await this.wsRepository.getAcksCount();
     const originalId = originalIdFromPayloadId(ackId, ackTableSize);
 
-    console.log("RECEIVED ACK ID: ", originalId);
+    try {
+      console.log("RECEIVED ACK ID: ", originalId);
+      await this.wsRepository.confirmAck(originalId, uplinkTimestamp);
+    } catch (e) {
+      console.error(`Error confirming ack with id: ${originalId}.`, e);
+    }
 
-    await this.wsRepository.confirmAck(originalId, uplinkTimestamp);
     const newThresholds =
       await this.wsRepository.getNewThresholdsFromRequests();
     await this.wsRepository.updateThresholds(newThresholds);
