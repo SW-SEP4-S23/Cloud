@@ -22,7 +22,7 @@ describe("Plants Controller", () => {
       return request(app.getHttpServer())
         .get("/stock/plants")
         .expect(200)
-        .expect([{}]);
+        .expect({});
     });
 
     test("Get plant by id", () => {
