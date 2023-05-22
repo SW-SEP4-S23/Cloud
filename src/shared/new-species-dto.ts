@@ -9,16 +9,13 @@ export class NewSpeciesDTO {
 
   @ApiPropertyOptional()
   @Optional()
-  @IsNumber()
   optimalCo2?: number;
 
   @ApiPropertyOptional()
   @Optional()
-  @IsNumber()
   optimalTemperature?: number;
 
   @ApiPropertyOptional()
   @Optional()
-  @IsNumber()
   optimalHumidity?: number;
 }

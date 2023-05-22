@@ -9,4 +9,8 @@ export class SpeciesService {
   createSpecies(newSpeciesDTO: NewSpeciesDTO) {
     return this.speciesRepo.createSpecies(newSpeciesDTO);
   }
+
+  updateSpecies(newSpeciesDTO: NewSpeciesDTO) {
+    return this.speciesRepo.updateSpecies(newSpeciesDTO);
+  }
 }
