@@ -17,14 +17,12 @@ export const plantSpecies: Prisma.PlantSpeciesCreateManyInput[] = [
 
 export const plantBatch: Prisma.PlantBatchCreateManyInput[] = [
   {
-    id: 1,
     harvestDate: new Date("2021-01-01T00:00:00.000Z"),
     plantingDate: new Date("2020-12-01T00:00:00.000Z"),
     ps_Name: "Aloe Vera",
     amount: 10,
   },
   {
-    id: 2,
     harvestDate: new Date("2021-01-01T00:00:00.000Z"),
     plantingDate: new Date("2020-12-01T00:00:00.000Z"),
     ps_Name: "Basil",
@@ -34,15 +32,12 @@ export const plantBatch: Prisma.PlantBatchCreateManyInput[] = [
 
 export const plant: Prisma.PlantCreateManyInput[] = [
   {
-    id: 1,
     pb_Id: 1,
   },
   {
-    id: 2,
     pb_Id: 1,
   },
   {
-    id: 3,
     pb_Id: 2,
   },
 ];
