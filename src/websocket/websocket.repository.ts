@@ -30,7 +30,7 @@ export class WebSocketRepository {
     // Latest requests for all datatypes that haven't been acked
     return this.prisma.thresholdRequests.findMany({
       where: {
-        ackId: null,
+        ack_Id: null,
       },
       select: {
         id: true,
