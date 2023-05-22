@@ -1,5 +1,8 @@
 import { Injectable } from "@nestjs/common";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { PrismaService } from "nestjs-prisma";
+import { PlantNotFoundError } from "./exceptions/PlantNotFoundError";
+import { BatchNotFoundError } from "./exceptions/BatchNotFoundError";
 
 @Injectable()
 export class LogsRepository {
@@ -42,22 +45,39 @@ export class LogsRepository {
   }
 
   async createPlantLog(params: { plantId: number; message: string }) {
-    return this.prisma.plantLogs.create({
-      data: {
-        p_Id: params.plantId,
-        message: params.message,
-        timestamp: new Date(),
-      },
-    });
+    try {
+      return await this.prisma.plantLogs.create({
+        data: {
+          p_Id: params.plantId,
+          message: params.message,
+          timestamp: new Date(),
+        },
+      });
+    } catch (e) {
+      console.log(e);
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code === "P2003") {
+          throw new PlantNotFoundError(params.plantId);
+        }
+      }
+    }
   }
 
   async createBatchLog(params: { batchId: number; message: string }) {
-    return this.prisma.batchLogs.create({
-      data: {
-        pb_Id: params.batchId,
-        message: params.message,
-        timestamp: new Date(),
-      },
-    });
+    try {
+      return await this.prisma.batchLogs.create({
+        data: {
+          pb_Id: params.batchId,
+          message: params.message,
+          timestamp: new Date(),
+        },
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        if (e.code === "P2003") {
+          throw new BatchNotFoundError(params.batchId);
+        }
+      }
+    }
   }
 }

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   Param,
   ParseIntPipe,
   Post,
@@ -9,6 +10,8 @@ import {
 import { LogsService } from "./logs.service";
 import { CreatePlantLogDto } from "./dto/create-plant-log-dto";
 import { CreateBatchLogDto } from "./dto/create-batch-log-dto";
+import { BatchNotFoundError } from "./exceptions/BatchNotFoundError";
+import { PlantNotFoundError } from "./exceptions/PlantNotFoundError";
 
 @Controller("stock")
 export class LogsController {
@@ -40,24 +43,36 @@ export class LogsController {
   }
 
   @Post("/plants/:plantId/logs")
-  createPlantLog(
+  async createPlantLog(
     @Param("plantId", ParseIntPipe) plantId: number,
     @Body() createPlantLogDto: CreatePlantLogDto,
   ) {
-    return this.logsService.createPlantLog({
-      plantId,
-      message: createPlantLogDto.message,
-    });
+    try {
+      return await this.logsService.createPlantLog({
+        plantId,
+        message: createPlantLogDto.message,
+      });
+    } catch (e) {
+      if (e instanceof PlantNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+    }
   }
 
   @Post("/batches/:batchId/logs")
-  createBatchLog(
+  async createBatchLog(
     @Param("batchId", ParseIntPipe) batchId: number,
     @Body() createBatchLogDto: CreateBatchLogDto,
   ) {
-    return this.logsService.createBatchLog({
-      batchId,
-      message: createBatchLogDto.message,
-    });
+    try {
+      return await this.logsService.createBatchLog({
+        batchId,
+        message: createBatchLogDto.message,
+      });
+    } catch (e) {
+      if (e instanceof BatchNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+    }
   }
 }

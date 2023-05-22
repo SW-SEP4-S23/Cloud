@@ -1,5 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { LogsRepository } from "./logs.repository";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { PlantNotFoundError } from "./exceptions/PlantNotFoundError";
+import { BatchNotFoundError } from "./exceptions/BatchNotFoundError";
 
 @Injectable()
 export class LogsService {
@@ -25,11 +28,11 @@ export class LogsService {
     return this.logsRepository.getBatchLogsByBatchId(batchId);
   }
 
-  async createPlantLog(params: { plantId: number; message: string }) {
+  createPlantLog(params: { plantId: number; message: string }) {
     return this.logsRepository.createPlantLog(params);
   }
 
-  async createBatchLog(params: { batchId: number; message: string }) {
+  createBatchLog(params: { batchId: number; message: string }) {
     return this.logsRepository.createBatchLog(params);
   }
 }
