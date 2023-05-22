@@ -39,7 +39,7 @@ export const getPendingThreshold = async (
         dataType: true,
         maxValueReq: true,
         minValueReq: true,
-        ackId: true,
+        ack_Id: true,
         ack: {
           select: {
             acked: true,
@@ -51,7 +51,7 @@ export const getPendingThreshold = async (
     if (pendingThreshold.ack == null || !pendingThreshold.ack.acked) {
       // Omitting ackId and ack from result
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { ackId, ack, ...result } = pendingThreshold;
+      const { ack_Id, ack, ...result } = pendingThreshold;
       return result;
     }
   } catch {
