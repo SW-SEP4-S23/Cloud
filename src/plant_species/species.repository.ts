@@ -2,6 +2,7 @@ import { NewSpeciesDTO } from "./../shared/new-species-dto";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "nestjs-prisma";
+import { UpdateSpeciesDTO } from "../shared/update-species-dto";
 
 @Injectable()
 export class SpeciesRepository {
@@ -37,22 +38,24 @@ export class SpeciesRepository {
     }
   }
 
-  async updateSpecies(newSpeciesDTO: NewSpeciesDTO) {
+  async updateSpecies(updateSpeciesDTO: UpdateSpeciesDTO) {
     try {
       const data = {};
 
-      if (newSpeciesDTO.optimalCo2 !== null) {
-        data["OptimalCo2"] = newSpeciesDTO.optimalCo2;
+      if (updateSpeciesDTO.updateValues.optimalCo2 !== null) {
+        data["OptimalCo2"] = updateSpeciesDTO.updateValues.optimalCo2;
       }
-      if (newSpeciesDTO.optimalTemperature !== null) {
-        data["optimalTemperature"] = newSpeciesDTO.optimalTemperature;
+      if (updateSpeciesDTO.updateValues.optimalTemperature !== null) {
+        data["optimalTemperature"] =
+          updateSpeciesDTO.updateValues.optimalTemperature;
       }
-      if (newSpeciesDTO.optimalHumidity !== null) {
-        data["optimalHumidity"] = newSpeciesDTO.optimalHumidity;
+      if (updateSpeciesDTO.updateValues.optimalHumidity !== null) {
+        data["optimalHumidity"] = updateSpeciesDTO.updateValues.optimalHumidity;
       }
+      data["name"] = updateSpeciesDTO.updateValues.name;
 
       return await this.prisma.plantSpecies.update({
-        where: { name: newSpeciesDTO.name },
+        where: { name: updateSpeciesDTO.nameToBeChanged },
         data,
       });
     } catch (e) {
@@ -61,6 +64,12 @@ export class SpeciesRepository {
         if (e.code === "P2025") {
           throw new HttpException(
             "Species with this name does not exist",
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+        if (e.code === "P2002") {
+          throw new HttpException(
+            "Species with this name already exists",
             HttpStatus.BAD_REQUEST,
           );
         }

@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Patch, Get, Param } from "@nestjs/common";
 import { NewSpeciesDTO } from "../shared/new-species-dto";
 import { SpeciesService } from "./species.service";
+import { UpdateSpeciesDTO } from "../shared/update-species-dto";
 
 @Controller("stock/species")
 export class SpeciesController {
@@ -12,8 +13,8 @@ export class SpeciesController {
   }
 
   @Patch()
-  updateSpecies(@Body() newSpeciesDTO: NewSpeciesDTO) {
-    return this.speciesService.updateSpecies(newSpeciesDTO);
+  updateSpecies(@Body() updateSpeciesDTO: UpdateSpeciesDTO) {
+    return this.speciesService.updateSpecies(updateSpeciesDTO);
   }
 
   @Get()
