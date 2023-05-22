@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Patch } from "@nestjs/common";
+import { Body, Controller, Post, Patch, Get, Param } from "@nestjs/common";
 import { NewSpeciesDTO } from "../shared/new-species-dto";
 import { SpeciesService } from "./species.service";
 
@@ -14,5 +14,15 @@ export class SpeciesController {
   @Patch()
   updateSpecies(@Body() newSpeciesDTO: NewSpeciesDTO) {
     return this.speciesService.updateSpecies(newSpeciesDTO);
+  }
+
+  @Get()
+  getAllSpecies() {
+    return this.speciesService.getAllSpecies();
+  }
+
+  @Get(":name")
+  getSpecies(@Param("name") name: string) {
+    return this.speciesService.getSpeciesByName(name);
   }
 }

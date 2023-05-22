@@ -55,4 +55,79 @@ export class SpeciesRepository {
       data,
     });
   }
+
+  async getAllSpecies() {
+    const data = await this.prisma.plantSpecies.findMany({
+      include: {
+        PlantBatch: {
+          select: {
+            amount: true,
+          },
+        },
+      },
+    });
+    const transformedData = {};
+    data.forEach((item) => {
+      const {
+        name,
+        OptimalCo2,
+        optimalHumidity,
+        optimalTemperature,
+        PlantBatch,
+      } = item;
+      const totalPlants = PlantBatch.reduce(
+        (sum, batch) => sum + batch.amount,
+        0,
+      );
+
+      transformedData[name] = {
+        OptimalCo2,
+        optimalHumidity,
+        optimalTemperature,
+        totalPlants,
+      };
+    });
+    return transformedData;
+  }
+
+  async getSpeciesByName(name: string) {
+    const data = await this.prisma.plantSpecies.findUnique({
+      where: { name },
+      include: {
+        PlantBatch: {
+          select: {
+            id: true,
+            amount: true,
+            harvestDate: true,
+            plantingDate: true,
+          },
+        },
+      },
+    });
+    if (!data) {
+      // Handle species not found
+      return null;
+    }
+
+    const transformedData = {
+      name: data.name,
+      OptimalCo2: data.OptimalCo2,
+      optimalHumidity: data.optimalHumidity,
+      optimalTemperature: data.optimalTemperature,
+      totalPlants: data.PlantBatch.reduce(
+        (sum, batch) => sum + batch.amount,
+        0,
+      ),
+      PlantBatches: data.PlantBatch.reduce((result, batch) => {
+        result[`batchId-${batch.id}`] = {
+          amount: batch.amount,
+          harvestDate: batch.harvestDate,
+          plantingDate: batch.plantingDate,
+        };
+        return result;
+      }, {}),
+    };
+
+    return transformedData;
+  }
 }

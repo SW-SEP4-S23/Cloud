@@ -1,6 +1,6 @@
 import { Optional } from "@nestjs/common";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsString } from "class-validator";
 
 export class NewSpeciesDTO {
   @ApiProperty()
