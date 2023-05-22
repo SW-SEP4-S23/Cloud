@@ -1,8 +1,42 @@
 import { PrismaClient } from "@prisma/client";
 import { DataType } from "@prisma/client";
+import {
+  batchLogs,
+  plant,
+  plantBatch,
+  plantLogs,
+  plantSpecies,
+} from "./test-data";
 const prisma = new PrismaClient();
 
 async function main() {
+  await Promise.all([seedDatapoints(), seedPlantSpecies()]);
+}
+
+async function seedPlantSpecies() {
+  await prisma.plantSpecies.createMany({
+    data: plantSpecies,
+  });
+
+  await prisma.plantBatch.createMany({
+    data: plantBatch,
+  });
+
+  await prisma.plant.createMany({
+    data: plant,
+  });
+
+  await Promise.all([
+    prisma.plantLogs.createMany({
+      data: plantLogs,
+    }),
+    prisma.batchLogs.createMany({
+      data: batchLogs,
+    }),
+  ]);
+}
+
+async function seedDatapoints() {
   const data = [];
 
   const iterations = 21; //nr of DataPoint for each sensor
