@@ -10,6 +10,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//DATAPOINT
+
 model Datapoint {
   timestamp DateTime
   type      DataType
@@ -17,6 +19,8 @@ model Datapoint {
 
   @@id([timestamp, type])
 }
+
+//THRESHOLDS
 
 model Thresholds {
   dataType          DataType            @id
@@ -27,14 +31,13 @@ model Thresholds {
 
 model ThresholdRequests {
   id          Int        @default(autoincrement())
-  //I think this is neccesary?
   thresholds  Thresholds @relation(fields: [dataType], references: [dataType])
   dataType    DataType
   minValueReq Float
   maxValueReq Float
   requestDate DateTime
-  ack         Ack?       @relation(fields: [ackId], references: [id])
-  ackId       Int?
+  ack         Ack?       @relation(fields: [ack_Id], references: [id])
+  ack_Id      Int?
 
   @@id([id, dataType])
 }
@@ -44,6 +47,50 @@ model Ack {
   dateRecieved      DateTime?
   acked             Boolean
   thresholdRequests ThresholdRequests[]
+}
+
+//PLANTS
+
+model PlantSpecies {
+  name               String       @id
+  OptimalCo2         Float?
+  optimalHumidity    Float?
+  optimalTemperature Float?
+  PlantBatch         PlantBatch[]
+}
+
+model PlantBatch {
+  id           Int          @id @default(autoincrement())
+  harvestDate  DateTime?
+  plantingDate DateTime
+  ps           PlantSpecies @relation(fields: [ps_Name], references: [name])
+  ps_Name      String
+  amount       Int
+  Plant        Plant[]
+  BatchLogs    BatchLogs[]
+}
+
+model Plant {
+  id        Int         @id @default(autoincrement())
+  pb        PlantBatch  @relation(fields: [pb_Id], references: [id])
+  pb_Id     Int
+  PlantLogs PlantLogs[]
+}
+
+model PlantLogs {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime
+  message   String
+  p         Plant    @relation(fields: [p_Id], references: [id])
+  p_Id      Int
+}
+
+model BatchLogs {
+  id        Int        @id @default(autoincrement())
+  timestamp DateTime
+  message   String
+  pb        PlantBatch @relation(fields: [pb_Id], references: [id])
+  pb_Id     Int
 }
 
 enum DataType {
