@@ -3,7 +3,7 @@ import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 import { BatchRepository, HarvestedCondition } from "./batch.repository";
 import { CreateBatch } from "./dto/create-batch";
 import { PatchHarvestDate } from "./dto/patch-batch";
-import { IsHarvested, testString } from "./dto/query-harvested";
+import { IsHarvested } from "./dto/query-harvested";
 
 @Injectable()
 export class BatchService {
@@ -18,12 +18,11 @@ export class BatchService {
   }
 
   getBatch(interval: IntervalQuery, harvested: IsHarvested) {
-    testString(harvested.isHarvested);
     let harvestedCondition: HarvestedCondition = undefined;
 
-    if (harvested.isHarvested === "true")
+    if (harvested.isHarvested)
       harvestedCondition = { harvestDate: { not: null } };
-    if (harvested.isHarvested === "false")
+    if (harvested.isHarvested === false)
       harvestedCondition = { harvestDate: null };
 
     console.log(harvestedCondition);
