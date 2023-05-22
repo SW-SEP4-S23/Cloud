@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { SpeciesRepository } from "./species.repository";
 import { NewSpeciesDTO } from "../shared/new-species-dto";
-import { get } from "http";
 
 @Injectable()
 export class SpeciesService {
