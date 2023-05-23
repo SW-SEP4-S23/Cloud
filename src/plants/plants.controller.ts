@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { PlantsService } from "./plants.service";
 
