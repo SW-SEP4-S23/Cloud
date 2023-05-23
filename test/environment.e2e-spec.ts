@@ -3,6 +3,7 @@ import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import { DataType } from "@prisma/client";
+import { NewThresholdWrapperDTO } from "../src/shared/new-threshold-wrapper-dto";
 // import { CommonTestsInterfaces, commonTests } from "./commonTests"; DEPRECATED
 
 describe("Environment Controller", () => {
@@ -117,20 +118,7 @@ describe("Environment Controller", () => {
   describe("(GET, POST) Thresholds", () => {
     //Values to be used in the tests
     //This leaves possiblity to make more tests with different values
-    let minMaxValuesObject: {
-      newTemperatureThreshold: {
-        minValue: number;
-        maxValue: number;
-      };
-      newHumidityThreshold: {
-        minValue: number;
-        maxValue: number;
-      };
-      newCo2Threshold: {
-        minValue: number;
-        maxValue: number;
-      };
-    };
+    let minMaxValuesObject: NewThresholdWrapperDTO;
 
     describe("(POST) Thresholds", () => {
       test("Checking if POST succeeds", () => {
