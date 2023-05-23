@@ -17,7 +17,7 @@ export class PlantsController {
   }
 
   @Get("/:id")
-  async findOne(@Param("id") id: number) {
+  async findOne(@Param("id", ParseIntPipe) id: number) {
     const plantToReturn = await this.plantsService.findOne(id);
 
     if (!plantToReturn) {
