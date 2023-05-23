@@ -1,6 +1,6 @@
-import { PrismaService } from "../prisma.service";
 import { Injectable } from "@nestjs/common";
 import { DataType } from "@prisma/client";
+import { PrismaService } from "nestjs-prisma";
 
 @Injectable()
 export class DatapointRepository {

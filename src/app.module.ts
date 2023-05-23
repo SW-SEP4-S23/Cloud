@@ -6,6 +6,7 @@ import { Co2Module } from "./co2/co2.module";
 import { WebSocketModule } from "./websocket/websocket.module";
 import { EnvironmentModule } from "./environment/environment.module";
 import { PrismaModule } from "nestjs-prisma";
+import { BatchModule } from "./batch/batch.module";
 import { PlantsModule } from "./plants/plants.module";
 import { LogsModule } from "./logs/logs.module";
 import { SpeciesModule } from "./plant_species/species.module";
@@ -20,6 +21,7 @@ import { SpeciesModule } from "./plant_species/species.module";
     EnvironmentModule,
     LogsModule,
     WebSocketModule,
+    BatchModule,
     PlantsModule,
     SpeciesModule,
   ],
