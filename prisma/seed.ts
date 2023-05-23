@@ -8,6 +8,7 @@ import {
   plantSpecies,
   speciesLogs,
 } from "./test-data";
+
 const prisma = new PrismaClient();
 
 async function main() {
