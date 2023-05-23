@@ -42,9 +42,6 @@ jobs:
       - name: Sync database schema
         run: npm run db:push
 
-      - name: Seed database
-        run: npm run db:mock
-
       - name: Lint code
         run: npm run lint
 

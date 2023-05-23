@@ -2,7 +2,6 @@ import { INestApplication } from "@nestjs/common";
 import { AppModule } from "../src/app.module";
 import { Test } from "@nestjs/testing";
 import * as request from "supertest";
-import { plant } from "../prisma/test-data";
 
 describe("Plants Controller", () => {
   let app: INestApplication;

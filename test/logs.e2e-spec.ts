@@ -20,11 +20,7 @@ describe("Logs Controller", () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        transform: true,
-      }),
-    );
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
     await app.init();
   });
 

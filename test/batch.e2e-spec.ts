@@ -17,6 +17,7 @@ describe("Batch Controller", () => {
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     await app.init();
   });
+
   //To see the seeded data, find the file in ../prisma/seed.ts
   describe("(POST) Batch", () => {
     test("Batch creation", () => {
@@ -32,7 +33,7 @@ describe("Batch Controller", () => {
         .post("/stock/batch")
         .send(batch)
         .expect(201)
-        .then((res) => {
+        .expect((res) => {
           const expectedResponse = [
             {
               amount: amount,
@@ -63,7 +64,7 @@ describe("Batch Controller", () => {
       return request(app.getHttpServer())
         .get("/stock/batch")
         .expect(200)
-        .then((res) => {
+        .expect((res) => {
           expect(res.body.length).toEqual(3);
         });
     });
@@ -74,7 +75,7 @@ describe("Batch Controller", () => {
       return request(app.getHttpServer())
         .get(`/stock/batch?startDate=${startDate}&endDate=${endDate}`)
         .expect(200)
-        .then((res) => {
+        .expect((res) => {
           expect(res.body.length).toEqual(expectedLength);
           const body1PlantingDate = new Date(res.body[0].plantingDate);
           const body2PlantingDate = new Date(res.body[1].plantingDate);
@@ -90,7 +91,7 @@ describe("Batch Controller", () => {
       return request(app.getHttpServer())
         .get(`/stock/batch?isHarvested=${isHarvested}`)
         .expect(200)
-        .then((res) => {
+        .expect((res) => {
           expect(res.body.length).toEqual(expectedLength);
           const body1HarvestDate = new Date(res.body[0].harvestDate);
           const body2HarvestDate = new Date(res.body[1].harvestDate);
@@ -104,7 +105,7 @@ describe("Batch Controller", () => {
       return request(app.getHttpServer())
         .get(`/stock/batch?isHarvested=${isHarvested}`)
         .expect(200)
-        .then((res) => {
+        .expect((res) => {
           expect(res.body.length).toEqual(expectedLength);
           expect(res.body[0].harvestDate).toBeFalsy();
         });
@@ -116,7 +117,7 @@ describe("Batch Controller", () => {
       return request(app.getHttpServer())
         .get(`/stock/batch/${id}`)
         .expect(200)
-        .then((res) => {
+        .expect((res) => {
           expect(res.body.id).toEqual(id);
         });
     });
@@ -133,7 +134,7 @@ describe("Batch Controller", () => {
         .patch(`/stock/batch/${id}`)
         .send({ harvestDate: harvestDate })
         .expect(200)
-        .then((res) => {
+        .expect((res) => {
           expect(res.body.harvestDate).toEqual(harvestDate);
         });
     });
