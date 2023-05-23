@@ -146,4 +146,8 @@ describe("Batch Controller", () => {
         .expect(404);
     });
   });
+
+  afterAll(async () => {
+    await app.close();
+  });
 });
