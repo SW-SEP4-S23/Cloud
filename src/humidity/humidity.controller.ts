@@ -21,4 +21,9 @@ export class HumidityController {
   postThresholdRequest(@Body() newThreshold: NewThresholdDTO) {
     return this.humidityService.postThresholdRequest(newThreshold);
   }
+
+  @Get("/hardcoded-thresholds")
+  getHardcodedThresholds() {
+    return this.humidityService.getHardcodedThresholds();
+  }
 }

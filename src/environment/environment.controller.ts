@@ -21,4 +21,9 @@ export class EnvironmentController {
   findAllThresholds() {
     return this.environmentService.findAllThresholds();
   }
+
+  @Get("/hardcoded-thresholds")
+  getHardcodedThresholds() {
+    return this.environmentService.getHardcodedThresholds();
+  }
 }

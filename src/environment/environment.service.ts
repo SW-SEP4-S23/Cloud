@@ -4,6 +4,10 @@ import { EnvironmentRepository } from "./environment.repository";
 import { NewThresholdWrapperDTO } from "../shared/new-threshold-wrapper-dto";
 import { newThresholdChecker } from "../shared/new-threshold-dto";
 import { DataType } from "@prisma/client";
+import {
+  hardcodedThresholds,
+  testForHardcodedThresholds,
+} from "../shared/hardcoded-thresholds";
 
 @Injectable()
 export class EnvironmentService {
@@ -34,6 +38,7 @@ export class EnvironmentService {
   }
 
   postThresholdsRequests(newThresholds: NewThresholdWrapperDTO) {
+    testForHardcodedThresholds(newThresholds);
     for (const key in newThresholds) {
       if (newThresholds.hasOwnProperty(key)) {
         const thresholdDTO = newThresholds[key];
@@ -45,5 +50,9 @@ export class EnvironmentService {
 
   findAllThresholds() {
     return this.environmentRepository.findAllThresholds();
+  }
+
+  getHardcodedThresholds() {
+    return hardcodedThresholds;
   }
 }

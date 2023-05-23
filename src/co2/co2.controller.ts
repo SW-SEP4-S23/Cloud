@@ -12,7 +12,6 @@ export class Co2Controller {
     return this.co2Service.findAllInterval(interval);
   }
 
-  //Skal opdateres med PENDING
   @Get("/thresholds")
   getDataPointThresholds() {
     return this.co2Service.getDataPointThresholds();
@@ -21,5 +20,10 @@ export class Co2Controller {
   @Post("/thresholds")
   postThresholdRequest(@Body() newThreshold: NewThresholdDTO) {
     return this.co2Service.postThresholdRequest(newThreshold);
+  }
+
+  @Get("/hardcoded-thresholds")
+  getHardcodedThresholds() {
+    return this.co2Service.getHardcodedThresholds();
   }
 }

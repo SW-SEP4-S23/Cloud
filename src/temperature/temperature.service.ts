@@ -5,6 +5,10 @@ import {
   NewThresholdDTO,
   newThresholdChecker,
 } from "../shared/new-threshold-dto";
+import {
+  hardcodedThresholds,
+  testForHardcodedThresholdsTemperature,
+} from "../shared/hardcoded-thresholds";
 
 @Injectable()
 export class TemperatureService {
@@ -22,6 +26,11 @@ export class TemperatureService {
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
     newThresholdChecker(newThreshold);
+    testForHardcodedThresholdsTemperature(newThreshold);
     return this.temperatureRepository.postThresholdRequest(newThreshold);
+  }
+
+  getHardcodedThresholds() {
+    return hardcodedThresholds.temperature;
   }
 }
