@@ -53,7 +53,6 @@ export class LogsRepository {
           case "P2025":
             throw new PlantNotFoundError(plantId);
           default:
-            console.log(e);
             throw e;
         }
       }
@@ -78,7 +77,6 @@ export class LogsRepository {
           case "P2025":
             throw new BatchNotFoundError(batchId);
           default:
-            console.log(e);
             throw e;
         }
       }
@@ -103,7 +101,6 @@ export class LogsRepository {
           case "P2025":
             throw new SpeciesNotFoundError(speciesName);
           default:
-            console.log(e);
             throw e;
         }
       }
@@ -125,14 +122,12 @@ export class LogsRepository {
         },
       });
     } catch (e) {
-      console.log(e);
       if (e instanceof PrismaClientKnownRequestError) {
         switch (e.code) {
           case "P2002":
           case "P2003":
             throw new PlantNotFoundError(params.plantId);
           default:
-            console.log(e);
             throw e;
         }
       }
@@ -160,7 +155,6 @@ export class LogsRepository {
           case "P2003":
             throw new BatchNotFoundError(params.batchId);
           default:
-            console.log(e);
             throw e;
         }
       }
@@ -188,7 +182,6 @@ export class LogsRepository {
           case "P2003":
             throw new SpeciesNotFoundError(params.speciesName);
           default:
-            console.log(e);
             throw e;
         }
       }
