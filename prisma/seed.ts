@@ -6,6 +6,7 @@ import {
   plantBatch,
   plantLogs,
   plantSpecies,
+  speciesLogs,
 } from "./test-data";
 const prisma = new PrismaClient();
 
@@ -32,6 +33,9 @@ async function seedPlantSpecies() {
     }),
     prisma.batchLogs.createMany({
       data: batchLogs,
+    }),
+    prisma.speciesLogs.createMany({
+      data: speciesLogs,
     }),
   ]);
 }

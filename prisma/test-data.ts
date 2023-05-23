@@ -72,3 +72,16 @@ export const batchLogs: Prisma.BatchLogsCreateManyInput[] = [
     pb_Id: 2,
   },
 ];
+
+export const speciesLogs: Prisma.SpeciesLogsCreateManyInput[] = [
+  {
+    timestamp: new Date("2021-01-01T00:00:00.000Z").toISOString(),
+    message: "Species 1 is doing well",
+    plantSpeciesName: "Aloe Vera",
+  },
+  {
+    timestamp: new Date("2021-01-01T00:00:00.000Z").toISOString(),
+    message: "Species 2 is doing well",
+    plantSpeciesName: "Basil",
+  },
+];
