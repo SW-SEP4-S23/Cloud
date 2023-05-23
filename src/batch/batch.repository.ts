@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
 import { CreateBatch } from "./dto/create-batch";
@@ -28,15 +28,21 @@ export class BatchRepository {
     return [plantBatch, plants];
   }
 
-  updateBatch(id: number, harvestDate: PatchHarvestDate) {
-    return this.prisma.plantBatch.update({
-      where: {
-        id: id,
-      },
-      data: {
-        harvestDate: harvestDate.harvestDate,
-      },
-    });
+  async updateBatch(id: number, harvestDate: PatchHarvestDate) {
+    try {
+      return await this.prisma.plantBatch.update({
+        where: {
+          id: id,
+        },
+        data: {
+          harvestDate: harvestDate.harvestDate,
+        },
+      });
+    } catch (e) {
+      if (e.code === "P2025")
+        throw new HttpException("Batch not found", HttpStatus.NOT_FOUND);
+      else throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   findAll(whereCondition: HarvestedCondition) {

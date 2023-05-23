@@ -44,19 +44,16 @@ export const plant: Prisma.PlantCreateManyInput[] = [
 
 export const plantLogs: Prisma.PlantLogsCreateManyInput[] = [
   {
-    id: 1,
     timestamp: new Date("2021-01-01T00:00:00.000Z"),
     message: "Plant 1 is doing well",
     p_Id: 1,
   },
   {
-    id: 2,
     timestamp: new Date("2021-01-01T00:00:00.000Z"),
     message: "Plant 2 is doing well",
     p_Id: 2,
   },
   {
-    id: 3,
     timestamp: new Date("2021-01-01T00:00:00.000Z"),
     message: "Plant 3 is doing poorly",
     p_Id: 2,
@@ -65,13 +62,11 @@ export const plantLogs: Prisma.PlantLogsCreateManyInput[] = [
 
 export const batchLogs: Prisma.BatchLogsCreateManyInput[] = [
   {
-    id: 1,
     timestamp: new Date("2021-01-01T00:00:00.000Z"),
     message: "Batch 1 is doing well",
     pb_Id: 1,
   },
   {
-    id: 2,
     timestamp: new Date("2021-01-01T00:00:00.000Z"),
     message: "Batch 2 is doing well",
     pb_Id: 2,
