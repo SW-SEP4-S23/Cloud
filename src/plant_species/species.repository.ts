@@ -126,9 +126,12 @@ export class SpeciesRepository {
         },
       },
     });
+
     if (!data) {
-      // Handle species not found
-      return null;
+      throw new HttpException(
+        "Species with this name does not exist",
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const transformedData = {

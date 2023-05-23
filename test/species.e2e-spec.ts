@@ -60,8 +60,11 @@ describe("Species controller", () => {
     test("Get species that does not exist", () => {
       return request(app.getHttpServer())
         .get("/stock/species/NOT_A_SPECIES")
-        .expect(200)
-        .expect({});
+        .expect(404)
+        .expect({
+          statusCode: 404,
+          message: "Species with this name does not exist",
+        });
     });
   });
 
