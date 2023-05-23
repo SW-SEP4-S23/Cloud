@@ -52,11 +52,12 @@ model Ack {
 //PLANTS
 
 model PlantSpecies {
-  name               String       @id
+  name               String        @id
   OptimalCo2         Float?
   optimalHumidity    Float?
   optimalTemperature Float?
   PlantBatch         PlantBatch[]
+  speciesLogs        SpeciesLogs[]
 }
 
 model PlantBatch {
@@ -75,6 +76,14 @@ model Plant {
   pb        PlantBatch  @relation(fields: [pb_Id], references: [id])
   pb_Id     Int
   PlantLogs PlantLogs[]
+}
+
+model SpeciesLogs {
+  id               Int          @id @default(autoincrement())
+  timestamp        DateTime
+  message          String
+  plantSpecies     PlantSpecies @relation(fields: [plantSpeciesName], references: [name])
+  plantSpeciesName String
 }
 
 model PlantLogs {
