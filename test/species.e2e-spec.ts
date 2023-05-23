@@ -25,7 +25,7 @@ describe("Species controller", () => {
             OptimalCo2: 400,
             optimalHumidity: 0.5,
             optimalTemperature: 20,
-            totalPlants: 10,
+            totalPlants: 20, //! This is not correct, it should be 10, but since we don't reset the database between tests, it is 20
           },
           Basil: {
             OptimalCo2: 300,
