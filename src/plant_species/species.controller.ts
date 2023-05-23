@@ -1,23 +1,52 @@
-import { Body, Controller, Post, Patch, Get, Param } from "@nestjs/common";
-import { NewSpeciesDTO } from "../shared/new-species-dto";
+import {
+  Body,
+  Controller,
+  Post,
+  Patch,
+  Get,
+  Param,
+  HttpException,
+} from "@nestjs/common";
 import { SpeciesService } from "./species.service";
-import { UpdateSpeciesDTO } from "../shared/update-species-dto";
+import { NewSpeciesDTO } from "./dto/new-species-dto";
+import { SpeciesNotFoundError } from "./exceptions/SpeciesNotFoundError";
+import { SpeciesNameAlreadyExistsError } from "./exceptions/SpeciesNameAlreadyExistsError";
 
 @Controller("stock/species")
 export class SpeciesController {
   constructor(private readonly speciesService: SpeciesService) {}
 
   @Post()
-  createSpecies(@Body() newSpeciesDTO: NewSpeciesDTO) {
-    return this.speciesService.createSpecies(newSpeciesDTO);
+  async createSpecies(@Body() newSpeciesDTO: NewSpeciesDTO) {
+    try {
+      return await this.speciesService.createSpecies(newSpeciesDTO);
+    } catch (e) {
+      if (e instanceof SpeciesNameAlreadyExistsError) {
+        throw new HttpException(e.message, 400);
+      }
+      throw new HttpException(e.message, 500);
+    }
   }
 
   @Patch(":nameToBeChanged")
-  updateSpecies(
+  async updateSpecies(
     @Param("nameToBeChanged") nameToBeChanged: string,
     @Body() NewSpeciesDTO: NewSpeciesDTO,
   ) {
-    return this.speciesService.updateSpecies(nameToBeChanged, NewSpeciesDTO);
+    try {
+      return await this.speciesService.updateSpecies(
+        nameToBeChanged,
+        NewSpeciesDTO,
+      );
+    } catch (e) {
+      if (e instanceof SpeciesNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+      if (e instanceof SpeciesNameAlreadyExistsError) {
+        throw new HttpException(e.message, 400);
+      }
+      throw new HttpException(e.message, 500);
+    }
   }
 
   @Get()
@@ -26,7 +55,14 @@ export class SpeciesController {
   }
 
   @Get(":name")
-  getSpecies(@Param("name") name: string) {
-    return this.speciesService.getSpeciesByName(name);
+  async getSpecies(@Param("name") name: string) {
+    try {
+      return await this.speciesService.getSpeciesByName(name);
+    } catch (e) {
+      if (e instanceof SpeciesNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+      throw new HttpException(e.message, 500);
+    }
   }
 }
