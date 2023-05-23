@@ -3,18 +3,11 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { PrismaService } from "nestjs-prisma";
 import { PlantNotFoundError } from "./exceptions/PlantNotFoundError";
 import { BatchNotFoundError } from "./exceptions/BatchNotFoundError";
+import { SpeciesNotFoundError } from "./exceptions/SpeciesNotFoundError";
 
 @Injectable()
 export class LogsRepository {
   constructor(private readonly prisma: PrismaService) {}
-
-  async getAllBatchLogs() {
-    return this.prisma.batchLogs.findMany();
-  }
-
-  async getAllPlantLogs() {
-    return this.prisma.plantLogs.findMany();
-  }
 
   async getAllLogs() {
     const [plantLogs, batchLogs] = await Promise.all([
@@ -28,20 +21,91 @@ export class LogsRepository {
     };
   }
 
+  async getAllBatchLogs() {
+    return this.prisma.batchLogs.findMany();
+  }
+
+  async getAllPlantLogs() {
+    return this.prisma.plantLogs.findMany();
+  }
+
+  async getAllSpeciesLogs() {
+    return this.prisma.speciesLogs.findMany();
+  }
+
   async getPlantLogsByPlantId(plantId: number) {
-    return this.prisma.plantLogs.findMany({
-      where: {
-        p_Id: plantId,
-      },
-    });
+    try {
+      const { PlantLogs } = await this.prisma.plant.findFirstOrThrow({
+        where: {
+          id: plantId,
+        },
+        select: {
+          PlantLogs: true,
+        },
+      });
+
+      return PlantLogs;
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        switch (e.code) {
+          case "P2025":
+            throw new PlantNotFoundError(plantId);
+          default:
+            console.log(e);
+            throw e;
+        }
+      }
+    }
   }
 
   async getBatchLogsByBatchId(batchId: number) {
-    return this.prisma.batchLogs.findMany({
-      where: {
-        pb_Id: batchId,
-      },
-    });
+    try {
+      const { BatchLogs } = await this.prisma.plantBatch.findFirstOrThrow({
+        where: {
+          id: batchId,
+        },
+        select: {
+          BatchLogs: true,
+        },
+      });
+
+      return BatchLogs;
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        switch (e.code) {
+          case "P2025":
+            throw new BatchNotFoundError(batchId);
+          default:
+            console.log(e);
+            throw e;
+        }
+      }
+    }
+  }
+
+  async getSpeciesLogsBySpeciesName(speciesName: string) {
+    try {
+      const { speciesLogs } = await this.prisma.plantSpecies.findFirstOrThrow({
+        where: {
+          name: speciesName,
+        },
+        select: {
+          speciesLogs: true,
+        },
+      });
+
+      return speciesLogs;
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        switch (e.code) {
+          case "P2025":
+            throw new SpeciesNotFoundError(speciesName);
+          default:
+            console.log(e);
+            throw e;
+        }
+      }
+    }
   }
 
   async createPlantLog(params: { plantId: number; message: string }) {
@@ -52,12 +116,22 @@ export class LogsRepository {
           message: params.message,
           timestamp: new Date(),
         },
+        select: {
+          id: true,
+          p_Id: true,
+          message: true,
+        },
       });
     } catch (e) {
       console.log(e);
       if (e instanceof PrismaClientKnownRequestError) {
-        if (e.code === "P2003") {
-          throw new PlantNotFoundError(params.plantId);
+        switch (e.code) {
+          case "P2002":
+          case "P2003":
+            throw new PlantNotFoundError(params.plantId);
+          default:
+            console.log(e);
+            throw e;
         }
       }
     }
@@ -71,11 +145,49 @@ export class LogsRepository {
           message: params.message,
           timestamp: new Date(),
         },
+        select: {
+          id: true,
+          pb_Id: true,
+          message: true,
+        },
       });
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
-        if (e.code === "P2003") {
-          throw new BatchNotFoundError(params.batchId);
+        switch (e.code) {
+          case "P2002":
+          case "P2003":
+            throw new BatchNotFoundError(params.batchId);
+          default:
+            console.log(e);
+            throw e;
+        }
+      }
+    }
+  }
+
+  async createSpeciesLog(params: { speciesName: string; message: string }) {
+    try {
+      return await this.prisma.speciesLogs.create({
+        data: {
+          plantSpeciesName: params.speciesName,
+          message: params.message,
+          timestamp: new Date(),
+        },
+        select: {
+          id: true,
+          plantSpeciesName: true,
+          message: true,
+        },
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        switch (e.code) {
+          case "P2002":
+          case "P2003":
+            throw new SpeciesNotFoundError(params.speciesName);
+          default:
+            console.log(e);
+            throw e;
         }
       }
     }

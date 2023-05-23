@@ -4,7 +4,6 @@ import {
   Get,
   HttpException,
   Param,
-  ParseIntPipe,
   Post,
 } from "@nestjs/common";
 import { LogsService } from "./logs.service";
@@ -32,19 +31,47 @@ export class LogsController {
     return this.logsService.getAllBatchLogs();
   }
 
+  @Get("/species/logs")
+  getAllSpeciesLogs() {
+    return this.logsService.getAllSpeciesLogs();
+  }
+
   @Get("/plants/:plantId/logs")
-  getPlantLogsByPlantId(@Param("plantId", ParseIntPipe) plantId: number) {
-    return this.logsService.getPlantLogsByPlantId(plantId);
+  async getPlantLogsByPlantId(@Param("plantId") plantId: number) {
+    try {
+      return await this.logsService.getPlantLogsByPlantId(plantId);
+    } catch (e) {
+      if (e instanceof PlantNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+    }
   }
 
   @Get("/batches/:batchId/logs")
-  getBatchLogsByBatchId(@Param("batchId", ParseIntPipe) batchId: number) {
-    return this.logsService.getBatchLogsByBatchId(batchId);
+  async getBatchLogsByBatchId(@Param("batchId") batchId: number) {
+    try {
+      return await this.logsService.getBatchLogsByBatchId(batchId);
+    } catch (e) {
+      if (e instanceof BatchNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+    }
+  }
+
+  @Get("/species/:speciesName/logs")
+  async getSpeciesLogsBySpeciesName(@Param("speciesName") speciesName: string) {
+    try {
+      return await this.logsService.getSpeciesLogsBySpeciesName(speciesName);
+    } catch (e) {
+      if (e instanceof BatchNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+    }
   }
 
   @Post("/plants/:plantId/logs")
   async createPlantLog(
-    @Param("plantId", ParseIntPipe) plantId: number,
+    @Param("plantId") plantId: number,
     @Body() createPlantLogDto: CreatePlantLogDto,
   ) {
     try {
@@ -61,13 +88,30 @@ export class LogsController {
 
   @Post("/batches/:batchId/logs")
   async createBatchLog(
-    @Param("batchId", ParseIntPipe) batchId: number,
+    @Param("batchId") batchId: number,
     @Body() createBatchLogDto: CreateBatchLogDto,
   ) {
     try {
       return await this.logsService.createBatchLog({
         batchId,
         message: createBatchLogDto.message,
+      });
+    } catch (e) {
+      if (e instanceof BatchNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+    }
+  }
+
+  @Post("/species/:speciesName/logs")
+  async createSpeciesLog(
+    @Param("speciesName") speciesName: string,
+    @Body() createSpeciesLogDto: CreateBatchLogDto,
+  ) {
+    try {
+      return await this.logsService.createSpeciesLog({
+        speciesName,
+        message: createSpeciesLogDto.message,
       });
     } catch (e) {
       if (e instanceof BatchNotFoundError) {

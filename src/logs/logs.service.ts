@@ -1,31 +1,36 @@
 import { Injectable } from "@nestjs/common";
 import { LogsRepository } from "./logs.repository";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
-import { PlantNotFoundError } from "./exceptions/PlantNotFoundError";
-import { BatchNotFoundError } from "./exceptions/BatchNotFoundError";
 
 @Injectable()
 export class LogsService {
   constructor(private readonly logsRepository: LogsRepository) {}
 
-  async getAllLogs() {
+  getAllLogs() {
     return this.logsRepository.getAllLogs();
   }
 
-  async getAllPlantLogs() {
+  getAllPlantLogs() {
     return this.logsRepository.getAllPlantLogs();
   }
 
-  async getAllBatchLogs() {
+  getAllBatchLogs() {
     return this.logsRepository.getAllBatchLogs();
   }
 
-  async getPlantLogsByPlantId(plantId: number) {
+  getAllSpeciesLogs() {
+    return this.logsRepository.getAllSpeciesLogs();
+  }
+
+  getPlantLogsByPlantId(plantId: number) {
     return this.logsRepository.getPlantLogsByPlantId(plantId);
   }
 
-  async getBatchLogsByBatchId(batchId: number) {
+  getBatchLogsByBatchId(batchId: number) {
     return this.logsRepository.getBatchLogsByBatchId(batchId);
+  }
+
+  getSpeciesLogsBySpeciesName(speciesName: string) {
+    return this.logsRepository.getSpeciesLogsBySpeciesName(speciesName);
   }
 
   createPlantLog(params: { plantId: number; message: string }) {
@@ -34,5 +39,9 @@ export class LogsService {
 
   createBatchLog(params: { batchId: number; message: string }) {
     return this.logsRepository.createBatchLog(params);
+  }
+
+  createSpeciesLog(params: { speciesName: string; message: string }) {
+    return this.logsRepository.createSpeciesLog(params);
   }
 }
