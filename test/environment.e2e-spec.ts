@@ -4,7 +4,6 @@ import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import { DataType } from "@prisma/client";
 import { NewThresholdWrapperDTO } from "../src/shared/new-threshold-wrapper-dto";
-// import { CommonTestsInterfaces, commonTests } from "./commonTests"; DEPRECATED
 
 describe("Environment Controller", () => {
   let app: INestApplication;
