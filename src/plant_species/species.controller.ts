@@ -12,9 +12,12 @@ export class SpeciesController {
     return this.speciesService.createSpecies(newSpeciesDTO);
   }
 
-  @Patch()
-  updateSpecies(@Body() updateSpeciesDTO: UpdateSpeciesDTO) {
-    return this.speciesService.updateSpecies(updateSpeciesDTO);
+  @Patch(":nameToBeChanged")
+  updateSpecies(
+    @Param("nameToBeChanged") nameToBeChanged: string,
+    @Body() NewSpeciesDTO: NewSpeciesDTO,
+  ) {
+    return this.speciesService.updateSpecies(nameToBeChanged, NewSpeciesDTO);
   }
 
   @Get()

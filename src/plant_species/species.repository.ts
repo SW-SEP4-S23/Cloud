@@ -64,7 +64,7 @@ export class SpeciesRepository {
         if (e.code === "P2025") {
           throw new HttpException(
             "Species with this name does not exist",
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.NOT_FOUND,
           );
         }
         if (e.code === "P2002") {

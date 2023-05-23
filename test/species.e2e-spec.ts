@@ -114,11 +114,11 @@ describe("Species controller", () => {
         nameToBeChanged: "NOT_A_SPECIES",
       };
       return request(app.getHttpServer())
-        .patch("/stock/species")
-        .send(speciesToUpdate)
-        .expect(400)
+        .patch(`/stock/species/${speciesToUpdate.nameToBeChanged}`)
+        .send(speciesToUpdate.updateValues)
+        .expect(404)
         .expect({
-          statusCode: 400,
+          statusCode: 404,
           message: "Species with this name does not exist",
         });
     });
@@ -130,8 +130,8 @@ describe("Species controller", () => {
         nameToBeChanged: "Basil",
       };
       return request(app.getHttpServer())
-        .patch("/stock/species")
-        .send(speciesToUpdate)
+        .patch(`/stock/species/${speciesToUpdate.nameToBeChanged}`)
+        .send(speciesToUpdate.updateValues)
         .expect(400)
         .expect({
           statusCode: 400,
@@ -148,8 +148,8 @@ describe("Species controller", () => {
         nameToBeChanged: "Basil",
       };
       return request(app.getHttpServer())
-        .patch("/stock/species")
-        .send(speciesToUpdate)
+        .patch(`/stock/species/${speciesToUpdate.nameToBeChanged}`)
+        .send(speciesToUpdate.updateValues)
         .expect(200)
         .expect({
           name: "Pineapple",

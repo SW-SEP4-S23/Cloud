@@ -1,7 +1,7 @@
+import { UpdateSpeciesDTO } from "./../shared/update-species-dto";
 import { Injectable } from "@nestjs/common";
 import { SpeciesRepository } from "./species.repository";
 import { NewSpeciesDTO } from "../shared/new-species-dto";
-import { UpdateSpeciesDTO } from "../shared/update-species-dto";
 
 @Injectable()
 export class SpeciesService {
@@ -11,8 +11,12 @@ export class SpeciesService {
     return this.speciesRepo.createSpecies(newSpeciesDTO);
   }
 
-  updateSpecies(updateSpeciesDTO: UpdateSpeciesDTO) {
-    return this.speciesRepo.updateSpecies(updateSpeciesDTO);
+  updateSpecies(nameToBeChanged: string, updateSpeciesDTO: NewSpeciesDTO) {
+    const updateSpecies: UpdateSpeciesDTO = {
+      nameToBeChanged: nameToBeChanged,
+      updateValues: updateSpeciesDTO,
+    };
+    return this.speciesRepo.updateSpecies(updateSpecies);
   }
 
   getAllSpecies() {
