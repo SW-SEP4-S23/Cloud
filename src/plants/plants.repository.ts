@@ -26,7 +26,7 @@ export class PlantsRepository {
 
   findOne(plantId: number) {
     return this.prisma.plant.findUnique({
-      where: { id: Number(plantId) },
+      where: { id: plantId },
       include: {
         pb: {
           select: {
