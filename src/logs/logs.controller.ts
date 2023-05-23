@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   Param,
+  ParseIntPipe,
   Post,
 } from "@nestjs/common";
 import { LogsService } from "./logs.service";
@@ -11,6 +12,7 @@ import { CreatePlantLogDto } from "./dto/create-plant-log-dto";
 import { CreateBatchLogDto } from "./dto/create-batch-log-dto";
 import { BatchNotFoundError } from "./exceptions/BatchNotFoundError";
 import { PlantNotFoundError } from "./exceptions/PlantNotFoundError";
+import { SpeciesNotFoundError } from "./exceptions/SpeciesNotFoundError";
 
 @Controller("stock")
 export class LogsController {
@@ -37,24 +39,28 @@ export class LogsController {
   }
 
   @Get("/plants/:plantId/logs")
-  async getPlantLogsByPlantId(@Param("plantId") plantId: number) {
+  async getPlantLogsByPlantId(@Param("plantId", ParseIntPipe) plantId: number) {
     try {
       return await this.logsService.getPlantLogsByPlantId(plantId);
     } catch (e) {
       if (e instanceof PlantNotFoundError) {
         throw new HttpException(e.message, 404);
       }
+
+      throw new HttpException(e.message, 500);
     }
   }
 
   @Get("/batches/:batchId/logs")
-  async getBatchLogsByBatchId(@Param("batchId") batchId: number) {
+  async getBatchLogsByBatchId(@Param("batchId", ParseIntPipe) batchId: number) {
     try {
       return await this.logsService.getBatchLogsByBatchId(batchId);
     } catch (e) {
       if (e instanceof BatchNotFoundError) {
         throw new HttpException(e.message, 404);
       }
+
+      throw new HttpException(e.message, 500);
     }
   }
 
@@ -66,12 +72,14 @@ export class LogsController {
       if (e instanceof BatchNotFoundError) {
         throw new HttpException(e.message, 404);
       }
+
+      throw new HttpException(e.message, 500);
     }
   }
 
   @Post("/plants/:plantId/logs")
   async createPlantLog(
-    @Param("plantId") plantId: number,
+    @Param("plantId", ParseIntPipe) plantId: number,
     @Body() createPlantLogDto: CreatePlantLogDto,
   ) {
     try {
@@ -83,12 +91,14 @@ export class LogsController {
       if (e instanceof PlantNotFoundError) {
         throw new HttpException(e.message, 404);
       }
+
+      throw new HttpException(e.message, 500);
     }
   }
 
   @Post("/batches/:batchId/logs")
   async createBatchLog(
-    @Param("batchId") batchId: number,
+    @Param("batchId", ParseIntPipe) batchId: number,
     @Body() createBatchLogDto: CreateBatchLogDto,
   ) {
     try {
@@ -100,6 +110,8 @@ export class LogsController {
       if (e instanceof BatchNotFoundError) {
         throw new HttpException(e.message, 404);
       }
+
+      throw new HttpException(e.message, 500);
     }
   }
 
@@ -114,9 +126,11 @@ export class LogsController {
         message: createSpeciesLogDto.message,
       });
     } catch (e) {
-      if (e instanceof BatchNotFoundError) {
+      if (e instanceof SpeciesNotFoundError) {
         throw new HttpException(e.message, 404);
       }
+
+      throw new HttpException(e.message, 500);
     }
   }
 }

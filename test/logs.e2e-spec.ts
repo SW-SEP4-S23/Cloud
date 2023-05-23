@@ -1,10 +1,15 @@
-import { INestApplication } from "@nestjs/common";
-import { AppModule } from "../src/app.module";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { plantLogs, batchLogs, plant } from "../prisma/test-data";
+import {
+  plantLogs,
+  batchLogs,
+  speciesLogs,
+  plantSpecies,
+} from "../prisma/test-data";
 import * as request from "supertest";
 import { CreateBatchLogDto } from "../src/logs/dto/create-batch-log-dto";
 import { CreatePlantLogDto } from "../src/logs/dto/create-plant-log-dto";
+import { AppModule } from "../src/app.module";
 
 describe("Logs Controller", () => {
   let app: INestApplication;
@@ -15,6 +20,11 @@ describe("Logs Controller", () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+      }),
+    );
     await app.init();
   });
 
@@ -24,8 +34,11 @@ describe("Logs Controller", () => {
         .get("/stock/logs")
         .expect(200)
         .expect((res) => {
-          expect(res.body.plantLogs).toMatchObject(plantLogs);
-          expect(res.body.batchLogs).toMatchObject(batchLogs);
+          expect(res.body).toMatchObject({
+            speciesLogs,
+            plantLogs,
+            batchLogs,
+          });
         });
     });
   });
@@ -48,6 +61,17 @@ describe("Logs Controller", () => {
         .expect(200)
         .expect((res) => {
           expect(res.body).toMatchObject(batchLogs);
+        });
+    });
+  });
+
+  describe("(GET '/species/logs') All Species Logs", () => {
+    test("Should return all species logs", () => {
+      return request(app.getHttpServer())
+        .get("/stock/species/logs")
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toMatchObject(speciesLogs);
         });
     });
   });
@@ -126,6 +150,20 @@ describe("Logs Controller", () => {
     });
   });
 
+  describe("(GET '/species/:speciesId/logs') Species Logs", () => {
+    test("Should return species logs for the speciesId", () => {
+      const speciesName = plantSpecies[0].name;
+      return request(app.getHttpServer())
+        .get(`/stock/species/${speciesName}/logs`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toMatchObject(
+            speciesLogs.filter((log) => log.plantSpeciesName === speciesName),
+          );
+        });
+    });
+  });
+
   describe("(POST '/plants/:plantId/logs') Create Plant Log", () => {
     test("Should create a plant log", () => {
       const plantId = 1;
@@ -139,7 +177,7 @@ describe("Logs Controller", () => {
         .expect(201)
         .expect((res) => {
           expect(res.body).toMatchObject({
-            message: "Test message",
+            message: createPlantLogDto.message,
             p_Id: plantId,
           });
         });
@@ -192,7 +230,7 @@ describe("Logs Controller", () => {
         .expect(201)
         .expect((res) => {
           expect(res.body).toMatchObject({
-            message: "Test message",
+            message: createBatchLogDto.message,
             pb_Id: batchId,
           });
         });
@@ -228,6 +266,42 @@ describe("Logs Controller", () => {
           statusCode: 400,
           message: "Validation failed (numeric string is expected)",
           error: "Bad Request",
+        });
+    });
+  });
+
+  describe("(POST '/species/:speciesId/logs') Create Species Log", () => {
+    test("Should create a species log", () => {
+      const speciesName = plantSpecies[0].name;
+
+      const createBatchLogDto = new CreateBatchLogDto();
+      createBatchLogDto.message = "Test message";
+
+      return request(app.getHttpServer())
+        .post(`/stock/species/${speciesName}/logs`)
+        .send(createBatchLogDto)
+        .expect(201)
+        .expect((res) => {
+          expect(res.body).toMatchObject({
+            message: createBatchLogDto.message,
+            plantSpeciesName: speciesName,
+          });
+        });
+    });
+
+    test("Should return 404 if species does not exist", () => {
+      const nonExistingSpeciesName = "notASpecies";
+
+      const createBatchLogDto = new CreateBatchLogDto();
+      createBatchLogDto.message = "Test message";
+
+      return request(app.getHttpServer())
+        .post(`/stock/species/${nonExistingSpeciesName}/logs`)
+        .send(createBatchLogDto)
+        .expect(404)
+        .expect({
+          statusCode: 404,
+          message: `Species with name ${nonExistingSpeciesName} not found`,
         });
     });
   });

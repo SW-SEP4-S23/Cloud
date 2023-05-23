@@ -10,12 +10,14 @@ export class LogsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllLogs() {
-    const [plantLogs, batchLogs] = await Promise.all([
+    const [speciesLogs, plantLogs, batchLogs] = await Promise.all([
+      this.getAllSpeciesLogs(),
       this.getAllPlantLogs(),
       this.getAllBatchLogs(),
     ]);
 
     return {
+      speciesLogs,
       plantLogs,
       batchLogs,
     };
