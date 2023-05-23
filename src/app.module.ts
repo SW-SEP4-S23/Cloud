@@ -7,6 +7,8 @@ import { WebSocketModule } from "./websocket/websocket.module";
 import { EnvironmentModule } from "./environment/environment.module";
 import { PrismaModule } from "nestjs-prisma";
 import { PlantsModule } from "./plants/plants.module";
+import { LogsModule } from "./logs/logs.module";
+import { SpeciesModule } from "./plant_species/species.module";
 
 @Module({
   imports: [
@@ -16,8 +18,10 @@ import { PlantsModule } from "./plants/plants.module";
     HumidityModule,
     Co2Module,
     EnvironmentModule,
+    LogsModule,
     WebSocketModule,
     PlantsModule,
+    SpeciesModule,
   ],
 })
 export class AppModule {}
