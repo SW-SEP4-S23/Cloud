@@ -9,7 +9,7 @@ import {
   postAndCheckForPendingThresholds,
   postThresholds,
 } from "./common-tests";
-import { hardcodedThresholds } from "../src/shared/new-threshold-dto";
+import { hardcodedThresholds } from "../src/environment/shared/dto/new-threshold-dto";
 
 describe("Co2 Controller", () => {
   let app: INestApplication;

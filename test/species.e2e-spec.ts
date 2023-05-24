@@ -2,8 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { UpdateSpeciesDTO } from "../src/plant_species/dto/update-species-dto";
-import { NewSpeciesDTO } from "../src/plant_species/dto/new-species-dto";
+import { UpdateSpeciesDTO } from "../src/stock/species/dto/update-species-dto";
+import { NewSpeciesDTO } from "../src/stock/species/dto/new-species-dto";
 
 describe("Species controller", () => {
   let app: INestApplication;

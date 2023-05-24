@@ -1,10 +1,10 @@
-import { hardcodedThresholds } from "./../src/shared/new-threshold-dto";
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import { DataType } from "@prisma/client";
-import { NewThresholdWrapperDTO } from "../src/shared/new-threshold-wrapper-dto";
+import { NewThresholdWrapperDTO } from "../src/environment/shared/dto/new-threshold-wrapper-dto";
+import { hardcodedThresholds } from "../src/environment/shared/dto/new-threshold-dto";
 
 describe("Environment Controller", () => {
   let app: INestApplication;

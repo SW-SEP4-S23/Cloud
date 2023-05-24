@@ -2,7 +2,7 @@ import { Test } from "@nestjs/testing";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { CreateBatch } from "../src/batch/dto/create-batch";
+import { CreateBatch } from "../src/stock/batch/dto/create-batch";
 import { plantSpecies } from "../prisma/test-data";
 
 describe("Batch Controller", () => {
