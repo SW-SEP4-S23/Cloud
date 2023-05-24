@@ -1,16 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
-import { IntervalQuery } from "../shared/interval-query";
+import { IntervalQuery } from "../../shared/interval-query";
 import { DataType } from "@prisma/client";
 import {
   findDataPointsByInterval,
   findLatestDataPoint,
-} from "../shared/datapoint-repository-utils";
+} from "../../shared/datapoint-repository-utils";
 import {
   getDatapointThresholds,
   postThresholdRequest,
-} from "../utils/threshold-query-utils";
-import { NewThresholdDTO } from "../shared/new-threshold-dto";
+} from "../../utils/threshold-query-utils";
+import { NewThresholdDTO } from "../../shared/new-threshold-dto";
 
 @Injectable()
 export class TemperatureRepository {

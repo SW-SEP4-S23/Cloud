@@ -1,12 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { TemperatureRepository } from "./temperature.repository";
-import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
+import {
+  IntervalQuery,
+  validate,
+  isDefined,
+} from "../../shared/interval-query";
 import {
   NewThresholdDTO,
   newThresholdChecker,
   testForHardcodedThresholdsTemperature,
   hardcodedThresholds,
-} from "../shared/new-threshold-dto";
+} from "../../shared/new-threshold-dto";
 
 @Injectable()
 export class TemperatureService {
