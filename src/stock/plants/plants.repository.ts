@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
-import { PlantNotFoundError } from "../logs/exceptions/PlantNotFoundError";
+import { PlantNotFoundError } from "../shared/exceptions/PlantNotFoundError";
 
 @Injectable()
 export class PlantsRepository {

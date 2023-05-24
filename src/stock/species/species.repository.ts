@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import { PrismaService } from "nestjs-prisma";
 import { UpdateSpeciesDTO } from "./dto/update-species-dto";
 import { NewSpeciesDTO } from "./dto/new-species-dto";
-import { SpeciesNotFoundError } from "./exceptions/SpeciesNotFoundError";
+import { SpeciesNotFoundError } from "../shared/exceptions/SpeciesNotFoundError";
 import { SpeciesNameAlreadyExistsError } from "./exceptions/SpeciesNameAlreadyExistsError";
 
 @Injectable()

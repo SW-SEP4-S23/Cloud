@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { PrismaService } from "nestjs-prisma";
-import { PlantNotFoundError } from "./exceptions/PlantNotFoundError";
-import { BatchNotFoundError } from "./exceptions/BatchNotFoundError";
-import { SpeciesNotFoundError } from "./exceptions/SpeciesNotFoundError";
+import { PlantNotFoundError } from "../shared/exceptions/PlantNotFoundError";
+import { BatchNotFoundError } from "../shared/exceptions/BatchNotFoundError";
+import { SpeciesNotFoundError } from "../shared/exceptions/SpeciesNotFoundError";
 
 @Injectable()
 export class LogsRepository {

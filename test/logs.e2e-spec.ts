@@ -7,8 +7,8 @@ import {
   plantSpecies,
 } from "../prisma/test-data";
 import * as request from "supertest";
-import { CreateBatchLogDto } from "../src/logs/dto/create-batch-log-dto";
-import { CreatePlantLogDto } from "../src/logs/dto/create-plant-log-dto";
+import { CreateBatchLogDto } from "../src/stock/logs/dto/create-batch-log-dto";
+import { CreatePlantLogDto } from "../src/stock/logs/dto/create-plant-log-dto";
 import { AppModule } from "../src/app.module";
 
 describe("Logs Controller", () => {

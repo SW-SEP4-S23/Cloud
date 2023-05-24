@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
-import { IntervalQuery } from "../shared/interval-query";
+import { IntervalQuery } from "../../shared/dto/interval-query";
 import { CreateBatch } from "./dto/create-batch";
 import { PatchHarvestDate } from "./dto/patch-batch";
-import { BatchNotFoundError } from "../logs/exceptions/BatchNotFoundError";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { SpeciesNotFoundError } from "../logs/exceptions/SpeciesNotFoundError";
+import { SpeciesNotFoundError } from "../shared/exceptions/SpeciesNotFoundError";
+import { BatchNotFoundError } from "../shared/exceptions/BatchNotFoundError";
 
 @Injectable()
 export class BatchRepository {

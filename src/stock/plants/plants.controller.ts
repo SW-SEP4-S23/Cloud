@@ -7,7 +7,7 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import { PlantsService } from "./plants.service";
-import { PlantNotFoundError } from "../logs/exceptions/PlantNotFoundError";
+import { PlantNotFoundError } from "../shared/exceptions/PlantNotFoundError";
 
 @Controller("stock/plants")
 export class PlantsController {

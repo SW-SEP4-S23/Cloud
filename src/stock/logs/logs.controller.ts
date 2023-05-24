@@ -10,9 +10,9 @@ import {
 import { LogsService } from "./logs.service";
 import { CreatePlantLogDto } from "./dto/create-plant-log-dto";
 import { CreateBatchLogDto } from "./dto/create-batch-log-dto";
-import { BatchNotFoundError } from "./exceptions/BatchNotFoundError";
-import { PlantNotFoundError } from "./exceptions/PlantNotFoundError";
-import { SpeciesNotFoundError } from "./exceptions/SpeciesNotFoundError";
+import { BatchNotFoundError } from "../shared/exceptions/BatchNotFoundError";
+import { PlantNotFoundError } from "../shared/exceptions/PlantNotFoundError";
+import { SpeciesNotFoundError } from "../shared/exceptions/SpeciesNotFoundError";
 
 @Controller("stock")
 export class LogsController {

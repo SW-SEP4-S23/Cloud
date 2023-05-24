@@ -3,14 +3,14 @@ import {
   IntervalQuery,
   validate,
   isDefined,
-} from "../../shared/interval-query";
+} from "../../shared/dto/interval-query";
 import { Co2Repository } from "./co2.repository";
 import {
   NewThresholdDTO,
   newThresholdChecker,
   testForHardcodedThresholdsCo2,
   hardcodedThresholds,
-} from "../../shared/new-threshold-dto";
+} from "../shared/dto/new-threshold-dto";
 
 @Injectable()
 export class Co2Service {

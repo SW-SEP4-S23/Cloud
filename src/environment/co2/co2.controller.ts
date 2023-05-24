@@ -1,7 +1,7 @@
 import { Controller, Get, Query, Post, Body } from "@nestjs/common";
-import { IntervalQuery } from "../../shared/interval-query";
+import { IntervalQuery } from "../../shared/dto/interval-query";
 import { Co2Service } from "./co2.service";
-import { NewThresholdDTO } from "../../shared/new-threshold-dto";
+import { NewThresholdDTO } from "../shared/dto/new-threshold-dto";
 
 @Controller("environment/co2")
 export class Co2Controller {

@@ -9,13 +9,13 @@ import {
   Patch,
   HttpException,
 } from "@nestjs/common";
-import { IntervalQuery } from "../shared/interval-query";
+import { IntervalQuery } from "../../shared/dto/interval-query";
 import { BatchService } from "./batch.service";
 import { CreateBatch } from "./dto/create-batch";
 import { PatchHarvestDate } from "./dto/patch-batch";
 import { IsHarvested } from "./dto/query-harvested";
-import { BatchNotFoundError } from "../logs/exceptions/BatchNotFoundError";
-import { SpeciesNotFoundError } from "../logs/exceptions/SpeciesNotFoundError";
+import { SpeciesNotFoundError } from "../shared/exceptions/SpeciesNotFoundError";
+import { BatchNotFoundError } from "../shared/exceptions/BatchNotFoundError";
 
 @Controller("stock/batches")
 export class BatchController {

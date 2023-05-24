@@ -1,5 +1,5 @@
 import { PrismaService } from "nestjs-prisma";
-import { IntervalQuery } from "./interval-query";
+import { IntervalQuery } from "../../../shared/dto/interval-query";
 import { DataType } from "@prisma/client";
 
 //Environment should not use these functions, since they are build for specific data types -->

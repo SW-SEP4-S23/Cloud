@@ -1,7 +1,7 @@
 import { EnvironmentService } from "./environment.service";
-import { IntervalQuery } from "../shared/interval-query";
+import { IntervalQuery } from "../shared/dto/interval-query";
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
-import { NewThresholdWrapperDTO } from "../shared/new-threshold-wrapper-dto";
+import { NewThresholdWrapperDTO } from "./shared/dto/new-threshold-wrapper-dto";
 
 @Controller("environment")
 export class EnvironmentController {

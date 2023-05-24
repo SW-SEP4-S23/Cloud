@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { SpeciesService } from "./species.service";
 import { NewSpeciesDTO } from "./dto/new-species-dto";
-import { SpeciesNotFoundError } from "./exceptions/SpeciesNotFoundError";
+import { SpeciesNotFoundError } from "../shared/exceptions/SpeciesNotFoundError";
 import { SpeciesNameAlreadyExistsError } from "./exceptions/SpeciesNameAlreadyExistsError";
 
 @Controller("stock/species")

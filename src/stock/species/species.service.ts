@@ -2,7 +2,7 @@ import { UpdateSpeciesDTO } from "./dto/update-species-dto";
 import { Injectable } from "@nestjs/common";
 import { SpeciesRepository } from "./species.repository";
 import { NewSpeciesDTO } from "./dto/new-species-dto";
-import { SpeciesNotFoundError } from "./exceptions/SpeciesNotFoundError";
+import { SpeciesNotFoundError } from "../shared/exceptions/SpeciesNotFoundError";
 
 @Injectable()
 export class SpeciesService {

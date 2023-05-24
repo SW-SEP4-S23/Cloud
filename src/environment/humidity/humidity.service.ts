@@ -3,14 +3,14 @@ import {
   IntervalQuery,
   validate,
   isDefined,
-} from "../../shared/interval-query";
+} from "../../shared/dto/interval-query";
 import { HumidityRepository } from "./humidity.repository";
 import {
   NewThresholdDTO,
+  hardcodedThresholds,
   newThresholdChecker,
   testForHardcodedThresholdsHumidity,
-  hardcodedThresholds,
-} from "../../shared/new-threshold-dto";
+} from "../shared/dto/new-threshold-dto";
 
 @Injectable()
 export class HumidityService {
