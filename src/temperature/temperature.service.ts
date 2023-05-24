@@ -4,6 +4,8 @@ import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 import {
   NewThresholdDTO,
   newThresholdChecker,
+  testForHardcodedThresholdsTemperature,
+  hardcodedThresholds,
 } from "../shared/new-threshold-dto";
 
 @Injectable()
@@ -22,6 +24,11 @@ export class TemperatureService {
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
     newThresholdChecker(newThreshold);
+    testForHardcodedThresholdsTemperature(newThreshold);
     return this.temperatureRepository.postThresholdRequest(newThreshold);
+  }
+
+  getHardcodedThresholds() {
+    return hardcodedThresholds.temperature;
   }
 }

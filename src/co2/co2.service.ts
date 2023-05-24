@@ -4,6 +4,8 @@ import { Co2Repository } from "./co2.repository";
 import {
   NewThresholdDTO,
   newThresholdChecker,
+  testForHardcodedThresholdsCo2,
+  hardcodedThresholds,
 } from "../shared/new-threshold-dto";
 
 @Injectable()
@@ -22,6 +24,11 @@ export class Co2Service {
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
     newThresholdChecker(newThreshold);
+    testForHardcodedThresholdsCo2(newThreshold);
     return this.co2Repository.postThresholdRequest(newThreshold);
+  }
+
+  getHardcodedThresholds() {
+    return hardcodedThresholds.co2;
   }
 }

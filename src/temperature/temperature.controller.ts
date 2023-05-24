@@ -21,4 +21,9 @@ export class TemperatureController {
   postThresholdRequest(@Body() newThreshold: NewThresholdDTO) {
     return this.temperatureService.postThresholdRequest(newThreshold);
   }
+
+  @Get("/hardcoded-thresholds")
+  getHardcodedThresholds() {
+    return this.temperatureService.getHardcodedThresholds();
+  }
 }

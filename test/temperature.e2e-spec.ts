@@ -4,10 +4,12 @@ import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import {
+  getHardcodedThresholds,
   getThresholds,
   postAndCheckForPendingThresholds,
   postThresholds,
 } from "./common-tests";
+import { hardcodedThresholds } from "../src/shared/new-threshold-dto";
 
 describe("Temperature Controller", () => {
   let app: INestApplication;
@@ -147,16 +149,31 @@ describe("Temperature Controller", () => {
       });
     });
 
-    test("GET Thresholds", async () => {
-      temperaturePath = "/environment/temperature/thresholds";
-      temperatureMinValue = 0.5;
-      temperatureMaxValue = 10;
+    describe("(GET) Thresholds", () => {
+      test("Thresholds", async () => {
+        temperaturePath = "/environment/temperature/thresholds";
+        temperatureMinValue = 0.5;
+        temperatureMaxValue = 10;
 
-      request = app.getHttpServer();
+        request = app.getHttpServer();
 
-      await getThresholds(request, temperaturePath, DataType.TEMPERATURE);
+        await getThresholds(request, temperaturePath, DataType.TEMPERATURE);
+      });
+      test("Hardcoded Thresholds", async () => {
+        temperaturePath = "/environment/temperature/hardcoded-thresholds";
+        temperatureMinValue = hardcodedThresholds.temperature.min;
+        temperatureMaxValue = hardcodedThresholds.temperature.max;
+
+        request = app.getHttpServer();
+
+        await getHardcodedThresholds(
+          request,
+          temperaturePath,
+          temperatureMinValue,
+          temperatureMaxValue,
+        );
+      });
     });
-
     test("POST then check for pending", async () => {
       const temperaturePath = "/environment/temperature/thresholds";
       const temperatureMinValue = 5;

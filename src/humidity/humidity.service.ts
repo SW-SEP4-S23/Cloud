@@ -1,8 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 import { HumidityRepository } from "./humidity.repository";
-import { newThresholdChecker } from "../shared/new-threshold-dto";
-import { NewThresholdDTO } from "../shared/new-threshold-dto";
+import {
+  NewThresholdDTO,
+  newThresholdChecker,
+  testForHardcodedThresholdsHumidity,
+  hardcodedThresholds,
+} from "../shared/new-threshold-dto";
 
 @Injectable()
 export class HumidityService {
@@ -20,6 +24,11 @@ export class HumidityService {
 
   postThresholdRequest(newThreshold: NewThresholdDTO) {
     newThresholdChecker(newThreshold);
+    testForHardcodedThresholdsHumidity(newThreshold);
     return this.humidityRepository.postThresholdRequest(newThreshold);
+  }
+
+  getHardcodedThresholds() {
+    return hardcodedThresholds.humidity;
   }
 }
