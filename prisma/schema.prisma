@@ -53,53 +53,53 @@ model Ack {
 
 model PlantSpecies {
   name               String        @id
-  OptimalCo2         Float?
+  optimalCo2         Float?
   optimalHumidity    Float?
   optimalTemperature Float?
-  PlantBatch         PlantBatch[]
+  plantBatches       PlantBatch[]
   speciesLogs        SpeciesLogs[]
 }
 
 model PlantBatch {
-  id           Int          @id @default(autoincrement())
-  harvestDate  DateTime?
-  plantingDate DateTime
-  ps           PlantSpecies @relation(fields: [ps_Name], references: [name])
-  ps_Name      String
-  amount       Int
-  Plant        Plant[]
-  BatchLogs    BatchLogs[]
+  id                Int          @id @default(autoincrement())
+  harvestDate       DateTime?
+  plantingDate      DateTime
+  plantSpecies      PlantSpecies @relation(fields: [plantSpecies_Name], references: [name])
+  plantSpecies_Name String
+  amount            Int
+  plant             Plant[]
+  batchLogs         BatchLogs[]
 }
 
 model Plant {
-  id        Int         @id @default(autoincrement())
-  pb        PlantBatch  @relation(fields: [pb_Id], references: [id])
-  pb_Id     Int
-  PlantLogs PlantLogs[]
+  id            Int         @id @default(autoincrement())
+  plantBatch    PlantBatch  @relation(fields: [plantBatch_Id], references: [id])
+  plantBatch_Id Int
+  plantLogs     PlantLogs[]
 }
 
 model SpeciesLogs {
-  id               Int          @id @default(autoincrement())
-  timestamp        DateTime
-  message          String
-  plantSpecies     PlantSpecies @relation(fields: [plantSpeciesName], references: [name])
-  plantSpeciesName String
+  id                Int          @id @default(autoincrement())
+  timestamp         DateTime
+  message           String
+  plantSpecies      PlantSpecies @relation(fields: [plantSpecies_Name], references: [name])
+  plantSpecies_Name String
 }
 
 model PlantLogs {
   id        Int      @id @default(autoincrement())
   timestamp DateTime
   message   String
-  p         Plant    @relation(fields: [p_Id], references: [id])
-  p_Id      Int
+  plant     Plant    @relation(fields: [plant_Id], references: [id])
+  plant_Id  Int
 }
 
 model BatchLogs {
-  id        Int        @id @default(autoincrement())
-  timestamp DateTime
-  message   String
-  pb        PlantBatch @relation(fields: [pb_Id], references: [id])
-  pb_Id     Int
+  id            Int        @id @default(autoincrement())
+  timestamp     DateTime
+  message       String
+  plantBatch    PlantBatch @relation(fields: [plantBatch_Id], references: [id])
+  plantBatch_Id Int
 }
 
 enum DataType {

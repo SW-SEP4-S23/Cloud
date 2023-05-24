@@ -37,16 +37,16 @@ export class LogsRepository {
 
   async getPlantLogsByPlantId(plantId: number) {
     try {
-      const { PlantLogs } = await this.prisma.plant.findFirstOrThrow({
+      const { plantLogs } = await this.prisma.plant.findFirstOrThrow({
         where: {
           id: plantId,
         },
         select: {
-          PlantLogs: true,
+          plantLogs: true,
         },
       });
 
-      return PlantLogs;
+      return plantLogs;
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
         switch (e.code) {
@@ -61,16 +61,16 @@ export class LogsRepository {
 
   async getBatchLogsByBatchId(batchId: number) {
     try {
-      const { BatchLogs } = await this.prisma.plantBatch.findFirstOrThrow({
+      const { batchLogs } = await this.prisma.plantBatch.findFirstOrThrow({
         where: {
           id: batchId,
         },
         select: {
-          BatchLogs: true,
+          batchLogs: true,
         },
       });
 
-      return BatchLogs;
+      return batchLogs;
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
         switch (e.code) {
@@ -111,13 +111,13 @@ export class LogsRepository {
     try {
       return await this.prisma.plantLogs.create({
         data: {
-          p_Id: params.plantId,
+          plant_Id: params.plantId,
           message: params.message,
           timestamp: new Date(),
         },
         select: {
           id: true,
-          p_Id: true,
+          plant_Id: true,
           message: true,
         },
       });
@@ -138,13 +138,13 @@ export class LogsRepository {
     try {
       return await this.prisma.batchLogs.create({
         data: {
-          pb_Id: params.batchId,
+          plantBatch_Id: params.batchId,
           message: params.message,
           timestamp: new Date(),
         },
         select: {
           id: true,
-          pb_Id: true,
+          plantBatch_Id: true,
           message: true,
         },
       });
@@ -165,13 +165,13 @@ export class LogsRepository {
     try {
       return await this.prisma.speciesLogs.create({
         data: {
-          plantSpeciesName: params.speciesName,
+          plantSpecies_Name: params.speciesName,
           message: params.message,
           timestamp: new Date(),
         },
         select: {
           id: true,
-          plantSpeciesName: true,
+          plantSpecies_Name: true,
           message: true,
         },
       });

@@ -80,7 +80,7 @@ describe("Logs Controller", () => {
         .expect(200)
         .expect((res) => {
           expect(res.body).toMatchObject(
-            plantLogs.filter((log) => log.p_Id === existingId),
+            plantLogs.filter((log) => log.plant_Id === existingId),
           );
         });
     });
@@ -117,7 +117,7 @@ describe("Logs Controller", () => {
         .expect(200)
         .expect((res) => {
           expect(res.body).toMatchObject(
-            batchLogs.filter((log) => log.pb_Id === existingId),
+            batchLogs.filter((log) => log.plantBatch_Id === existingId),
           );
         });
     });
@@ -154,7 +154,7 @@ describe("Logs Controller", () => {
         .expect(200)
         .expect((res) => {
           expect(res.body).toMatchObject(
-            speciesLogs.filter((log) => log.plantSpeciesName === speciesName),
+            speciesLogs.filter((log) => log.plantSpecies_Name === speciesName),
           );
         });
     });
@@ -174,7 +174,7 @@ describe("Logs Controller", () => {
         .expect((res) => {
           expect(res.body).toMatchObject({
             message: createPlantLogDto.message,
-            p_Id: plantId,
+            plant_Id: plantId,
           });
         });
     });
@@ -227,7 +227,7 @@ describe("Logs Controller", () => {
         .expect((res) => {
           expect(res.body).toMatchObject({
             message: createBatchLogDto.message,
-            pb_Id: batchId,
+            plantBatch_Id: batchId,
           });
         });
     });
@@ -280,7 +280,7 @@ describe("Logs Controller", () => {
         .expect((res) => {
           expect(res.body).toMatchObject({
             message: createBatchLogDto.message,
-            plantSpeciesName: speciesName,
+            plantSpecies_Name: speciesName,
           });
         });
     });

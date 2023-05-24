@@ -24,33 +24,33 @@ describe("Plants Controller", () => {
       const expectedResponse = [
         {
           id: 1,
-          pb_Id: 1,
-          pb: expect.objectContaining({
+          plantBatch_Id: 1,
+          plantBatch: expect.objectContaining({
             plantingDate: "2020-12-01T00:00:00.000Z",
             harvestDate: "2021-01-01T00:00:00.000Z",
-            ps: expect.any(Object),
+            plantSpecies: expect.any(Object),
           }),
-          PlantLogs: expect.arrayContaining([expect.any(Object)]),
+          plantLogs: expect.arrayContaining([expect.any(Object)]),
         },
         {
           id: 2,
-          pb_Id: 1,
-          pb: expect.objectContaining({
+          plantBatch_Id: 1,
+          plantBatch: expect.objectContaining({
             plantingDate: "2020-12-01T00:00:00.000Z",
             harvestDate: "2021-01-01T00:00:00.000Z",
-            ps: expect.any(Object),
+            plantSpecies: expect.any(Object),
           }),
-          PlantLogs: expect.arrayContaining([expect.any(Object)]),
+          plantLogs: expect.arrayContaining([expect.any(Object)]),
         },
         {
           id: 3,
-          pb_Id: 2,
-          pb: expect.objectContaining({
+          plantBatch_Id: 2,
+          plantBatch: expect.objectContaining({
             plantingDate: "2020-12-01T00:00:00.000Z",
             harvestDate: "2021-01-01T00:00:00.000Z",
-            ps: expect.any(Object),
+            plantSpecies: expect.any(Object),
           }),
-          PlantLogs: [],
+          plantLogs: [],
         },
       ];
 
@@ -67,18 +67,18 @@ describe("Plants Controller", () => {
         .expect(200)
         .expect({
           id: 1,
-          pb_Id: 1,
-          pb: {
+          plantBatch_Id: 1,
+          plantBatch: {
             plantingDate: "2020-12-01T00:00:00.000Z",
             harvestDate: "2021-01-01T00:00:00.000Z",
-            ps: { name: "Aloe Vera" },
+            plantSpecies: { name: "Aloe Vera" },
           },
-          PlantLogs: [
+          plantLogs: [
             {
               id: 1,
               timestamp: "2021-01-01T00:00:00.000Z",
               message: "Plant 1 is doing well",
-              p_Id: 1,
+              plant_Id: 1,
             },
           ],
         });

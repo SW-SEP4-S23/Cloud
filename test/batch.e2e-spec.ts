@@ -39,7 +39,7 @@ describe("Batch Controller", () => {
               amount: amount,
               harvestDate: null,
               plantingDate: plantingDate,
-              ps_Name: species,
+              plantSpecies_Name: species,
             },
             { count: amount },
           ];
@@ -49,7 +49,7 @@ describe("Batch Controller", () => {
               amount: res.body[0].amount,
               harvestDate: res.body[0].harvestDate,
               plantingDate: res.body[0].plantingDate,
-              ps_Name: res.body[0].ps_Name,
+              plantSpecies_Name: res.body[0].plantSpecies_Name,
             },
             { count: res.body[1].count },
           ];
