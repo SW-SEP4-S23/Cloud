@@ -15,7 +15,7 @@ export class SpeciesRepository {
       return await this.prisma.plantSpecies.create({
         data: {
           name: newSpeciesDTO.name,
-          OptimalCo2: newSpeciesDTO.optimalCo2,
+          optimalCo2: newSpeciesDTO.optimalCo2,
           optimalTemperature: newSpeciesDTO.optimalTemperature,
           optimalHumidity: newSpeciesDTO.optimalHumidity,
         },
@@ -38,7 +38,7 @@ export class SpeciesRepository {
         where: { name: updateSpeciesDTO.nameToBeChanged },
         data: {
           name: updateSpeciesDTO.updateValues.name,
-          OptimalCo2: updateSpeciesDTO.updateValues.optimalCo2,
+          optimalCo2: updateSpeciesDTO.updateValues.optimalCo2,
           optimalTemperature: updateSpeciesDTO.updateValues.optimalTemperature,
           optimalHumidity: updateSpeciesDTO.updateValues.optimalHumidity,
         },
@@ -62,7 +62,7 @@ export class SpeciesRepository {
   getAllSpecies() {
     return this.prisma.plantSpecies.findMany({
       include: {
-        PlantBatch: {
+        plantBatches: {
           select: {
             amount: true,
           },
@@ -75,7 +75,7 @@ export class SpeciesRepository {
     return this.prisma.plantSpecies.findUnique({
       where: { name },
       include: {
-        PlantBatch: {
+        plantBatches: {
           select: {
             id: true,
             amount: true,
