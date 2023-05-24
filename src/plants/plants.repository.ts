@@ -9,18 +9,18 @@ export class PlantsRepository {
   findAll() {
     return this.prisma.plant.findMany({
       include: {
-        pb: {
+        plantBatch: {
           select: {
             plantingDate: true,
             harvestDate: true,
-            ps: {
+            plantSpecies: {
               select: {
                 name: true,
               },
             },
           },
         },
-        PlantLogs: true,
+        plantLogs: true,
       },
     });
   }
@@ -29,18 +29,18 @@ export class PlantsRepository {
     const data = await this.prisma.plant.findUnique({
       where: { id: plantId },
       include: {
-        pb: {
+        plantBatch: {
           select: {
             plantingDate: true,
             harvestDate: true,
-            ps: {
+            plantSpecies: {
               select: {
                 name: true,
               },
             },
           },
         },
-        PlantLogs: true,
+        plantLogs: true,
       },
     });
     if (!data) {

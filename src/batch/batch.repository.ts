@@ -21,15 +21,15 @@ export class BatchRepository {
         },
       });
 
-      const plantData = Array.from({ length: createBatch.amount }).map(() => ({
-        pb_Id: plantBatch.id,
-      }));
+    const plantData = Array.from({ length: createBatch.amount }).map(() => ({
+      plantBatch_Id: plantBatch.id,
+    }));
 
       const plants = await this.prisma.plant.createMany({
         data: plantData,
       });
 
-      return [plantBatch, plants];
+      return [plantBatch, plants];}
     } catch (e) {
       console.log(e);
       if (e instanceof PrismaClientKnownRequestError) {
@@ -94,7 +94,7 @@ export class BatchRepository {
         id: true,
         plantingDate: true,
         harvestDate: true,
-        Plant: {},
+        plant: {},
       },
     });
     if (!data) {

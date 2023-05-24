@@ -22,13 +22,13 @@ describe("Species controller", () => {
         .expect(200)
         .expect({
           "Aloe Vera": {
-            OptimalCo2: 400,
+            optimalCo2: 400,
             optimalHumidity: 0.5,
             optimalTemperature: 20,
             totalPlants: 10,
           },
           Basil: {
-            OptimalCo2: 300,
+            optimalCo2: 300,
             optimalHumidity: 5,
             optimalTemperature: 30,
             totalPlants: 10,
@@ -44,11 +44,11 @@ describe("Species controller", () => {
         .expect(200)
         .expect({
           name: "Basil",
-          OptimalCo2: 300,
+          optimalCo2: 300,
           optimalHumidity: 5,
           optimalTemperature: 30,
           totalPlants: 10,
-          PlantBatches: {
+          plantBatches: {
             2: {
               amount: 10,
               harvestDate: "2021-01-01T00:00:00.000Z",
@@ -83,7 +83,7 @@ describe("Species controller", () => {
         .expect(201)
         .expect({
           name: "Tomato",
-          OptimalCo2: 200,
+          optimalCo2: 200,
           optimalTemperature: 20,
           optimalHumidity: null,
         });
@@ -153,7 +153,7 @@ describe("Species controller", () => {
         .expect(200)
         .expect({
           name: "Pineapple",
-          OptimalCo2: 200,
+          optimalCo2: 200,
           optimalHumidity: 5,
           optimalTemperature: 20,
         });

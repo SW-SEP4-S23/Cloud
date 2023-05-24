@@ -4,7 +4,6 @@ import { seedDatabase, undoSeedDatabase } from "../prisma/seeding-functions";
 const prisma = new PrismaClient();
 
 beforeAll(async () => {
-  console.log("BEFORE ALL GLOBAL");
   await seedDatabase(prisma);
 });
 
