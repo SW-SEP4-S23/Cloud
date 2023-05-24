@@ -26,8 +26,11 @@ export class BatchController {
     try {
       return await this.batchService.createBatch(createBatch);
     } catch (e) {
-      if (e instanceof SpeciesNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case BatchNotFoundError:
+          throw new HttpException(e.message, 404);
+        case SpeciesNotFoundError:
+          throw new HttpException(e.message, 404);
       }
     }
   }
@@ -45,11 +48,12 @@ export class BatchController {
     try {
       return await this.batchService.findOne(id);
     } catch (e) {
-      if (e instanceof BatchNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case BatchNotFoundError:
+          throw new HttpException(e.message, 404);
+        default:
+          throw new HttpException(e.message, 500);
       }
-
-      throw new HttpException(e.message, 500);
     }
   }
 
@@ -61,11 +65,12 @@ export class BatchController {
     try {
       return await this.batchService.updateBatch(id, harvestDate);
     } catch (e) {
-      if (e instanceof BatchNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case BatchNotFoundError:
+          throw new HttpException(e.message, 404);
+        default:
+          throw new HttpException(e.message, 500);
       }
-
-      throw new HttpException(e.message, 500);
     }
   }
 }

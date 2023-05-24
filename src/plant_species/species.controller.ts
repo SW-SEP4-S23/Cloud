@@ -21,10 +21,12 @@ export class SpeciesController {
     try {
       return await this.speciesService.createSpecies(newSpeciesDTO);
     } catch (e) {
-      if (e instanceof SpeciesNameAlreadyExistsError) {
-        throw new HttpException(e.message, 400);
+      switch (e.constructor) {
+        case SpeciesNameAlreadyExistsError:
+          throw new HttpException(e.message, 400);
+        default:
+          throw new HttpException(e.message, 500);
       }
-      throw new HttpException(e.message, 500);
     }
   }
 
@@ -39,13 +41,14 @@ export class SpeciesController {
         NewSpeciesDTO,
       );
     } catch (e) {
-      if (e instanceof SpeciesNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case SpeciesNotFoundError:
+          throw new HttpException(e.message, 404);
+        case SpeciesNameAlreadyExistsError:
+          throw new HttpException(e.message, 400);
+        default:
+          throw new HttpException(e.message, 500);
       }
-      if (e instanceof SpeciesNameAlreadyExistsError) {
-        throw new HttpException(e.message, 400);
-      }
-      throw new HttpException(e.message, 500);
     }
   }
 
@@ -59,10 +62,12 @@ export class SpeciesController {
     try {
       return await this.speciesService.getSpeciesByName(name);
     } catch (e) {
-      if (e instanceof SpeciesNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case SpeciesNotFoundError:
+          throw new HttpException(e.message, 404);
+        default:
+          throw new HttpException(e.message, 500);
       }
-      throw new HttpException(e.message, 500);
     }
   }
 }

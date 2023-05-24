@@ -23,11 +23,12 @@ export class PlantsController {
     try {
       return await this.plantsService.findOne(id);
     } catch (e) {
-      if (e instanceof PlantNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case PlantNotFoundError:
+          throw new HttpException(e.message, HttpStatus.NOT_FOUND);
+        default:
+          throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
       }
-
-      throw new HttpException(e.message, 500);
     }
   }
 }

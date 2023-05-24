@@ -43,11 +43,12 @@ export class LogsController {
     try {
       return await this.logsService.getPlantLogsByPlantId(plantId);
     } catch (e) {
-      if (e instanceof PlantNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case PlantNotFoundError:
+          throw new HttpException(e.message, 404);
+        default:
+          throw new HttpException(e.message, 500);
       }
-
-      throw new HttpException(e.message, 500);
     }
   }
 
@@ -56,11 +57,12 @@ export class LogsController {
     try {
       return await this.logsService.getBatchLogsByBatchId(batchId);
     } catch (e) {
-      if (e instanceof BatchNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case BatchNotFoundError:
+          throw new HttpException(e.message, 404);
+        default:
+          throw new HttpException(e.message, 500);
       }
-
-      throw new HttpException(e.message, 500);
     }
   }
 
@@ -69,11 +71,12 @@ export class LogsController {
     try {
       return await this.logsService.getSpeciesLogsBySpeciesName(speciesName);
     } catch (e) {
-      if (e instanceof BatchNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case SpeciesNotFoundError:
+          throw new HttpException(e.message, 404);
+        default:
+          throw new HttpException(e.message, 500);
       }
-
-      throw new HttpException(e.message, 500);
     }
   }
 
@@ -88,11 +91,12 @@ export class LogsController {
         message: createPlantLogDto.message,
       });
     } catch (e) {
-      if (e instanceof PlantNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case PlantNotFoundError:
+          throw new HttpException(e.message, 404);
+        default:
+          throw new HttpException(e.message, 500);
       }
-
-      throw new HttpException(e.message, 500);
     }
   }
 
@@ -107,11 +111,12 @@ export class LogsController {
         message: createBatchLogDto.message,
       });
     } catch (e) {
-      if (e instanceof BatchNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case BatchNotFoundError:
+          throw new HttpException(e.message, 404);
+        default:
+          throw new HttpException(e.message, 500);
       }
-
-      throw new HttpException(e.message, 500);
     }
   }
 
@@ -126,11 +131,12 @@ export class LogsController {
         message: createSpeciesLogDto.message,
       });
     } catch (e) {
-      if (e instanceof SpeciesNotFoundError) {
-        throw new HttpException(e.message, 404);
+      switch (e.constructor) {
+        case SpeciesNotFoundError:
+          throw new HttpException(e.message, 404);
+        default:
+          throw new HttpException(e.message, 500);
       }
-
-      throw new HttpException(e.message, 500);
     }
   }
 }

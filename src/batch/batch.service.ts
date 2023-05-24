@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 import { BatchRepository, HarvestedCondition } from "./batch.repository";
 import { CreateBatch } from "./dto/create-batch";
