@@ -4,6 +4,7 @@ import {
   newThresholdChecker,
   testForHardcodedThresholdsCo2,
   testForHardcodedThresholdsHumidity,
+  testForHardcodedThresholdsTemperature,
 } from "./new-threshold-dto";
 
 describe("NewThresholdDTO Unit Tests", () => {
@@ -36,14 +37,14 @@ describe("NewThresholdDTO Unit Tests", () => {
   describe("Hardcoded Thresholds", () => {
     describe("Co2", () => {
       describe("Exceptions", () => {
-        it("should throw errro if minValue is < hardcoded min", () => {
+        it("should throw error if minValue is < hardcoded min", () => {
           provider.minValue = -1;
-          provider.maxValue = 100;
+          provider.maxValue = 0.4;
           expect(() => testForHardcodedThresholdsCo2(provider)).toThrowError();
         });
 
         it("should throw error if maxValue is > hardcoded max", () => {
-          provider.minValue = 0;
+          provider.minValue = 0.1;
           provider.maxValue = 1;
           expect(() => testForHardcodedThresholdsCo2(provider)).toThrowError();
         });
@@ -96,7 +97,7 @@ describe("NewThresholdDTO Unit Tests", () => {
           provider.minValue = -41;
           provider.maxValue = 100;
           expect(() =>
-            testForHardcodedThresholdsHumidity(provider),
+            testForHardcodedThresholdsTemperature(provider),
           ).toThrowError();
         });
 
@@ -104,8 +105,17 @@ describe("NewThresholdDTO Unit Tests", () => {
           provider.minValue = -40;
           provider.maxValue = 126;
           expect(() =>
-            testForHardcodedThresholdsHumidity(provider),
+            testForHardcodedThresholdsTemperature(provider),
           ).toThrowError();
+        });
+      });
+      describe("Sunny side scenarios", () => {
+        it("Should not throw error", () => {
+          provider.minValue = -39;
+          provider.maxValue = 124;
+          expect(() =>
+            testForHardcodedThresholdsTemperature(provider),
+          ).not.toThrowError();
         });
       });
     });
