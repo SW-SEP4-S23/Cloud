@@ -89,7 +89,7 @@ describe("Plants Controller", () => {
     test("Get plant with non-existant", () => {
       return request(app.getHttpServer()).get("/stock/plants/100").expect({
         statusCode: 404,
-        message: "Plant not found",
+        message: `Plant with id 100 not found`,
       });
     });
   });

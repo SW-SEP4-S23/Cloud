@@ -30,7 +30,7 @@ describe("Batch Controller", () => {
       batch.plantingDate = new Date(plantingDate);
 
       return request(app.getHttpServer())
-        .post("/stock/batch")
+        .post("/stock/batches")
         .send(batch)
         .expect(201)
         .expect((res) => {
@@ -62,7 +62,7 @@ describe("Batch Controller", () => {
   describe("(GET) Batch, query", () => {
     it("Get no queries, should return all batches", () => {
       return request(app.getHttpServer())
-        .get("/stock/batch")
+        .get("/stock/batches")
         .expect(200)
         .expect((res) => {
           expect(res.body.length).toEqual(3);
@@ -73,7 +73,7 @@ describe("Batch Controller", () => {
       const endDate = "2021-01-01T00:00:00.000Z";
       const expectedLength = 2;
       return request(app.getHttpServer())
-        .get(`/stock/batch?startDate=${startDate}&endDate=${endDate}`)
+        .get(`/stock/batches?startDate=${startDate}&endDate=${endDate}`)
         .expect(200)
         .expect((res) => {
           expect(res.body.length).toEqual(expectedLength);
@@ -89,7 +89,7 @@ describe("Batch Controller", () => {
       const expectedLength = 2;
       const isHarvested = true;
       return request(app.getHttpServer())
-        .get(`/stock/batch?isHarvested=${isHarvested}`)
+        .get(`/stock/batches?isHarvested=${isHarvested}`)
         .expect(200)
         .expect((res) => {
           expect(res.body.length).toEqual(expectedLength);
@@ -103,7 +103,7 @@ describe("Batch Controller", () => {
       const expectedLength = 1;
       const isHarvested = false;
       return request(app.getHttpServer())
-        .get(`/stock/batch?isHarvested=${isHarvested}`)
+        .get(`/stock/batches?isHarvested=${isHarvested}`)
         .expect(200)
         .expect((res) => {
           expect(res.body.length).toEqual(expectedLength);
@@ -115,7 +115,7 @@ describe("Batch Controller", () => {
     it("Get batch with id, should return batch", () => {
       const id = 1;
       return request(app.getHttpServer())
-        .get(`/stock/batch/${id}`)
+        .get(`/stock/batches/${id}`)
         .expect(200)
         .expect((res) => {
           expect(res.body.id).toEqual(id);
@@ -123,7 +123,10 @@ describe("Batch Controller", () => {
     });
     it("Get batch with id, should return 404", () => {
       const id = 100;
-      return request(app.getHttpServer()).get(`/stock/batch/${id}`).expect(404);
+      return request(app.getHttpServer())
+        .get(`/stock/batches/${id}`)
+        .expect(404)
+        .expect({ statusCode: 404, message: `Batch with id ${id} not found` });
     });
   });
   describe("(Patch) Batch, id", () => {
@@ -131,7 +134,7 @@ describe("Batch Controller", () => {
       const id = 1;
       const harvestDate = "2021-01-01T00:00:00.000Z";
       return request(app.getHttpServer())
-        .patch(`/stock/batch/${id}`)
+        .patch(`/stock/batches/${id}`)
         .send({ harvestDate: harvestDate })
         .expect(200)
         .expect((res) => {
@@ -142,9 +145,10 @@ describe("Batch Controller", () => {
       const id = 100;
       const harvestDate = "2021-01-01T00:00:00.000Z";
       return request(app.getHttpServer())
-        .patch(`/stock/batch/${id}`)
+        .patch(`/stock/batches/${id}`)
         .send({ harvestDate: harvestDate })
-        .expect(404);
+        .expect(404)
+        .expect({ statusCode: 404, message: `Batch with id ${id} not found` });
     });
   });
 
