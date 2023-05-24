@@ -1,5 +1,5 @@
 import { DownlinkPayload } from "./dto/downlink-data";
-import { MAX_ACK_ID } from "../constants";
+import { MAX_ACK_ID } from "./constants";
 
 export function hexToNumberArray(hex: string, interval = 2): number[] {
   const hexArray = hex.match(new RegExp(`.{1,${interval}}`, "g"));

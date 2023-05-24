@@ -1,3 +1,4 @@
+import { MAX_ACK_ID } from "./constants";
 import {
   payloadIdFromOriginalId,
   hexToNumberArray,
@@ -7,64 +8,61 @@ import {
 } from "./payload-utils";
 
 describe("hex to number array", () => {
-  it("it should return an array of 3 numbers", () => {
+  it("should return an array of 3 numbers", () => {
     expect(hexToNumberArray("000000")).toHaveLength(3);
   });
 
-  it("it should return the correct values", () => {
-    expect(hexToNumberArray("000000")).toEqual([0, 0, 0]);
-    expect(hexToNumberArray("ffffff")).toEqual([255, 255, 255]);
-    expect(hexToNumberArray("ff0000")).toEqual([255, 0, 0]);
-    expect(hexToNumberArray("00ff00")).toEqual([0, 255, 0]);
-    expect(hexToNumberArray("0000ff")).toEqual([0, 0, 255]);
+  test.each([
+    { hex: "000000", expected: { temperature: 0, co2: 0, humidity: 0 } },
+    { hex: "fefefe", expected: { temperature: 254, co2: 254, humidity: 254 } },
+    { hex: "fe0000", expected: { temperature: 254, co2: 0, humidity: 0 } },
+    { hex: "00fe00", expected: { temperature: 0, co2: 254, humidity: 0 } },
+    { hex: "0000fe", expected: { temperature: 0, co2: 0, humidity: 254 } },
+  ])("hexToNumberArray($hex) should return $expected", ({ hex, expected }) => {
+    expect(hexToNumberArray(hex)).toEqual([
+      expected.temperature,
+      expected.co2,
+      expected.humidity,
+    ]);
   });
 });
 
 describe("uplink hex payload to data", () => {
-  it("should return the correct values", () => {
-    expect(uplinkHexPayloadToData("00000000")).toEqual({
-      temperature: 0,
-      co2: 0,
-      humidity: 0,
-      id: 0,
-    });
-    expect(uplinkHexPayloadToData("ffffffff")).toEqual({
-      temperature: 255,
-      co2: 255,
-      humidity: 255,
-      id: 255,
-    });
-    expect(uplinkHexPayloadToData("000000ff")).toEqual({
-      temperature: 0,
-      co2: 0,
-      humidity: 0,
-      id: 255,
-    });
-    expect(uplinkHexPayloadToData("ff000000")).toEqual({
-      temperature: 255,
-      co2: 0,
-      humidity: 0,
-      id: 0,
-    });
-    expect(uplinkHexPayloadToData("00ff0000")).toEqual({
-      temperature: 0,
-      co2: 255,
-      humidity: 0,
-      id: 0,
-    });
-    expect(uplinkHexPayloadToData("0000ff00")).toEqual({
-      temperature: 0,
-      co2: 0,
-      humidity: 255,
-      id: 0,
-    });
-    expect(uplinkHexPayloadToData("000000ff")).toEqual({
-      temperature: 0,
-      co2: 0,
-      humidity: 0,
-      id: 255,
-    });
-  });
+  test.each([
+    {
+      hex: "00000000",
+      expected: { temperature: 0, co2: 0, humidity: 0, id: 0 },
+    },
+    {
+      hex: "fffffffe",
+      expected: { temperature: 255, co2: 255, humidity: 255, id: 254 },
+    },
+    {
+      hex: "000000fe",
+      expected: { temperature: 0, co2: 0, humidity: 0, id: 254 },
+    },
+    {
+      hex: "ff000000",
+      expected: { temperature: 255, co2: 0, humidity: 0, id: 0 },
+    },
+    {
+      hex: "00ff0000",
+      expected: { temperature: 0, co2: 255, humidity: 0, id: 0 },
+    },
+    {
+      hex: "0000ff00",
+      expected: { temperature: 0, co2: 0, humidity: 255, id: 0 },
+    },
+    {
+      hex: "000000fe",
+      expected: { temperature: 0, co2: 0, humidity: 0, id: 254 },
+    },
+  ])(
+    `uplinkHexPayloadToData($hex) should return $expected`,
+    ({ hex, expected }) => {
+      expect(uplinkHexPayloadToData(hex)).toEqual(expected);
+    },
+  );
 });
 
 describe("downlink data to hex payload", () => {
@@ -91,7 +89,7 @@ describe("downlink data to hex payload", () => {
 
     expect(
       downlinkDataToHexPayload({
-        ackId: 255,
+        ackId: 254,
         thresholds: {
           TEMPERATURE: {
             minValue: 255,
@@ -107,26 +105,42 @@ describe("downlink data to hex payload", () => {
           },
         },
       }),
-    ).toEqual("ffffffffffffff");
+    ).toEqual("fffffffffffffe");
   });
 });
 
 describe("converting between payload and original id", () => {
-  it("should return correct payload id", () => {
-    expect(payloadIdFromOriginalId(1)).toEqual(1);
-    expect(payloadIdFromOriginalId(255)).toEqual(255);
-    expect(payloadIdFromOriginalId(256)).toEqual(1);
+  test.each([
+    { payloadId: 1, expected: 1 },
+    { payloadId: MAX_ACK_ID, expected: MAX_ACK_ID },
+    { payloadId: MAX_ACK_ID + 1, expected: 1 },
+    { payloadId: MAX_ACK_ID * 2, expected: MAX_ACK_ID },
+    { payloadId: MAX_ACK_ID * 2 + 1, expected: 1 },
+  ])(
+    "payloadIdFromOriginalId($payloadId) should return $expected",
+    ({ payloadId, expected }) => {
+      expect(payloadIdFromOriginalId(payloadId)).toEqual(expected);
+    },
+  );
 
-    expect(payloadIdFromOriginalId(510)).toEqual(255);
-    expect(payloadIdFromOriginalId(511)).toEqual(1);
-  });
-
-  it("should return correct original id", () => {
-    expect(originalIdFromPayloadId(1, 1)).toEqual(1);
-    expect(originalIdFromPayloadId(255, 255)).toEqual(255);
-    expect(originalIdFromPayloadId(1, 256)).toEqual(256);
-
-    expect(originalIdFromPayloadId(255, 510)).toEqual(510);
-    expect(originalIdFromPayloadId(1, 511)).toEqual(511);
-  });
+  test.each([
+    { payloadId: 1, tableSize: 1, expected: 1 },
+    { payloadId: MAX_ACK_ID, tableSize: MAX_ACK_ID, expected: MAX_ACK_ID },
+    { payloadId: 1, tableSize: MAX_ACK_ID + 1, expected: MAX_ACK_ID + 1 },
+    {
+      payloadId: MAX_ACK_ID,
+      tableSize: MAX_ACK_ID * 2,
+      expected: MAX_ACK_ID * 2,
+    },
+    {
+      payloadId: 1,
+      tableSize: MAX_ACK_ID * 2 + 1,
+      expected: MAX_ACK_ID * 2 + 1,
+    },
+  ])(
+    "originalIdFromPayloadId($payloadId, $tableSize) should return $expected",
+    ({ payloadId, tableSize, expected }) => {
+      expect(originalIdFromPayloadId(payloadId, tableSize)).toEqual(expected);
+    },
+  );
 });
