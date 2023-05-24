@@ -1,6 +1,5 @@
-import { Optional } from "@nestjs/common";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 
 export class NewSpeciesDTO {
   @ApiProperty()
@@ -8,14 +7,14 @@ export class NewSpeciesDTO {
   name: string;
 
   @ApiPropertyOptional()
-  @Optional()
+  @IsOptional()
   optimalCo2?: number;
 
   @ApiPropertyOptional()
-  @Optional()
+  @IsOptional()
   optimalTemperature?: number;
 
   @ApiPropertyOptional()
-  @Optional()
+  @IsOptional()
   optimalHumidity?: number;
 }

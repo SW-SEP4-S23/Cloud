@@ -2,8 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
-import { NewSpeciesDTO } from "../src/shared/new-species-dto";
-import { UpdateSpeciesDTO } from "../src/shared/update-species-dto";
+import { UpdateSpeciesDTO } from "../src/plant_species/dto/update-species-dto";
+import { NewSpeciesDTO } from "../src/plant_species/dto/new-species-dto";
 
 describe("Species controller", () => {
   let app: INestApplication;
@@ -49,7 +49,7 @@ describe("Species controller", () => {
           optimalTemperature: 30,
           totalPlants: 10,
           PlantBatches: {
-            "batchId-2": {
+            2: {
               amount: 10,
               harvestDate: "2021-01-01T00:00:00.000Z",
               plantingDate: "2020-12-01T00:00:00.000Z",
@@ -63,7 +63,7 @@ describe("Species controller", () => {
         .expect(404)
         .expect({
           statusCode: 404,
-          message: "Species with this name does not exist",
+          message: "Species with name NOT_A_SPECIES not found",
         });
     });
   });
@@ -98,7 +98,7 @@ describe("Species controller", () => {
         .expect(400)
         .expect({
           statusCode: 400,
-          message: "Species with this name already exists",
+          message: `Species with name ${newSpecies.name} already exists`,
         });
     });
   });
@@ -119,7 +119,7 @@ describe("Species controller", () => {
         .expect(404)
         .expect({
           statusCode: 404,
-          message: "Species with this name does not exist",
+          message: `Species with name ${speciesToUpdate.nameToBeChanged} not found`,
         });
     });
     test("Update species with already existing name", () => {
@@ -135,7 +135,7 @@ describe("Species controller", () => {
         .expect(400)
         .expect({
           statusCode: 400,
-          message: "Species with this name already exists",
+          message: `Species with name ${speciesToUpdate.updateValues.name} already exists`,
         });
     });
     test("Update species", () => {
