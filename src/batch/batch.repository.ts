@@ -17,21 +17,20 @@ export class BatchRepository {
         data: {
           plantingDate: createBatch.plantingDate,
           amount: createBatch.amount,
-          ps_Name: createBatch.species,
+          plantSpecies_Name: createBatch.species,
         },
       });
 
-    const plantData = Array.from({ length: createBatch.amount }).map(() => ({
-      plantBatch_Id: plantBatch.id,
-    }));
+      const plantData = Array.from({ length: createBatch.amount }).map(() => ({
+        plantBatch_Id: plantBatch.id,
+      }));
 
       const plants = await this.prisma.plant.createMany({
         data: plantData,
       });
 
-      return [plantBatch, plants];}
+      return [plantBatch, plants];
     } catch (e) {
-      console.log(e);
       if (e instanceof PrismaClientKnownRequestError) {
         switch (e.code) {
           case "P2003":
