@@ -32,11 +32,7 @@ export class BatchService {
     return this.batchRepository.findAllInterval(interval, harvestedCondition);
   }
 
-  async findOne(id: number) {
-    const batch = await this.batchRepository.findOne(id);
-    if (batch === null)
-      throw new HttpException("Batch not found", HttpStatus.NOT_FOUND);
-
-    return batch;
+  findOne(id: number) {
+    return this.batchRepository.findOne(id);
   }
 }

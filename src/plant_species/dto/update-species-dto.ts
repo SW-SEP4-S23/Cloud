@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { NewSpeciesDTO } from "./new-species-dto";
-import { IsString } from "class-validator";
+import { IsString, MaxLength, MinLength } from "class-validator";
 
 export class UpdateSpeciesDTO {
   @ApiProperty()
@@ -8,5 +8,7 @@ export class UpdateSpeciesDTO {
 
   @ApiProperty()
   @IsString()
+  @MinLength(1)
+  @MaxLength(50)
   nameToBeChanged: string;
 }

@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import { PlantsService } from "./plants.service";
+import { PlantNotFoundError } from "../logs/exceptions/PlantNotFoundError";
 
 @Controller("stock/plants")
 export class PlantsController {
@@ -19,12 +20,14 @@ export class PlantsController {
 
   @Get("/:id")
   async findOne(@Param("id", ParseIntPipe) id: number) {
-    const plantToReturn = await this.plantsService.findOne(id);
+    try {
+      return await this.plantsService.findOne(id);
+    } catch (e) {
+      if (e instanceof PlantNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
 
-    if (!plantToReturn) {
-      throw new HttpException("Plant not found", HttpStatus.NOT_FOUND);
+      throw new HttpException(e.message, 500);
     }
-
-    return plantToReturn;
   }
 }

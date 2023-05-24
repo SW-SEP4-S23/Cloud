@@ -7,14 +7,16 @@ import {
   ParseIntPipe,
   Param,
   Patch,
+  HttpException,
 } from "@nestjs/common";
 import { IntervalQuery } from "../shared/interval-query";
 import { BatchService } from "./batch.service";
 import { CreateBatch } from "./dto/create-batch";
 import { PatchHarvestDate } from "./dto/patch-batch";
 import { IsHarvested } from "./dto/query-harvested";
+import { BatchNotFoundError } from "../logs/exceptions/BatchNotFoundError";
 
-@Controller("stock/batch")
+@Controller("stock/batches")
 export class BatchController {
   constructor(private readonly batchService: BatchService) {}
 
@@ -32,15 +34,31 @@ export class BatchController {
   }
 
   @Get(":id")
-  findOne(@Param("id", ParseIntPipe) id: number) {
-    return this.batchService.findOne(id);
+  async findOne(@Param("id", ParseIntPipe) id: number) {
+    try {
+      return await this.batchService.findOne(id);
+    } catch (e) {
+      if (e instanceof BatchNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+
+      throw new HttpException(e.message, 500);
+    }
   }
 
   @Patch(":id")
-  updateBatch(
+  async updateBatch(
     @Param("id", ParseIntPipe) id: number,
     @Body() harvestDate: PatchHarvestDate,
   ) {
-    return this.batchService.updateBatch(id, harvestDate);
+    try {
+      return await this.batchService.updateBatch(id, harvestDate);
+    } catch (e) {
+      if (e instanceof BatchNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+
+      throw new HttpException(e.message, 500);
+    }
   }
 }
