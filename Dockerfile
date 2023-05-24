@@ -1,3 +1,5 @@
+# Inspired by: https://www.tomray.dev/nestjs-docker-production#putting-it-all-together
+
 ###################
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
@@ -19,10 +21,16 @@ COPY --chown=node:node prisma ./prisma/
 
 # Create a .env file and write envrioment variables to it
 RUN touch .env
-RUN echo "DATABASE_URL=$DATABASE_URL" > ./.env
+RUN echo "DATABASE_URL=$DATABASE_URL" >.env
 
 # Install app dependencies using the `npm ci` command instead of `npm install`
 RUN npm ci
+
+# Migrate the database
+RUN npm run db:migrate:prod
+
+# Seed the database with essential production data
+RUN npm run db:seed
 
 # Bundle app source
 COPY --chown=node:node . .
@@ -42,7 +50,6 @@ COPY --chown=node:node package*.json ./
 
 # In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
 COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=development /usr/src/app/prisma ./prisma/
 COPY --chown=node:node --from=development /usr/src/app/.env ./.env
 COPY --chown=node:node . .
 
@@ -66,9 +73,7 @@ FROM node:18-alpine As production
 # Copy the bundled code from the build stage to the production image
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-COPY --chown=node:node --from=build /usr/src/app/package.json ./
-COPY --chown=node:node --from=build /usr/src/app/prisma ./prisma/
 COPY --chown=node:node --from=build /usr/src/app/.env ./.env
 
 # Start the server using the production build
-CMD [ "npm", "run", "start:migrate:prod" ]  
+CMD [ "node", "dist/src/main.js" ]

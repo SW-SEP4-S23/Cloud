@@ -17,12 +17,12 @@ export class BatchRepository {
         data: {
           plantingDate: createBatch.plantingDate,
           amount: createBatch.amount,
-          ps_Name: createBatch.species,
+          plantSpecies_Name: createBatch.species,
         },
       });
 
       const plantData = Array.from({ length: createBatch.amount }).map(() => ({
-        pb_Id: plantBatch.id,
+        plantBatch_Id: plantBatch.id,
       }));
 
       const plants = await this.prisma.plant.createMany({
@@ -94,7 +94,7 @@ export class BatchRepository {
         id: true,
         plantingDate: true,
         harvestDate: true,
-        Plant: {},
+        plant: {},
       },
     });
     if (!data) {

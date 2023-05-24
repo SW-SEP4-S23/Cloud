@@ -26,7 +26,7 @@ export class SpeciesService {
     const transformedData: Record<
       string,
       {
-        OptimalCo2: number;
+        optimalCo2: number;
         optimalHumidity: number;
         optimalTemperature: number;
         totalPlants: number;
@@ -35,18 +35,18 @@ export class SpeciesService {
     data.forEach((item) => {
       const {
         name,
-        OptimalCo2,
+        optimalCo2,
         optimalHumidity,
         optimalTemperature,
-        PlantBatch,
+        plantBatches,
       } = item;
-      const totalPlants = PlantBatch.reduce(
+      const totalPlants = plantBatches.reduce(
         (sum, batch) => sum + batch.amount,
         0,
       );
 
       transformedData[name] = {
-        OptimalCo2,
+        optimalCo2,
         optimalHumidity,
         optimalTemperature,
         totalPlants,
@@ -64,14 +64,14 @@ export class SpeciesService {
 
     const transformedData = {
       name: data.name,
-      OptimalCo2: data.OptimalCo2,
+      optimalCo2: data.optimalCo2,
       optimalHumidity: data.optimalHumidity,
       optimalTemperature: data.optimalTemperature,
-      totalPlants: data.PlantBatch.reduce(
+      totalPlants: data.plantBatches.reduce(
         (sum, batch) => sum + batch.amount,
         0,
       ),
-      PlantBatches: data.PlantBatch.reduce((result, batch) => {
+      plantBatches: data.plantBatches.reduce((result, batch) => {
         result[batch.id] = {
           amount: batch.amount,
           harvestDate: batch.harvestDate,
