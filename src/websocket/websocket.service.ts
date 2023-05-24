@@ -1,4 +1,3 @@
-import { createWebSocket } from "./create-websocket";
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import {
   downlinkDataToHexPayload,
@@ -10,46 +9,77 @@ import { WebSocket } from "ws";
 import { plainToClass } from "class-transformer";
 import { UplinkData } from "./dto/uplink-data";
 import { validateSync } from "class-validator";
-import { IOT_EUI } from "../constants";
+import { IOT_EUI, LORAWAN_WSS_URL } from "./constants";
 import { DownlinkData, Thresholds } from "./dto/downlink-data";
 import { WebSocketRepository } from "./websocket.repository";
 
 @Injectable()
 export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   #socket: WebSocket;
+  #reconnectInterval: number;
+  #fullClose = false;
 
-  constructor(private wsRepository: WebSocketRepository) {}
+  constructor(private wsRepository: WebSocketRepository) {
+    this.#reconnectInterval = 1000 * 60; // 1 minute
+  }
 
   async onModuleDestroy() {
-    this.#socket.close();
+    this.closeWebSocket();
   }
 
   async onModuleInit() {
-    this.#socket = await createWebSocket(
-      "wss://iotnet.teracom.dk/app?token=vnoVQAAAABFpb3RuZXQudGVyYWNvbS5ka0AHfDGv873AtxYtbA-B0Sw=",
-    );
-    await this.initSocket();
+    await this.connectWebSocket();
   }
 
-  async initSocket(): Promise<void> {
-    this.#socket.on("message", async (buffer: Buffer) => {
-      const data = JSON.parse(buffer.toString());
+  async connectWebSocket() {
+    await new Promise<void>((resolve, reject) => {
+      this.#socket = new WebSocket(LORAWAN_WSS_URL);
 
-      console.log("Data: ", data);
+      this.#socket.on("open", () => {
+        console.log("Socket opened");
+        resolve();
+      });
 
-      // Only handle the data packet of the uplink.
-      if (data?.cmd === "rx" && data?.port == 1) {
-        // Validate incoming data.
-        const uplinkData = plainToClass(UplinkData, data);
-        const validationErrors = validateSync(uplinkData);
-        if (validationErrors.length > 0) {
-          console.error("Validation of uplink data failed: ", validationErrors);
-          return;
+      this.#socket.on("error", (err) => {
+        console.error("Error in websocket: ", err);
+        reject(err);
+      });
+
+      this.#socket.on("close", () => {
+        console.log("Socket closed");
+        if (!this.#fullClose) {
+          console.log("Reconnecting in ", this.#reconnectInterval);
+          setTimeout(() => this.connectWebSocket(), this.#reconnectInterval);
         }
+      });
 
-        this.onUplink(uplinkData);
-      }
+      this.#socket.on("message", async (buffer: Buffer) => {
+        const data = JSON.parse(buffer.toString());
+
+        console.log("Data: ", data);
+
+        // Only handle the data packet of the uplink.
+        if (data?.cmd === "rx" && data?.port == 1) {
+          // Validate incoming data.
+          const uplinkData = plainToClass(UplinkData, data);
+          const validationErrors = validateSync(uplinkData);
+          if (validationErrors.length > 0) {
+            console.error(
+              "Validation of uplink data failed: ",
+              validationErrors,
+            );
+            return;
+          }
+
+          this.onUplink(uplinkData);
+        }
+      });
     });
+  }
+
+  closeWebSocket() {
+    this.#fullClose = true;
+    this.#socket.close();
   }
 
   async onUplink(uplinkData: UplinkData) {

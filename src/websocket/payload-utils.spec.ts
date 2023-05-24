@@ -7,16 +7,18 @@ import {
 } from "./payload-utils";
 
 describe("hex to number array", () => {
-  it("it should return an array of 3 numbers", () => {
+  it("should return an array of 3 numbers", () => {
     expect(hexToNumberArray("000000")).toHaveLength(3);
   });
 
-  it("it should return the correct values", () => {
-    expect(hexToNumberArray("000000")).toEqual([0, 0, 0]);
-    expect(hexToNumberArray("ffffff")).toEqual([255, 255, 255]);
-    expect(hexToNumberArray("ff0000")).toEqual([255, 0, 0]);
-    expect(hexToNumberArray("00ff00")).toEqual([0, 255, 0]);
-    expect(hexToNumberArray("0000ff")).toEqual([0, 0, 255]);
+  test.each([
+    ["000000", [0, 0, 0]],
+    ["ffffff", [255, 255, 255]],
+    ["ff0000", [255, 0, 0]],
+    ["00ff00", [0, 255, 0]],
+    ["0000ff", [0, 0, 255]],
+  ])("should return the correct values", (hex, expected) => {
+    expect(hexToNumberArray(hex)).toEqual(expected);
   });
 });
 
