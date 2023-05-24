@@ -4,10 +4,12 @@ import { HttpServer, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import {
+  getHardcodedThresholds,
   getThresholds,
   postAndCheckForPendingThresholds,
   postThresholds,
 } from "./common-tests";
+import { hardcodedThresholds } from "../src/shared/new-threshold-dto";
 
 describe("Co2 Controller", () => {
   let app: INestApplication;
@@ -147,14 +149,30 @@ describe("Co2 Controller", () => {
       });
     });
 
-    test("GET Thresholds", async () => {
-      co2Path = "/environment/co2/thresholds";
-      co2MinValue = 0.5;
-      co2MaxValue = 10;
+    describe("(GET) Thresholds)", () => {
+      test("Thresholds", async () => {
+        co2Path = "/environment/co2/thresholds";
+        co2MinValue = 0.5;
+        co2MaxValue = 10;
 
-      request = app.getHttpServer();
+        request = app.getHttpServer();
 
-      await getThresholds(request, co2Path, DataType.CO2);
+        await getThresholds(request, co2Path, DataType.CO2);
+      });
+      test("Hardcoded Thresholds", async () => {
+        co2Path = "/environment/co2/hardcoded-thresholds";
+        co2MinValue = hardcodedThresholds.co2.min;
+        co2MaxValue = hardcodedThresholds.co2.max;
+
+        request = app.getHttpServer();
+
+        await getHardcodedThresholds(
+          request,
+          co2Path,
+          co2MinValue,
+          co2MaxValue,
+        );
+      });
     });
 
     test("POST then check for pending", async () => {

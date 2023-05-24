@@ -1,3 +1,4 @@
+import { hardcodedThresholds } from "./../src/shared/new-threshold-dto";
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
@@ -145,29 +146,39 @@ describe("Environment Controller", () => {
           });
       });
 
-      test("GET Thresholds,", () => {
-        return request(app.getHttpServer())
-          .get("/environment/thresholds")
-          .expect(200)
-          .expect((request) => {
-            expect(request.body.upToDateThresholds).toEqual({
-              CO2: {
-                dataType: DataType.CO2,
-                minValue: null,
-                maxValue: null,
-              },
-              TEMPERATURE: {
-                dataType: DataType.TEMPERATURE,
-                minValue: null,
-                maxValue: null,
-              },
-              HUMIDITY: {
-                dataType: DataType.HUMIDITY,
-                minValue: null,
-                maxValue: null,
-              },
+      describe("GET Thresholds", () => {
+        test("Thresholds,", () => {
+          return request(app.getHttpServer())
+            .get("/environment/thresholds")
+            .expect(200)
+            .expect((request) => {
+              expect(request.body.upToDateThresholds).toEqual({
+                CO2: {
+                  dataType: DataType.CO2,
+                  minValue: null,
+                  maxValue: null,
+                },
+                TEMPERATURE: {
+                  dataType: DataType.TEMPERATURE,
+                  minValue: null,
+                  maxValue: null,
+                },
+                HUMIDITY: {
+                  dataType: DataType.HUMIDITY,
+                  minValue: null,
+                  maxValue: null,
+                },
+              });
             });
-          });
+        });
+        test("Hardcoded Thresholds", () => {
+          return request(app.getHttpServer())
+            .get("/environment/hardcoded-thresholds")
+            .expect(200)
+            .expect((request) => {
+              expect(request.body).toEqual(hardcodedThresholds);
+            });
+        });
       });
 
       test("POST Thresholds, then GET to check if they are pending", () => {

@@ -88,3 +88,17 @@ export const postAndCheckForPendingThresholds = async (
   expect(getResponse.body.pendingThreshold.maxValueReq).toBe(maximumValue);
   expect(getResponse.body.pendingThreshold.dataType).toBe(dataType);
 };
+
+export const getHardcodedThresholds = async (
+  httpServer: HttpServer,
+  path: string,
+  minimumValue: number,
+  maximumValue: number,
+) => {
+  const httpRequest = Request(httpServer);
+
+  const response = await httpRequest.get(path);
+
+  expect(response.body.min).toBe(minimumValue);
+  expect(response.body.max).toBe(maximumValue);
+};

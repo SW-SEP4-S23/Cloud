@@ -5,9 +5,11 @@ import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import {
   getThresholds,
+  getHardcodedThresholds,
   postAndCheckForPendingThresholds,
   postThresholds,
 } from "./common-tests";
+import { hardcodedThresholds } from "../src/shared/new-threshold-dto";
 
 describe("Humidity Controller", () => {
   let app: INestApplication;
@@ -147,14 +149,31 @@ describe("Humidity Controller", () => {
       });
     });
 
-    test("GET Thresholds", async () => {
-      humidityPath = "/environment/humidity/thresholds";
-      humidityMinValue = 10;
-      humidityMaxValue = 30;
+    describe("(GET) Thresholds", () => {
+      test("Thresholds", async () => {
+        humidityPath = "/environment/humidity/thresholds";
+        humidityMinValue = 10;
+        humidityMaxValue = 30;
 
-      request = app.getHttpServer();
+        request = app.getHttpServer();
 
-      await getThresholds(request, humidityPath, DataType.HUMIDITY);
+        await getThresholds(request, humidityPath, DataType.HUMIDITY);
+      });
+
+      test("Hardcoded thresholds", async () => {
+        humidityPath = "/environment/humidity/hardcoded-thresholds";
+        humidityMinValue = hardcodedThresholds.humidity.min;
+        humidityMaxValue = hardcodedThresholds.humidity.max;
+
+        request = app.getHttpServer();
+
+        await getHardcodedThresholds(
+          request,
+          humidityPath,
+          humidityMinValue,
+          humidityMaxValue,
+        );
+      });
     });
 
     test("POST then check for pending", async () => {
