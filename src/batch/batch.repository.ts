@@ -1,31 +1,45 @@
-import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
 import { IntervalQuery } from "../shared/interval-query";
 import { CreateBatch } from "./dto/create-batch";
 import { PatchHarvestDate } from "./dto/patch-batch";
+import { BatchNotFoundError } from "../logs/exceptions/BatchNotFoundError";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { SpeciesNotFoundError } from "../logs/exceptions/SpeciesNotFoundError";
 
 @Injectable()
 export class BatchRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async createBatch(createBatch: CreateBatch) {
-    const plantBatch = await this.prisma.plantBatch.create({
-      data: {
-        plantingDate: createBatch.plantingDate,
-        amount: createBatch.amount,
-        plantSpecies_Name: createBatch.species,
-      },
-    });
+    try {
+      const plantBatch = await this.prisma.plantBatch.create({
+        data: {
+          plantingDate: createBatch.plantingDate,
+          amount: createBatch.amount,
+          plantSpecies_Name: createBatch.species,
+        },
+      });
 
-    const plantData = Array.from({ length: createBatch.amount }).map(() => ({
-      plantBatch_Id: plantBatch.id,
-    }));
+      const plantData = Array.from({ length: createBatch.amount }).map(() => ({
+        plantBatch_Id: plantBatch.id,
+      }));
 
-    const plants = await this.prisma.plant.createMany({
-      data: plantData,
-    });
+      const plants = await this.prisma.plant.createMany({
+        data: plantData,
+      });
 
-    return [plantBatch, plants];
+      return [plantBatch, plants];
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        switch (e.code) {
+          case "P2003":
+            throw new SpeciesNotFoundError(createBatch.species);
+          default:
+            throw e;
+        }
+      }
+    }
   }
 
   async updateBatch(id: number, harvestDate: PatchHarvestDate) {
@@ -39,9 +53,14 @@ export class BatchRepository {
         },
       });
     } catch (e) {
-      if (e.code === "P2025")
-        throw new HttpException("Batch not found", HttpStatus.NOT_FOUND);
-      else throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      if (e instanceof PrismaClientKnownRequestError) {
+        switch (e.code) {
+          case "P2025":
+            throw new BatchNotFoundError(id);
+          default:
+            throw e;
+        }
+      }
     }
   }
 
@@ -65,8 +84,8 @@ export class BatchRepository {
     });
   }
 
-  findOne(id: number) {
-    return this.prisma.plantBatch.findUnique({
+  async findOne(id: number) {
+    const data = await this.prisma.plantBatch.findUnique({
       where: {
         id: id,
       },
@@ -77,6 +96,10 @@ export class BatchRepository {
         plant: {},
       },
     });
+    if (!data) {
+      throw new BatchNotFoundError(id);
+    }
+    return data;
   }
 }
 

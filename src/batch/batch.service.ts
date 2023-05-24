@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 import { BatchRepository, HarvestedCondition } from "./batch.repository";
 import { CreateBatch } from "./dto/create-batch";
@@ -32,11 +32,7 @@ export class BatchService {
     return this.batchRepository.findAllInterval(interval, harvestedCondition);
   }
 
-  async findOne(id: number) {
-    const batch = await this.batchRepository.findOne(id);
-    if (batch === null)
-      throw new HttpException("Batch not found", HttpStatus.NOT_FOUND);
-
-    return batch;
+  findOne(id: number) {
+    return this.batchRepository.findOne(id);
   }
 }

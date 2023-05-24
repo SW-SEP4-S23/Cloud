@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "nestjs-prisma";
+import { PlantNotFoundError } from "../logs/exceptions/PlantNotFoundError";
 
 @Injectable()
 export class PlantsRepository {
@@ -24,8 +25,8 @@ export class PlantsRepository {
     });
   }
 
-  findOne(plantId: number) {
-    return this.prisma.plant.findUnique({
+  async findOne(plantId: number) {
+    const data = await this.prisma.plant.findUnique({
       where: { id: plantId },
       include: {
         plantBatch: {
@@ -42,5 +43,9 @@ export class PlantsRepository {
         plantLogs: true,
       },
     });
+    if (!data) {
+      throw new PlantNotFoundError(plantId);
+    }
+    return data;
   }
 }
