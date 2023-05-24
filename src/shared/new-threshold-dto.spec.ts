@@ -34,23 +34,35 @@ describe("NewThresholdDTO Unit Tests", () => {
   });
 
   describe("Hardcoded Thresholds", () => {
-    describe("Exceptions", () => {
-      describe("Co2", () => {
-        it("Co2 should throw an error if minValue is < hardcoded min", () => {
+    describe("Co2", () => {
+      describe("Exceptions", () => {
+        it("should throw errro if minValue is < hardcoded min", () => {
           provider.minValue = -1;
           provider.maxValue = 100;
           expect(() => testForHardcodedThresholdsCo2(provider)).toThrowError();
         });
 
-        it("Co2 should throw an error if maxValue is > hardcoded max", () => {
+        it("should throw error if maxValue is > hardcoded max", () => {
           provider.minValue = 0;
           provider.maxValue = 1;
           expect(() => testForHardcodedThresholdsCo2(provider)).toThrowError();
         });
       });
 
-      describe("Humidity", () => {
-        it("Humidity should throw an error if minValue is < hardcoded min", () => {
+      describe("Sunny side scenarios", () => {
+        it("Within range", () => {
+          provider.minValue = 0.1;
+          provider.maxValue = 0.4;
+          expect(() =>
+            testForHardcodedThresholdsCo2(provider),
+          ).not.toThrowError();
+        });
+      });
+    });
+
+    describe("Humidity", () => {
+      describe("Exceptions", () => {
+        it("should throw error if minValue is < hardcoded min", () => {
           provider.minValue = -1;
           provider.maxValue = 100;
           expect(() =>
@@ -58,7 +70,7 @@ describe("NewThresholdDTO Unit Tests", () => {
           ).toThrowError();
         });
 
-        it("Humidity should throw an error if maxValue is > hardcoded max", () => {
+        it("should throw error if maxValue is > hardcoded max", () => {
           provider.minValue = 0;
           provider.maxValue = 101;
           expect(() =>
@@ -67,8 +79,20 @@ describe("NewThresholdDTO Unit Tests", () => {
         });
       });
 
-      describe("Temperature", () => {
-        it("Temperature should throw an error if minValue is < hardcoded min", () => {
+      describe("Sunny side scenarios", () => {
+        it("Should not throw error", () => {
+          provider.minValue = 0.1;
+          provider.maxValue = 99.9;
+          expect(() =>
+            testForHardcodedThresholdsHumidity(provider),
+          ).not.toThrowError();
+        });
+      });
+    });
+
+    describe("Temperature", () => {
+      describe("Exceptions", () => {
+        it("should throw error if minValue is < hardcoded min", () => {
           provider.minValue = -41;
           provider.maxValue = 100;
           expect(() =>
@@ -76,8 +100,8 @@ describe("NewThresholdDTO Unit Tests", () => {
           ).toThrowError();
         });
 
-        it("Temperature should throw an error if maxValue is > hardcoded max", () => {
-          provider.minValue = 0;
+        it("should throw error if maxValue is > hardcoded max", () => {
+          provider.minValue = -40;
           provider.maxValue = 126;
           expect(() =>
             testForHardcodedThresholdsHumidity(provider),
