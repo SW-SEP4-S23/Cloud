@@ -1,6 +1,6 @@
 import { DataType } from "@prisma/client";
 import { Test } from "@nestjs/testing";
-import { INestApplication } from "@nestjs/common";
+import { HttpServer, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import {
@@ -127,7 +127,7 @@ describe("Humidity Controller", () => {
     let humidityPath: string;
     let humidityMinValue: number;
     let humidityMaxValue: number;
-    let request: any;
+    let request: HttpServer;
 
     describe("(POST) Thresholds", () => {
       test("Checking if POST succeeds", async () => {

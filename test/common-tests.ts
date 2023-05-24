@@ -1,10 +1,11 @@
+import { HttpServer } from "@nestjs/common";
 import { DataType } from "@prisma/client";
 import * as Request from "supertest";
 
 const toleranceInMilliseconds = 60000; //1 minute
 
 export const postThresholds = async (
-  httpServer: any,
+  httpServer: HttpServer,
   path: string,
   minimumValue: number,
   maximumValue: number,
@@ -36,7 +37,7 @@ export const postThresholds = async (
 };
 
 export const getThresholds = async (
-  httpServer: any,
+  httpServer: HttpServer,
   path: string,
   dataType: DataType,
 ) => {

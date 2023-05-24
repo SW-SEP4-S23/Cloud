@@ -1,6 +1,6 @@
 import { DataType } from "@prisma/client";
 import { Test } from "@nestjs/testing";
-import { INestApplication } from "@nestjs/common";
+import { HttpServer, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import {
@@ -127,13 +127,13 @@ describe("Co2 Controller", () => {
     let co2Path: string;
     let co2MinValue: number;
     let co2MaxValue: number;
-    let request: any;
+    let request: HttpServer;
 
     describe("(POST) Thresholds)", () => {
       test("Checking if POST succeeds", async () => {
         co2Path = "/environment/co2/thresholds";
-        co2MinValue = 0.5;
-        co2MaxValue = 10;
+        co2MinValue = 0.1;
+        co2MaxValue = 0.4;
 
         request = app.getHttpServer();
 
@@ -159,8 +159,8 @@ describe("Co2 Controller", () => {
 
     test("POST then check for pending", async () => {
       co2Path = "/environment/co2/thresholds";
-      co2MinValue = 5;
-      co2MaxValue = 10;
+      co2MinValue = 0.1;
+      co2MaxValue = 0.4;
 
       request = app.getHttpServer();
 

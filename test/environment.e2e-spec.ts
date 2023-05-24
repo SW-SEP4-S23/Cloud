@@ -123,16 +123,16 @@ describe("Environment Controller", () => {
       test("Checking if POST succeeds", () => {
         minMaxValuesObject = {
           newTemperatureThreshold: {
-            minValue: 10,
-            maxValue: 30,
+            minValue: -20,
+            maxValue: 80,
           },
           newHumidityThreshold: {
-            minValue: 0.3,
-            maxValue: 0.7,
+            minValue: 0,
+            maxValue: 80,
           },
           newCo2Threshold: {
-            minValue: 1000,
-            maxValue: 2000,
+            minValue: 0.0,
+            maxValue: 0.5,
           },
         };
 
@@ -149,8 +149,8 @@ describe("Environment Controller", () => {
         return request(app.getHttpServer())
           .get("/environment/thresholds")
           .expect(200)
-          .expect((requestBody) => {
-            expect(requestBody.body.upToDateThresholds).toEqual({
+          .expect((request) => {
+            expect(request.body.upToDateThresholds).toEqual({
               CO2: {
                 dataType: DataType.CO2,
                 minValue: null,
@@ -173,16 +173,16 @@ describe("Environment Controller", () => {
       test("POST Thresholds, then GET to check if they are pending", () => {
         minMaxValuesObject = {
           newTemperatureThreshold: {
-            minValue: 10,
-            maxValue: 30,
+            minValue: -30,
+            maxValue: 50,
           },
           newHumidityThreshold: {
-            minValue: 0.3,
-            maxValue: 0.7,
+            minValue: 10,
+            maxValue: 90,
           },
           newCo2Threshold: {
-            minValue: 1000,
-            maxValue: 2000,
+            minValue: 0.2,
+            maxValue: 0.3,
           },
         };
 
@@ -194,22 +194,22 @@ describe("Environment Controller", () => {
             return request(app.getHttpServer())
               .get("/environment/thresholds")
               .expect(200)
-              .expect((requestBody) => {
-                expect(requestBody.body.pendingThresholds).toEqual({
+              .expect((request) => {
+                expect(request.body.pendingThresholds).toEqual({
                   co2: {
                     dataType: DataType.CO2,
-                    minValueReq: 1000,
-                    maxValueReq: 2000,
+                    minValueReq: 0.2,
+                    maxValueReq: 0.3,
                   },
                   temperature: {
                     dataType: DataType.TEMPERATURE,
-                    minValueReq: 10,
-                    maxValueReq: 30,
+                    minValueReq: -30,
+                    maxValueReq: 50,
                   },
                   humidity: {
                     dataType: DataType.HUMIDITY,
-                    minValueReq: 0.3,
-                    maxValueReq: 0.7,
+                    minValueReq: 10,
+                    maxValueReq: 90,
                   },
                 });
               });
