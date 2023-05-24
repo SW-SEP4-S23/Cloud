@@ -10,6 +10,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//DATAPOINT
+
 model Datapoint {
   timestamp DateTime
   type      DataType
@@ -17,6 +19,8 @@ model Datapoint {
 
   @@id([timestamp, type])
 }
+
+//THRESHOLDS
 
 model Thresholds {
   dataType          DataType            @id
@@ -27,14 +31,13 @@ model Thresholds {
 
 model ThresholdRequests {
   id          Int        @default(autoincrement())
-  //I think this is neccesary?
   thresholds  Thresholds @relation(fields: [dataType], references: [dataType])
   dataType    DataType
   minValueReq Float
   maxValueReq Float
   requestDate DateTime
-  ack         Ack?       @relation(fields: [ackId], references: [id])
-  ackId       Int?
+  ack         Ack?       @relation(fields: [ack_Id], references: [id])
+  ack_Id      Int?
 
   @@id([id, dataType])
 }
@@ -44,6 +47,59 @@ model Ack {
   dateRecieved      DateTime?
   acked             Boolean
   thresholdRequests ThresholdRequests[]
+}
+
+//PLANTS
+
+model PlantSpecies {
+  name               String        @id
+  optimalCo2         Float?
+  optimalHumidity    Float?
+  optimalTemperature Float?
+  plantBatches       PlantBatch[]
+  speciesLogs        SpeciesLogs[]
+}
+
+model PlantBatch {
+  id                Int          @id @default(autoincrement())
+  harvestDate       DateTime?
+  plantingDate      DateTime
+  plantSpecies      PlantSpecies @relation(fields: [plantSpecies_Name], references: [name])
+  plantSpecies_Name String
+  amount            Int
+  plant             Plant[]
+  batchLogs         BatchLogs[]
+}
+
+model Plant {
+  id            Int         @id @default(autoincrement())
+  plantBatch    PlantBatch  @relation(fields: [plantBatch_Id], references: [id])
+  plantBatch_Id Int
+  plantLogs     PlantLogs[]
+}
+
+model SpeciesLogs {
+  id                Int          @id @default(autoincrement())
+  timestamp         DateTime
+  message           String
+  plantSpecies      PlantSpecies @relation(fields: [plantSpecies_Name], references: [name])
+  plantSpecies_Name String
+}
+
+model PlantLogs {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime
+  message   String
+  plant     Plant    @relation(fields: [plant_Id], references: [id])
+  plant_Id  Int
+}
+
+model BatchLogs {
+  id            Int        @id @default(autoincrement())
+  timestamp     DateTime
+  message       String
+  plantBatch    PlantBatch @relation(fields: [plantBatch_Id], references: [id])
+  plantBatch_Id Int
 }
 
 enum DataType {

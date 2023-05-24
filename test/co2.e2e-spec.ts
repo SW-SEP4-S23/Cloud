@@ -1,13 +1,15 @@
 import { DataType } from "@prisma/client";
 import { Test } from "@nestjs/testing";
-import { INestApplication } from "@nestjs/common";
+import { HttpServer, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import {
+  getHardcodedThresholds,
   getThresholds,
   postAndCheckForPendingThresholds,
   postThresholds,
 } from "./common-tests";
+import { hardcodedThresholds } from "../src/environment/shared/dto/new-threshold-dto";
 
 describe("Co2 Controller", () => {
   let app: INestApplication;
@@ -127,13 +129,13 @@ describe("Co2 Controller", () => {
     let co2Path: string;
     let co2MinValue: number;
     let co2MaxValue: number;
-    let request: any;
+    let request: HttpServer;
 
     describe("(POST) Thresholds)", () => {
       test("Checking if POST succeeds", async () => {
         co2Path = "/environment/co2/thresholds";
-        co2MinValue = 0.5;
-        co2MaxValue = 10;
+        co2MinValue = 0.1;
+        co2MaxValue = 0.4;
 
         request = app.getHttpServer();
 
@@ -147,20 +149,36 @@ describe("Co2 Controller", () => {
       });
     });
 
-    test("GET Thresholds", async () => {
-      co2Path = "/environment/co2/thresholds";
-      co2MinValue = 0.5;
-      co2MaxValue = 10;
+    describe("(GET) Thresholds)", () => {
+      test("Thresholds", async () => {
+        co2Path = "/environment/co2/thresholds";
+        co2MinValue = 0.5;
+        co2MaxValue = 10;
 
-      request = app.getHttpServer();
+        request = app.getHttpServer();
 
-      await getThresholds(request, co2Path, DataType.CO2);
+        await getThresholds(request, co2Path, DataType.CO2);
+      });
+      test("Hardcoded Thresholds", async () => {
+        co2Path = "/environment/co2/hardcoded-thresholds";
+        co2MinValue = hardcodedThresholds.co2.min;
+        co2MaxValue = hardcodedThresholds.co2.max;
+
+        request = app.getHttpServer();
+
+        await getHardcodedThresholds(
+          request,
+          co2Path,
+          co2MinValue,
+          co2MaxValue,
+        );
+      });
     });
 
     test("POST then check for pending", async () => {
       co2Path = "/environment/co2/thresholds";
-      co2MinValue = 5;
-      co2MaxValue = 10;
+      co2MinValue = 0.1;
+      co2MaxValue = 0.4;
 
       request = app.getHttpServer();
 

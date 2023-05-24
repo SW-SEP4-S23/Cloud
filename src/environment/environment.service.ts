@@ -1,9 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
+import {
+  IntervalQuery,
+  validate,
+  isDefined,
+} from "../shared/dto/interval-query";
 import { EnvironmentRepository } from "./environment.repository";
-import { NewThresholdWrapperDTO } from "../shared/new-threshold-wrapper-dto";
-import { newThresholdChecker } from "../shared/new-threshold-dto";
+import { NewThresholdWrapperDTO } from "./shared/dto/new-threshold-wrapper-dto";
 import { DataType } from "@prisma/client";
+import {
+  hardcodedThresholds,
+  newThresholdChecker,
+  testForHardcodedThresholds,
+} from "./shared/dto/new-threshold-dto";
 
 @Injectable()
 export class EnvironmentService {
@@ -34,6 +42,7 @@ export class EnvironmentService {
   }
 
   postThresholdsRequests(newThresholds: NewThresholdWrapperDTO) {
+    testForHardcodedThresholds(newThresholds);
     for (const key in newThresholds) {
       if (newThresholds.hasOwnProperty(key)) {
         const thresholdDTO = newThresholds[key];
@@ -45,5 +54,9 @@ export class EnvironmentService {
 
   findAllThresholds() {
     return this.environmentRepository.findAllThresholds();
+  }
+
+  getHardcodedThresholds() {
+    return hardcodedThresholds;
   }
 }
