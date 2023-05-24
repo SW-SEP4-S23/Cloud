@@ -15,14 +15,21 @@ import { CreateBatch } from "./dto/create-batch";
 import { PatchHarvestDate } from "./dto/patch-batch";
 import { IsHarvested } from "./dto/query-harvested";
 import { BatchNotFoundError } from "../logs/exceptions/BatchNotFoundError";
+import { SpeciesNotFoundError } from "../logs/exceptions/SpeciesNotFoundError";
 
 @Controller("stock/batches")
 export class BatchController {
   constructor(private readonly batchService: BatchService) {}
 
   @Post()
-  createBatch(@Body() createBatch: CreateBatch) {
-    return this.batchService.createBatch(createBatch);
+  async createBatch(@Body() createBatch: CreateBatch) {
+    try {
+      return await this.batchService.createBatch(createBatch);
+    } catch (e) {
+      if (e instanceof SpeciesNotFoundError) {
+        throw new HttpException(e.message, 404);
+      }
+    }
   }
 
   @Get()
