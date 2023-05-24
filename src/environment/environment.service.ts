@@ -2,12 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { IntervalQuery, validate, isDefined } from "../shared/interval-query";
 import { EnvironmentRepository } from "./environment.repository";
 import { NewThresholdWrapperDTO } from "../shared/new-threshold-wrapper-dto";
-import { newThresholdChecker } from "../shared/new-threshold-dto";
-import { DataType } from "@prisma/client";
 import {
-  hardcodedThresholds,
+  newThresholdChecker,
   testForHardcodedThresholds,
-} from "../shared/hardcoded-thresholds";
+  hardcodedThresholds,
+} from "../shared/new-threshold-dto";
+import { DataType } from "@prisma/client";
 
 @Injectable()
 export class EnvironmentService {

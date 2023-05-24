@@ -4,11 +4,9 @@ import { Co2Repository } from "./co2.repository";
 import {
   NewThresholdDTO,
   newThresholdChecker,
-} from "../shared/new-threshold-dto";
-import {
   testForHardcodedThresholdsCo2,
   hardcodedThresholds,
-} from "../shared/hardcoded-thresholds";
+} from "../shared/new-threshold-dto";
 
 @Injectable()
 export class Co2Service {

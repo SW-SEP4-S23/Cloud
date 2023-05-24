@@ -4,11 +4,9 @@ import { HumidityRepository } from "./humidity.repository";
 import {
   NewThresholdDTO,
   newThresholdChecker,
-} from "../shared/new-threshold-dto";
-import {
-  hardcodedThresholds,
   testForHardcodedThresholdsHumidity,
-} from "../shared/hardcoded-thresholds";
+  hardcodedThresholds,
+} from "../shared/new-threshold-dto";
 
 @Injectable()
 export class HumidityService {
