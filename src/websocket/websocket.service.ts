@@ -17,14 +17,13 @@ import { WebSocketRepository } from "./websocket.repository";
 export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   #socket: WebSocket;
   #reconnectInterval: number;
-  #fullClose = false;
 
   constructor(private wsRepository: WebSocketRepository) {
     this.#reconnectInterval = 1000 * 60; // 1 minute
   }
 
   async onModuleDestroy() {
-    this.closeWebSocket();
+    await this.closeWebSocket();
   }
 
   async onModuleInit() {
@@ -36,7 +35,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
       this.#socket = new WebSocket(LORAWAN_WSS_URL);
 
       this.#socket.on("open", () => {
-        console.log("Socket opened");
+        console.info("Socket opened");
         resolve();
       });
 
@@ -46,11 +45,13 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
       });
 
       this.#socket.on("close", () => {
-        console.log("Socket closed");
-        if (!this.#fullClose) {
-          console.log("Reconnecting in ", this.#reconnectInterval);
-          setTimeout(() => this.connectWebSocket(), this.#reconnectInterval);
-        }
+        console.info("Socket closed");
+
+        console.info("Reconnecting in ", this.#reconnectInterval);
+        setTimeout(() => {
+          console.info("Reconnecting...");
+          this.connectWebSocket();
+        }, this.#reconnectInterval);
       });
 
       this.#socket.on("message", async (buffer: Buffer) => {
@@ -78,8 +79,17 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   }
 
   closeWebSocket() {
-    this.#fullClose = true;
-    this.#socket.close();
+    return new Promise<void>((resolve) => {
+      console.info("Closing socket...");
+
+      this.#socket.removeAllListeners("close");
+
+      this.#socket.on("close", () => {
+        resolve();
+      });
+
+      this.#socket.close();
+    });
   }
 
   async onUplink(uplinkData: UplinkData) {
