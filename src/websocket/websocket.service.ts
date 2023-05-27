@@ -122,16 +122,36 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   }
 
   async sendDownlink() {
-    const updateRequestArray =
-      await this.wsRepository.getLatestThresholdUpdateRequests();
+    const [currentThresholds, latestThresholdRequests] = await Promise.all([
+      this.wsRepository.getCurrentThresholds(),
+      this.wsRepository.getLatestThresholdUpdateRequests(),
+    ]);
 
-    if (updateRequestArray.length === 0) {
+    if (latestThresholdRequests.length === 0) {
       console.info("No unacked requests");
       return;
     }
 
+    // if there is no threshold request for a specific data type, use the current threshold
+    const updateRequestArray = Object.values(currentThresholds).map(
+      (currentThreshold, index) => {
+        const latestThresholdRequest = latestThresholdRequests[index];
+
+        if (!latestThresholdRequest) {
+          return {
+            id: null,
+            dataType: currentThreshold.dataType,
+            minValueReq: currentThreshold.minValue,
+            maxValueReq: currentThreshold.maxValue,
+          };
+        }
+
+        return latestThresholdRequest;
+      },
+    );
+
     const ack = await this.wsRepository.createAcksForThresholdUpdateRequests(
-      updateRequestArray,
+      updateRequestArray.filter((updateRequest) => updateRequest.id === null),
     );
 
     const ackId = payloadIdFromOriginalId(ack.id);
