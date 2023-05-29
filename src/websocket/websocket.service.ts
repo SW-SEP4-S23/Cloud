@@ -122,15 +122,15 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
   }
 
   async sendDownlink() {
-    const [currentThresholds, latestThresholdRequests] = await Promise.all([
-      this.wsRepository.getCurrentThresholds(),
-      this.wsRepository.getLatestThresholdUpdateRequests(),
-    ]);
+    const latestThresholdRequests =
+      await this.wsRepository.getLatestThresholdUpdateRequests();
 
     if (latestThresholdRequests.length === 0) {
       console.info("No unacked requests");
       return;
     }
+
+    const currentThresholds = await this.wsRepository.getCurrentThresholds();
 
     // if there is no threshold request for a specific data type, use the current threshold
     const updateRequestArray = Object.values(currentThresholds).map(
