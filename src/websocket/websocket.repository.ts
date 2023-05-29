@@ -6,7 +6,7 @@ import { DataType } from "@prisma/client";
 export class WebSocketRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createDatapoint(params: {
+  createDatapoint(params: {
     timestamp: Date;
     co2: number;
     humidity: number;
@@ -26,11 +26,30 @@ export class WebSocketRepository {
     });
   }
 
-  async getLatestThresholdUpdateRequests() {
+  getCurrentThresholds() {
+    return this.prisma.thresholds.findMany({
+      select: {
+        dataType: true,
+        maxValue: true,
+        minValue: true,
+      },
+    });
+  }
+
+  getLatestThresholdUpdateRequests() {
     // Latest requests for all datatypes that haven't been acked
     return this.prisma.thresholdRequests.findMany({
       where: {
-        ack_Id: null,
+        OR: [
+          {
+            ack_Id: null,
+          },
+          {
+            ack: {
+              acked: false,
+            },
+          },
+        ],
       },
       select: {
         id: true,
@@ -45,7 +64,7 @@ export class WebSocketRepository {
     });
   }
 
-  async createAcksForThresholdUpdateRequests(
+  createAcksForThresholdUpdateRequests(
     requests: {
       id: number;
       dataType: DataType;
@@ -79,7 +98,7 @@ export class WebSocketRepository {
     });
   }
 
-  async getNewThresholdsFromRequests() {
+  getNewThresholdsFromRequests() {
     return this.prisma.thresholdRequests.findMany({
       where: {
         ack: {
@@ -98,7 +117,7 @@ export class WebSocketRepository {
     });
   }
 
-  async updateThresholds(
+  updateThresholds(
     thresholdsRequests: {
       dataType: DataType;
       minValueReq: number;
@@ -120,7 +139,7 @@ export class WebSocketRepository {
     );
   }
 
-  async getAcksCount() {
+  getAcksCount() {
     return this.prisma.ack.count();
   }
 }
