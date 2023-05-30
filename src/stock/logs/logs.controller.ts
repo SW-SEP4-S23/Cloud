@@ -13,7 +13,7 @@ import { CreateBatchLogDto } from "./dto/create-batch-log-dto";
 import { BatchNotFoundError } from "../shared/exceptions/BatchNotFoundError";
 import { PlantNotFoundError } from "../shared/exceptions/PlantNotFoundError";
 import { SpeciesNotFoundError } from "../shared/exceptions/SpeciesNotFoundError";
-import { createSpeciesLogDto } from "./dto/create-species-log-dto";
+import { CreateSpeciesLogDto } from "./dto/create-species-log-dto";
 
 @Controller("stock")
 export class LogsController {
