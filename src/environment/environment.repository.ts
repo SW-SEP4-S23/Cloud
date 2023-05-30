@@ -86,7 +86,7 @@ export class EnvironmentRepository {
     return namedThresholds;
   }
 
-  private async getPendingThresholds() {
+ async #getPendingThresholds() {
     const [co2, humidity, temperature] = await Promise.all([
       getPendingThreshold(DataType.CO2, this.prismaService),
       getPendingThreshold(DataType.HUMIDITY, this.prismaService),
