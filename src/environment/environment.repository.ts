@@ -74,7 +74,7 @@ export class EnvironmentRepository {
     };
   }
 
-  private async getUpToDateThresholds() {
+async #getUpToDateThresholds() {
     const thresholds = await this.prismaService.thresholds.findMany();
 
     // map the thresholds to an object with the datatype as key
