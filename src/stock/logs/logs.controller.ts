@@ -124,7 +124,7 @@ export class LogsController {
   @Post("/species/:speciesName/logs")
   async createSpeciesLog(
     @Param("speciesName") speciesName: string,
-    @Body() createSpeciesLogDto: createSpeciesLogDto,
+    @Body() createSpeciesLogDto: CreateSpeciesLogDto,
   ) {
     try {
       return await this.logsService.createSpeciesLog({
