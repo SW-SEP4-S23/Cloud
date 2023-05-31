@@ -13,7 +13,6 @@ import { CreateBatchLogDto } from "./dto/create-batch-log-dto";
 import { BatchNotFoundError } from "../shared/exceptions/BatchNotFoundError";
 import { PlantNotFoundError } from "../shared/exceptions/PlantNotFoundError";
 import { SpeciesNotFoundError } from "../shared/exceptions/SpeciesNotFoundError";
-import { CreateSpeciesLogDto } from "./dto/create-species-log-dto";
 
 @Controller("stock")
 export class LogsController {
@@ -124,7 +123,7 @@ export class LogsController {
   @Post("/species/:speciesName/logs")
   async createSpeciesLog(
     @Param("speciesName") speciesName: string,
-    @Body() createSpeciesLogDto: CreateSpeciesLogDto,
+    @Body() createSpeciesLogDto: CreateBatchLogDto,
   ) {
     try {
       return await this.logsService.createSpeciesLog({

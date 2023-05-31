@@ -74,7 +74,7 @@ export class EnvironmentRepository {
     };
   }
 
-async #getUpToDateThresholds() {
+  async getUpToDateThresholds() {
     const thresholds = await this.prismaService.thresholds.findMany();
 
     // map the thresholds to an object with the datatype as key
@@ -86,7 +86,7 @@ async #getUpToDateThresholds() {
     return namedThresholds;
   }
 
- async #getPendingThresholds() {
+  async getPendingThresholds() {
     const [co2, humidity, temperature] = await Promise.all([
       getPendingThreshold(DataType.CO2, this.prismaService),
       getPendingThreshold(DataType.HUMIDITY, this.prismaService),
